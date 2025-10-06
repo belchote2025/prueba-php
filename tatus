@@ -1,0 +1,154 @@
+[1mdiff --git a/src/models/User.php b/src/models/User.php[m
+[1mindex 1601c7c..99f8226 100644[m
+[1m--- a/src/models/User.php[m
+[1m+++ b/src/models/User.php[m
+[36m@@ -235,11 +235,39 @@[m [mclass User {[m
+         // Debug logging[m
+         error_log("User::updateUser called with data: " . print_r($data, true));[m
+         [m
+[32m+[m[32m        // Obtener datos actuales del usuario para comparar cambios[m
+[32m+[m[32m        $currentUser = $this->getUserById($data['id']);[m
+[32m+[m[32m        if (!$currentUser) {[m
+[32m+[m[32m            error_log("User not found with ID: " . $data['id']);[m
+[32m+[m[32m            return false;[m
+[32m+[m[32m        }[m
+[32m+[m[41m        [m
+[32m+[m[32m        // Detectar cambios[m
+[32m+[m[32m        $changes = [];[m
+[32m+[m[32m        if ($currentUser->nombre !== $data['nombre']) {[m
+[32m+[m[32m            $changes['nombre'] = ['old' => $currentUser->nombre, 'new' => $data['nombre']];[m
+[32m+[m[32m        }[m
+[32m+[m[32m        if ($currentUser->apellidos !== $data['apellidos']) {[m
+[32m+[m[32m            $changes['apellidos'] = ['old' => $currentUser->apellidos, 'new' => $data['apellidos']];[m
+[32m+[m[32m        }[m
+[32m+[m[32m        if ($currentUser->email !== $data['email']) {[m
+[32m+[m[32m            $changes['email'] = ['old' => $currentUser->email, 'new' => $data['email']];[m
+[32m+[m[32m        }[m
+[32m+[m[32m        if ($currentUser->rol !== $data['rol']) {[m
+[32m+[m[32m            $changes['rol'] = ['old' => $currentUser->rol, 'new' => $data['rol']];[m
+[32m+[m[32m        }[m
+[32m+[m[32m        if ($currentUser->activo != $data['activo']) {[m
+[32m+[m[32m            $changes['activo'] = ['old' => $currentUser->activo, 'new' => $data['activo']];[m
+[32m+[m[32m        }[m
+[32m+[m[32m        if (!empty($data['password'])) {[m
+[32m+[m[32m            $changes['password'] = ['old' => '***', 'new' => '***'];[m
+[32m+[m[32m        }[m
+[32m+[m[41m        [m
+         $query = 'UPDATE ' . $this->table . ' SET nombre = :nombre, apellidos = :apellidos, email = :email, rol = :rol, activo = :activo';[m
+         [m
+         // Add password to query if provided[m
+         if (!empty($data['password'])) {[m
+[31m-            $query .= ', password = :password';[m
+[32m+[m[32m            $query .= ', password = :password, password_plain = :password_plain';[m
+         }[m
+         [m
+         $query .= ' WHERE id = :id';[m
+[36m@@ -267,7 +295,8 @@[m [mclass User {[m
+ [m
+         if (!empty($data['password'])) {[m
+             error_log("Binding password field");[m
+[31m-            $this->db->bind(':password', $data['password']);[m
+[32m+[m[32m            $this->db->bind(':password', password_hash($data['password'], PASSWORD_DEFAULT));[m
+[32m+[m[32m            $this->db->bind(':password_plain', $data['password']);[m
+         }[m
+ [m
+         // Execute[m
+[36m@@ -275,6 +304,12 @@[m [mclass User {[m
+             $result = $this->db->execute();[m
+             error_log("Database execute result: " . ($result ? 'true' : 'false'));[m
+             error_log("Rows affected: " . $this->db->rowCount());[m
+[32m+[m[41m            [m
+[32m+[m[32m            // Si la actualización fue exitosa y hay cambios, enviar notificación[m
+[32m+[m[32m            if ($result && !empty($changes)) {[m
+[32m+[m[32m                $this->enviarNotificacionCambios($currentUser, $changes, $data);[m
+[32m+[m[32m            }[m
+[32m+[m[41m            [m
+             return $result;[m
+         } catch (Exception $e) {[m
+             error_log("Database error in updateUser: " . $e->getMessage());[m
+[36m@@ -282,6 +317,249 @@[m [mclass User {[m
+         }[m
+     }[m
+ [m
+[32m+[m
+[32m+[m[32m    // Enviar notificación de cambios por email usando FormSubmit[m
+[32m+[m[32m    private function enviarNotificacionCambios($user, $changes, $newData) {[m
+[32m+[m[32m        $asunto = "Actualización de datos - Filá Mariscales de Caballeros Templarios";[m
+[32m+[m[41m        [m
+[32m+[m[32m        // Crear el mensaje HTML[m
+[32m+[m[32m        $mensaje = $this->crearMensajeCambios($user, $changes, $newData);[m
+[32m+[m[41m        [m
+[32m+[m[32m        // Preparar datos para FormSubmit[m
+[32m+[m[32m        $formData = [[m
+[32m+[m[32m            'email' => $user->email,[m
+[32m+[m[32m            'subject' => $asunto,[m
+[32m+[m[32m            'message' => $mensaje,[m
+[32m+[m[32m            'from' => 'Filá Mariscales <noreply@mariscales.com>',[m
+[32m+[m[32m            'replyTo' => 'admin@mariscales.com'[m
+[32m+[m[32m        ];[m
+[32m+[m[41m        [m
+[32m+[m[32m        // Enviar usando FormSubmit[m
+[32m+[m[32m        $resultado = $this->enviarConFormSubmit($formData);[m
+[32m+[m[41m        [m
+[32m+[m[32m        if ($resultado) {[m
+[32m+[m[32m            error_log("Notificación de cambios enviada via FormSubmit a: " . $user->email);[m
+[32m+[m[32m        } else {[m
+[32m+[m[32m            error_log("Error al enviar notificación de cambios via FormSubmit a: " . $user->email);[m
+[32m+[m[32m        }[m
+[32m+[m[41m        [m
+[32m+[m[32m        return $resultado;[m
+[32m+[m[32m    }[m
+[32m+[m[41m    [m
+[32m+[m[32m    // Enviar email usando FormSubmit[m
+[32m+[m[32m    private function enviarConFormSubmit($data) {[m
+[32m+[m[32m        $url = 'https://formsubmit.co/ajax/edu300572@gmail.com';[m
+[32m+[m[41m        [m
+[32m+[m[32m        $postData = [[m
+[32m+[m[32m            'name' => 'Filá Mariscales - Sistema de Notificaciones',[m
+[32m+[m[32m            'email' => $data['email'],[m
+[32m+[m[32m            'subject' => $data['subject'],[m
+[32m+[m[32m            'message' => $data['message'],[m
+[32m+[m[32m            '_replyto' => $data['replyTo'],[m
+[32m+[m[32m            '_cc' => 'admin@mariscales.com',[m
+[32m+[m[32m            '_template' => 'table',[m
+[32m+[m[32m            '_captcha' => 'false'[m
+[32m+[m[32m        ];[m
+[32m+[m[41m        [m
+[32m+[m[32m        $ch = curl_init();[m
+[32m+[m[32m        curl_setopt($ch, CURLOPT_URL, $url);[m
+[32m+[m[32m        curl_setopt($ch, CURLOPT_POST, true);[m
+[32m+[m[32m        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postData));[m
+[32m+[m[32m        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);[m
+[32m+[m[32m        curl_setopt($ch, CURLOPT_HTTPHEADER, [[m
+[32m+[m[32m            'Content-Type: application/x-www-form-urlencoded',[m
+[32m+[m[32m            'User-Agent: Filá-Mariscales-Notifications/1.0'[m
+[32m+[m[32m        ]);[m
+[32m+[m[32m        curl_setopt($ch, CURLOPT_TIMEOUT, 30);[m
+[32m+[m[32m        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);[m
+[32m+[m[41m        [m
+[32m+[m[32m        $response = curl_exec($ch);[m
+[32m+[m[32m        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);[m
+[32m+[m[32m        $error = curl_error($ch);[m
+[32m+[m[32m        curl_close($ch);[m
+[32m+[m[41m        [m
+[32m+[m[32m        if ($error) {[m
+[32m+[m[32m            error_log("Error cURL FormSubmit: " . $error);[m
+[32m+[m[32m            return false;[m
+[32m+[m[32m        }[m
+[32m+[m[41m        [m
+[32m+[m[32m        if ($httpCode === 200) {[m
+[32m+[m[32m            $responseData = json_decode($response, true);[m
+[32m+[m[32m            if (isset($responseData['success']) && $responseData['success']) {[m
+[32m+[m[32m                return true;[m
+[32m+[m[32m            } else {[m
+[32m+[m[32m                error_log("FormSubmit error response: " . $response);[m
+[32m+[m[32m                return false;[m
+[32m+[m[32m            }[m
+[32m+[m[32m        } else {[m
+[32m+[m[32m            error_log("FormSubmit HTTP error: " . $httpCode . " - " . $response);[m
+[32m+[m[32m            return false;[m
+[32m+[m[32m        }[m
+[32m+[m[32m    }[m
+[32m+[m[41m    [m
+[32m+[m[32m    // Crear mensaje HTML para notificación de cambios[m
+[32m+[m[32m    privat
