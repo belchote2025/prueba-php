@@ -1,14 +1,6 @@
 <?php
-require_once __DIR__ . '/../../../src/config/config.php';
-
-// Configurar datos para el layout
-$data = [
-    'title' => 'Descargas',
-    'description' => 'Documentos y archivos para descargar'
-];
-
-// Iniciar el buffer de salida
-ob_start();
+// Los datos ya vienen del controlador a través del método view()
+// No es necesario require_once ni redefinir $data aquí
 ?>
 
 <style>
@@ -118,8 +110,8 @@ ob_start();
                 <div class="col-md-4">
                     <select class="form-select" id="categoryFilter">
                         <option value="">Todas las categorías</option>
-                        <?php if (isset($data['categories'])): ?>
-                            <?php foreach ($data['categories'] as $key => $value): ?>
+                        <?php if (isset($categories) && is_array($categories)): ?>
+                            <?php foreach ($categories as $key => $value): ?>
                                 <option value="<?php echo $key; ?>"><?php echo $value; ?></option>
                             <?php endforeach; ?>
                         <?php endif; ?>
@@ -128,10 +120,17 @@ ob_start();
             </div>
         </div>
         
+        <!-- Error message if any -->
+        <?php if (isset($error) && $error): ?>
+            <div class="alert alert-warning" role="alert">
+                <i class="bi bi-exclamation-triangle me-2"></i><?php echo htmlspecialchars($error); ?>
+            </div>
+        <?php endif; ?>
+        
         <!-- Documents Grid -->
         <div class="row g-4" id="documentsContainer">
-            <?php if (!empty($data['documents'])): ?>
-                <?php foreach ($data['documents'] as $document): ?>
+            <?php if (!empty($documents) && is_array($documents)): ?>
+                <?php foreach ($documents as $document): ?>
                     <div class="col-md-6 col-lg-4 document-item" data-category="<?php echo $document->categoria; ?>">
                         <div class="card document-card h-100">
                             <div class="card-body">
@@ -164,7 +163,7 @@ ob_start();
                                         <h5 class="card-title mb-1"><?php echo htmlspecialchars($document->titulo); ?></h5>
                                         <p class="text-muted small mb-2"><?php echo date('d/m/Y', strtotime($document->fecha_subida)); ?></p>
                                         <span class="badge bg-light text-dark category-badge">
-                                            <?php echo htmlspecialchars($data['categories'][$document->categoria] ?? $document->categoria); ?>
+                                            <?php echo htmlspecialchars($categories[$document->categoria] ?? $document->categoria); ?>
                                         </span>
                                     </div>
                                 </div>
@@ -184,7 +183,7 @@ ob_start();
                                 </div>
                                 
                                 <div class="text-center">
-                                    <a href="/prueba-php/public/descargar/<?php echo $document->id; ?>" class="download-btn">
+                                    <a href="<?php echo URL_ROOT; ?>/descargar/<?php echo $document->id; ?>" class="download-btn">
                                         <i class="bi bi-download me-1"></i>Descargar
                                     </a>
                                 </div>
@@ -254,11 +253,3 @@ document.addEventListener('DOMContentLoaded', function() {
     document.head.appendChild(style);
 });
 </script>
-
-<?php
-// Obtener el contenido del buffer
-$content = ob_get_clean();
-
-// Incluir el layout principal
-include __DIR__ . '/../layouts/main.php';
-?>

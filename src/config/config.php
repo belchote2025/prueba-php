@@ -24,7 +24,8 @@ define('APP_VERSION', '1.0.0');
 
 // Error reporting (set to 0 in production)
 error_reporting(E_ALL);
-ini_set('display_errors', 0);
+ini_set('display_errors', 1); // Temporal para debug
+ini_set('display_startup_errors', 1);
 
 // Timezone
 date_default_timezone_set('Europe/Madrid');
