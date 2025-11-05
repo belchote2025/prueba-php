@@ -10,7 +10,7 @@
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <!-- Admin CSS -->
-    <link href="/prueba-php/public/assets/css/admin.css" rel="stylesheet">
+    <link href="<?php echo URL_ROOT; ?>/assets/css/admin.css" rel="stylesheet">
     
     <style>
         body { 
@@ -123,7 +123,7 @@
                         <!-- Featured Image -->
                         <?php if (!empty($news->imagen_portada)): ?>
                             <div class="mb-4">
-                                <img src="http://localhost/prueba-php/public/serve-image.php?path=uploads/news/<?= urlencode($news->imagen_portada) ?>" 
+                                <img src="http://localhost<?php echo URL_ROOT; ?>/serve-image.php?path=uploads/news/<?= urlencode($news->imagen_portada) ?>" 
                                      class="news-image" alt="Imagen de portada">
                             </div>
                         <?php endif; ?>
@@ -307,7 +307,7 @@
                                     <?= date('d/m/Y H:i', strtotime($news->fecha_publicacion)) ?>
                                 </div>
                                 <?php if (!empty($news->imagen_portada)): ?>
-                                    <img src="http://localhost/prueba-php/public/serve-image.php?path=uploads/news/<?= urlencode($news->imagen_portada) ?>" 
+                                    <img src="http://localhost<?php echo URL_ROOT; ?>/serve-image.php?path=uploads/news/<?= urlencode($news->imagen_portada) ?>" 
                                          class="img-fluid mb-3" alt="Imagen de portada">
                                 <?php endif; ?>
                                 <div class="news-content">

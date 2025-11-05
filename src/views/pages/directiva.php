@@ -113,7 +113,7 @@ ob_start(); // Start output buffering
                 <h2 class="fw-bold mb-4">¿Quieres contactar con nosotros?</h2>
                 <p class="lead mb-4">Estamos a tu disposición para cualquier consulta o sugerencia</p>
                 <div class="d-flex justify-content-center gap-3">
-                    <a href="/prueba-php/public/contacto" class="btn btn-danger btn-lg">Enviar mensaje</a>
+                    <a href="<?php echo URL_ROOT; ?>/contacto" class="btn btn-danger btn-lg">Enviar mensaje</a>
                     <button type="button" class="btn btn-outline-danger btn-lg" onclick="mostrarTelefono()">Llamar ahora</button>
                 </div>
             </div>

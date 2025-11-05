@@ -12,6 +12,9 @@ if (!function_exists('isLoggedIn')) {
     <title><?php echo SITE_NAME; ?> | <?php echo $data['title']; ?></title>
     <meta name="description" content="<?php echo isset($data['description']) ? $data['description'] : SITE_NAME; ?>">
     
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="<?php echo URL_ROOT; ?>/favicon.ico">
+    
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
@@ -21,15 +24,15 @@ if (!function_exists('isLoggedIn')) {
     <!-- AOS Animation Library -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="/prueba-php/public/assets/css/style.css">
+    <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/assets/css/style.css">
     <!-- Animations CSS -->
-    <link rel="stylesheet" href="/prueba-php/public/assets/css/animations.css">
+    <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/assets/css/animations.css">
 </head>
 <body>
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="/prueba-php/public/">
+            <a class="navbar-brand" href="<?php echo URL_ROOT; ?>/">
                 <i class="bi bi-shield-fill me-2"></i>
                 Filá Mariscales
             </a>
@@ -42,7 +45,7 @@ if (!function_exists('isLoggedIn')) {
                 <ul class="navbar-nav mx-auto">
                     <!-- Inicio -->
                     <li class="nav-item">
-                        <a class="nav-link <?php echo isActive('') ? 'active' : ''; ?>" href="/prueba-php/public/">
+                        <a class="nav-link <?php echo isActive('') ? 'active' : ''; ?>" href="<?php echo URL_ROOT; ?>/">
                             <i class="bi bi-house-door me-1"></i>Inicio
                         </a>
                     </li>
@@ -54,27 +57,27 @@ if (!function_exists('isLoggedIn')) {
                         </a>
                         <ul class="dropdown-menu">
                             <li>
-                                <a class="dropdown-item" href="/prueba-php/public/historia">
+                                <a class="dropdown-item" href="<?php echo URL_ROOT; ?>/historia">
                                     <i class="bi bi-clock-history me-2"></i>Historia
                                 </a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="/prueba-php/public/directiva">
+                                <a class="dropdown-item" href="<?php echo URL_ROOT; ?>/directiva">
                                     <i class="bi bi-person-badge me-2"></i>Directiva
                                 </a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="/prueba-php/public/blog">
+                                <a class="dropdown-item" href="<?php echo URL_ROOT; ?>/blog">
                                     <i class="bi bi-journal-text me-2"></i>Blog
                                 </a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="/prueba-php/public/libro">
+                                <a class="dropdown-item" href="<?php echo URL_ROOT; ?>/libro">
                                     <i class="bi bi-book-open me-2"></i>Libro
                                 </a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="/prueba-php/public/noticias">
+                                <a class="dropdown-item" href="<?php echo URL_ROOT; ?>/noticias">
                                     <i class="bi bi-newspaper me-2"></i>Noticias
                                 </a>
                             </li>
@@ -88,22 +91,22 @@ if (!function_exists('isLoggedIn')) {
                         </a>
                         <ul class="dropdown-menu">
                             <li>
-                                <a class="dropdown-item" href="/prueba-php/public/calendario">
+                                <a class="dropdown-item" href="<?php echo URL_ROOT; ?>/calendario">
                                     <i class="bi bi-calendar-event me-2"></i>Calendario
                                 </a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="/prueba-php/public/musica">
+                                <a class="dropdown-item" href="<?php echo URL_ROOT; ?>/musica">
                                     <i class="bi bi-music-note me-2"></i>Música
                                 </a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="/prueba-php/public/descargas">
+                                <a class="dropdown-item" href="<?php echo URL_ROOT; ?>/descargas">
                                     <i class="bi bi-download me-2"></i>Descargas
                                 </a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="/prueba-php/public/galeria">
+                                <a class="dropdown-item" href="<?php echo URL_ROOT; ?>/galeria">
                                     <i class="bi bi-images me-2"></i>Galería
                                 </a>
                             </li>
@@ -117,22 +120,22 @@ if (!function_exists('isLoggedIn')) {
                         </a>
                         <ul class="dropdown-menu">
                             <li>
-                                <a class="dropdown-item" href="/prueba-php/public/interactiva">
+                                <a class="dropdown-item" href="<?php echo URL_ROOT; ?>/interactiva">
                                     <i class="bi bi-magic me-2"></i>Zona Interactiva
                                 </a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="/prueba-php/public/tienda">
+                                <a class="dropdown-item" href="<?php echo URL_ROOT; ?>/tienda">
                                     <i class="bi bi-shop me-2"></i>Tienda
                                 </a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="/prueba-php/public/patrocinadores">
+                                <a class="dropdown-item" href="<?php echo URL_ROOT; ?>/patrocinadores">
                                     <i class="bi bi-star me-2"></i>Patrocinadores
                                 </a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="/prueba-php/public/hermanamientos">
+                                <a class="dropdown-item" href="<?php echo URL_ROOT; ?>/hermanamientos">
                                     <i class="bi bi-heart me-2"></i>Hermanamientos
                                 </a>
                             </li>
@@ -141,7 +144,7 @@ if (!function_exists('isLoggedIn')) {
                     
                     <!-- Socios -->
                     <li class="nav-item">
-                        <a class="nav-link <?php echo isActive('socios') ? 'active' : ''; ?>" href="/prueba-php/public/socios">
+                        <a class="nav-link <?php echo isActive('socios') ? 'active' : ''; ?>" href="<?php echo URL_ROOT; ?>/socios">
                             <i class="bi bi-person-badge me-1"></i>Socios
                         </a>
                     </li>
@@ -158,7 +161,7 @@ if (!function_exists('isLoggedIn')) {
                                     <i class="bi bi-person me-2"></i>Mi Perfil
                                 </a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="/prueba-php/public/logout.php">
+                                <li><a class="dropdown-item" href="<?php echo URL_ROOT; ?>/logout.php">
                                     <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
                                 </a></li>
                             </ul>
@@ -178,7 +181,7 @@ if (!function_exists('isLoggedIn')) {
                     ?>
                     <?php if ($cart_count > 0): ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="/prueba-php/public/cart">
+                            <a class="nav-link" href="<?php echo URL_ROOT; ?>/cart">
                                 <i class="bi bi-cart3 me-1"></i>Carrito
                                 <span class="badge bg-danger ms-1 cart-counter"><?= $cart_count ?></span>
                             </a>
@@ -194,7 +197,7 @@ if (!function_exists('isLoggedIn')) {
                     ?>
                     <?php if ($wishlist_count > 0): ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="/prueba-php/public/order/wishlist">
+                            <a class="nav-link" href="<?php echo URL_ROOT; ?>/order/wishlist">
                                 <i class="bi bi-heart me-1"></i>Favoritos
                                 <span class="badge bg-danger ms-1 wishlist-counter"><?= $wishlist_count ?></span>
                             </a>
@@ -204,19 +207,19 @@ if (!function_exists('isLoggedIn')) {
                     <?php if (isLoggedIn()): ?>
                         <?php if (isAdmin()): ?>
                             <li class="nav-item">
-                                <a class="nav-link btn btn-admin" href="/prueba-php/public/admin">
+                                <a class="nav-link btn btn-admin" href="<?php echo URL_ROOT; ?>/admin">
                                     <i class="bi bi-gear me-1"></i>Admin
                                 </a>
                             </li>
                         <?php endif; ?>
                     <?php else: ?>
                         <li class="nav-item">
-                            <a class="nav-link btn btn-login" href="/prueba-php/public/login">
+                            <a class="nav-link btn btn-login" href="<?php echo URL_ROOT; ?>/login">
                                 <i class="bi bi-box-arrow-in-right me-1"></i>Iniciar Sesión
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link btn btn-admin" href="/prueba-php/public/registro">
+                            <a class="nav-link btn btn-admin" href="<?php echo URL_ROOT; ?>/registro">
                                 <i class="bi bi-person-plus me-1"></i>Registrarse
                             </a>
                         </li>
@@ -326,9 +329,9 @@ if (!function_exists('isLoggedIn')) {
                     </div>
                     <div class="col-md-6 text-md-end">
                         <div class="footer-bottom-links">
-                            <a href="/prueba-php/public/privacidad" class="text-light text-decoration-none me-3">Política de Privacidad</a>
-                            <a href="/prueba-php/public/cookies" class="text-light text-decoration-none me-3">Cookies</a>
-                            <a href="/prueba-php/public/legal" class="text-light text-decoration-none">Aviso Legal</a>
+                            <a href="<?php echo URL_ROOT; ?>/privacidad" class="text-light text-decoration-none me-3">Política de Privacidad</a>
+                            <a href="<?php echo URL_ROOT; ?>/cookies" class="text-light text-decoration-none me-3">Cookies</a>
+                            <a href="<?php echo URL_ROOT; ?>/legal" class="text-light text-decoration-none">Aviso Legal</a>
                         </div>
                     </div>
                 </div>
@@ -346,9 +349,9 @@ if (!function_exists('isLoggedIn')) {
     <!-- AOS Animation Library -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <!-- Custom JS -->
-    <script src="/prueba-php/public/assets/js/main.js"></script>
+    <script src="<?php echo URL_ROOT; ?>/assets/js/main.js"></script>
     <!-- Animations JS -->
-    <script src="/prueba-php/public/assets/js/animations.js"></script>
+    <script src="<?php echo URL_ROOT; ?>/assets/js/animations.js"></script>
     
     <script>
         // Bootstrap-compatible dropdown functionality
@@ -503,7 +506,7 @@ if (!function_exists('isLoggedIn')) {
                 // Crear un formulario para enviar el logout
                 var form = document.createElement('form');
                 form.method = 'POST';
-                form.action = '/prueba-php/public/logout';
+                form.action = '<?php echo URL_ROOT; ?>/logout';
                 
                 // Agregar token CSRF si existe
                 var csrfToken = document.querySelector('meta[name="csrf-token"]');
@@ -532,7 +535,7 @@ if (!function_exists('isLoggedIn')) {
                     const cartItem = document.createElement('li');
                     cartItem.className = 'nav-item';
                     cartItem.innerHTML = `
-                        <a class="nav-link" href="/prueba-php/public/cart">
+                        <a class="nav-link" href="<?php echo URL_ROOT; ?>/cart">
                             <i class="bi bi-cart3 me-1"></i>Carrito
                             <span class="badge bg-danger ms-1 cart-counter">${count}</span>
                         </a>
@@ -567,8 +570,16 @@ if (!function_exists('isLoggedIn')) {
 
         // Función para obtener información del carrito
         function getCartInfo() {
-            fetch('/prueba-php/public/cart/info')
-                .then(response => response.json())
+            var cartUrl = '<?php echo URL_ROOT; ?>/cart/info';
+            console.log('Fetching cart info from:', cartUrl);
+            fetch(cartUrl)
+                .then(response => {
+                    console.log('Cart response status:', response.status, response.statusText);
+                    if (!response.ok) {
+                        throw new Error('HTTP error! status: ' + response.status);
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     if (data.success) {
                         updateCartCounter(data.cart_count);
@@ -591,7 +602,7 @@ if (!function_exists('isLoggedIn')) {
                     const wishlistItem = document.createElement('li');
                     wishlistItem.className = 'nav-item';
                     wishlistItem.innerHTML = `
-                        <a class="nav-link" href="/prueba-php/public/order/wishlist">
+                        <a class="nav-link" href="<?php echo URL_ROOT; ?>/order/wishlist">
                             <i class="bi bi-heart me-1"></i>Favoritos
                             <span class="badge bg-danger ms-1 wishlist-counter">${count}</span>
                         </a>
@@ -626,8 +637,16 @@ if (!function_exists('isLoggedIn')) {
 
         // Función para obtener información de la wishlist
         function getWishlistInfo() {
-            fetch('/prueba-php/public/order/wishlist/info')
-                .then(response => response.json())
+            var wishlistUrl = '<?php echo URL_ROOT; ?>/order/wishlist/info';
+            console.log('Fetching wishlist info from:', wishlistUrl);
+            fetch(wishlistUrl)
+                .then(response => {
+                    console.log('Wishlist response status:', response.status, response.statusText);
+                    if (!response.ok) {
+                        throw new Error('HTTP error! status: ' + response.status);
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     if (data.success) {
                         updateWishlistCounter(data.wishlist_count);
@@ -801,3 +820,4 @@ if (!function_exists('isLoggedIn')) {
     </script>
 </body>
 </html>
+

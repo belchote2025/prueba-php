@@ -53,7 +53,7 @@
                             </h5>
                         </div>
                         <div class="card-body">
-                            <form method="POST" action="/prueba-php/public/profile/change-password">
+                            <form method="POST" action="<?php echo URL_ROOT; ?>/profile/change-password">
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="mb-3">

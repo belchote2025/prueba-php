@@ -254,7 +254,7 @@ function viewMessage(filename) {
     modal.show();
     
     // Cargar contenido
-    fetch(`/prueba-php/public/admin/mensajes/view/${filename}`)
+    fetch(`<?php echo URL_ROOT; ?>/admin/mensajes/view/${filename}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -298,7 +298,7 @@ function viewMessage(filename) {
 
 // Descargar mensaje
 function downloadMessage(filename) {
-    window.open(`/prueba-php/public/admin/mensajes/download/${filename}`, '_blank');
+    window.open(`<?php echo URL_ROOT; ?>/admin/mensajes/download/${filename}`, '_blank');
 }
 
 // Descargar mensaje actual
@@ -311,7 +311,7 @@ function downloadCurrentMessage() {
 // Eliminar mensaje
 function deleteMessage(filename) {
     if (confirm(`¿Estás seguro de que quieres eliminar el mensaje "${filename}"?`)) {
-        fetch(`/prueba-php/public/admin/mensajes/delete/${filename}`, {
+        fetch(`<?php echo URL_ROOT; ?>/admin/mensajes/delete/${filename}`, {
             method: 'DELETE'
         })
         .then(response => response.json())

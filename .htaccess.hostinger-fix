@@ -1,0 +1,15 @@
+# Versión específica para Hostinger que funciona
+# Copia este contenido a .htaccess si el anterior no funciona
+
+RewriteEngine On
+
+# Redirigir la raíz directamente a public/index.php
+RewriteCond %{REQUEST_URI} ^/$
+RewriteRule ^$ public/index.php [L]
+
+# Si no es para public/ y no es un archivo/directorio existente, redirigir a public/
+RewriteCond %{REQUEST_URI} !^/public/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ public/$1 [L]
+

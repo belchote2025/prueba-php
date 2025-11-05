@@ -167,7 +167,7 @@
                                     <!-- Current Image -->
                                     <?php if ($news && !empty($news->imagen_portada)): ?>
                                         <div class="image-preview-container">
-                                            <img src="http://localhost/prueba-php/public/serve-image.php?path=uploads/news/<?= urlencode($news->imagen_portada) ?>" 
+                                            <img src="http://localhost<?php echo URL_ROOT; ?>/serve-image.php?path=uploads/news/<?= urlencode($news->imagen_portada) ?>" 
                                                  class="image-preview" id="currentImage" alt="Imagen actual">
                                             <div class="mt-2">
                                                 <small class="text-muted">Imagen actual</small>

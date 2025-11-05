@@ -217,14 +217,14 @@
     
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/prueba-php/public/admin/dashboard">
+            <a class="navbar-brand" href="<?php echo URL_ROOT; ?>/admin/dashboard">
                 <i class="fas fa-shield-alt me-2"></i>Panel de Administración
             </a>
             <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="/prueba-php/public/admin/dashboard">Dashboard</a>
-                <a class="nav-link active" href="/prueba-php/public/admin/usuarios">Usuarios</a>
-                <a class="nav-link" href="/prueba-php/public/admin/galeria">Galería</a>
-                <a class="nav-link" href="/prueba-php/public/admin/logout">Cerrar Sesión</a>
+                <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/dashboard">Dashboard</a>
+                <a class="nav-link active" href="<?php echo URL_ROOT; ?>/admin/usuarios">Usuarios</a>
+                <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/galeria">Galería</a>
+                <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/logout">Cerrar Sesión</a>
             </div>
         </div>
     </nav>
@@ -233,7 +233,7 @@
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
             <h1 class="h2">Gestión de Usuarios</h1>
             <div class="btn-toolbar mb-2 mb-md-0">
-                <a href="/prueba-php/public/admin/crearUsuario" class="btn btn-primary">
+                <a href="<?php echo URL_ROOT; ?>/admin/crearUsuario" class="btn btn-primary">
                     <i class="fas fa-plus me-2"></i>Nuevo Usuario
                 </a>
             </div>
@@ -505,7 +505,7 @@
         console.log('📝 Formulario llenado con datos del usuario');
         
         // Actualizar la acción del formulario
-        const formAction = '/prueba-php/public/admin/editarUsuario/' + userId;
+        const formAction = '<?php echo URL_ROOT; ?>/admin/editarUsuario/' + userId;
         document.getElementById('editUserForm').action = formAction;
         console.log('🔗 Form action set to:', formAction);
         
@@ -535,7 +535,7 @@
         console.log('Abriendo modal de reset para usuario:', userId);
         
         // Actualizar la acción del formulario
-        document.getElementById('resetPasswordForm').action = '/prueba-php/public/admin/resetearPassword/' + userId;
+        document.getElementById('resetPasswordForm').action = '<?php echo URL_ROOT; ?>/admin/resetearPassword/' + userId;
         
         // Limpiar campos del formulario
         document.getElementById('newPassword').value = '';
@@ -564,8 +564,8 @@
             
         if (confirm(message)) {
             const url = action === 'activar' ? 
-                '/prueba-php/public/admin/activarUsuario/' + userId :
-                '/prueba-php/public/admin/desactivarUsuario/' + userId;
+                '<?php echo URL_ROOT; ?>/admin/activarUsuario/' + userId :
+                '<?php echo URL_ROOT; ?>/admin/desactivarUsuario/' + userId;
                 
             // Crear formulario temporal y enviarlo
             const form = document.createElement('form');
@@ -589,7 +589,7 @@
             // Crear formulario temporal y enviarlo
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = '/prueba-php/public/admin/eliminarUsuario/' + userId;
+            form.action = '<?php echo URL_ROOT; ?>/admin/eliminarUsuario/' + userId;
             
             const csrfInput = document.createElement('input');
             csrfInput.type = 'hidden';
@@ -746,7 +746,7 @@
             // Crear formulario para enviar la petición
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = '/prueba-php/public/admin/clearTempPassword/' + userId;
+            form.action = '<?php echo URL_ROOT; ?>/admin/clearTempPassword/' + userId;
             
             // Agregar token CSRF
             const csrfInput = document.createElement('input');

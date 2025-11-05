@@ -232,7 +232,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
         
         <div class="back-link">
-            <a href="/prueba-php/public/">
+            <a href="<?php echo URL_ROOT; ?>/">
                 <i class="bi bi-arrow-left me-2"></i>Volver al sitio principal
             </a>
         </div>

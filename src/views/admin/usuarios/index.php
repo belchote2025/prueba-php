@@ -1,7 +1,7 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">Gestión de Usuarios</h1>
     <div class="btn-toolbar mb-2 mb-md-0">
-        <a href="/prueba-php/public/admin/crearUsuario" class="btn btn-sm btn-primary">
+        <a href="<?php echo URL_ROOT; ?>/admin/crearUsuario" class="btn btn-sm btn-primary">
             <i class="fas fa-plus me-1"></i> Nuevo Usuario
         </a>
     </div>
@@ -62,7 +62,7 @@
                             </td>
                             <td>
                                 <div class="btn-group btn-group-sm">
-                                    <a href="/prueba-php/public/admin/editarUsuario/<?= $user->id ?>" class="btn btn-outline-primary" title="Editar">
+                                    <a href="<?php echo URL_ROOT; ?>/admin/editarUsuario/<?= $user->id ?>" class="btn btn-outline-primary" title="Editar">
                                         <i class="fas fa-edit"></i>
                                     </a>
                                     <button type="button" class="btn btn-outline-<?= $user->activo ? 'warning' : 'success' ?>" 
@@ -139,7 +139,7 @@
                             </div>
                             
                             <div class="d-flex gap-2">
-                                <a href="/prueba-php/public/admin/editarUsuario/<?= $user->id ?>" class="btn btn-outline-primary btn-sm flex-fill">
+                                <a href="<?php echo URL_ROOT; ?>/admin/editarUsuario/<?= $user->id ?>" class="btn btn-outline-primary btn-sm flex-fill">
                                     <i class="fas fa-edit me-1"></i> Editar
                                 </a>
                                 <button type="button" class="btn btn-outline-<?= $user->activo ? 'warning' : 'success' ?> btn-sm flex-fill" 
@@ -163,19 +163,19 @@
         <nav aria-label="Paginación de usuarios">
             <ul class="pagination justify-content-center">
                 <li class="page-item <?= $data['currentPage'] <= 1 ? 'disabled' : '' ?>">
-                    <a class="page-link" href="/prueba-php/public/admin/usuarios/<?= $data['currentPage'] - 1 ?>" aria-label="Anterior">
+                    <a class="page-link" href="<?php echo URL_ROOT; ?>/admin/usuarios/<?= $data['currentPage'] - 1 ?>" aria-label="Anterior">
                         <span aria-hidden="true">&laquo;</span>
                     </a>
                 </li>
                 
                 <?php for ($i = 1; $i <= $data['totalPages']; $i++): ?>
                     <li class="page-item <?= $i == $data['currentPage'] ? 'active' : '' ?>">
-                        <a class="page-link" href="/prueba-php/public/admin/usuarios/<?= $i ?>"><?= $i ?></a>
+                        <a class="page-link" href="<?php echo URL_ROOT; ?>/admin/usuarios/<?= $i ?>"><?= $i ?></a>
                     </li>
                 <?php endfor; ?>
                 
                 <li class="page-item <?= $data['currentPage'] >= $data['totalPages'] ? 'disabled' : '' ?>">
-                    <a class="page-link" href="/prueba-php/public/admin/usuarios/<?= $data['currentPage'] + 1 ?>" aria-label="Siguiente">
+                    <a class="page-link" href="<?php echo URL_ROOT; ?>/admin/usuarios/<?= $data['currentPage'] + 1 ?>" aria-label="Siguiente">
                         <span aria-hidden="true">&raquo;</span>
                     </a>
                 </li>
@@ -237,7 +237,7 @@ function toggleUserStatus(userId, newStatus, userName) {
         const csrfToken = '<?= generateCsrfToken() ?>';
         
         // Realizar la petición AJAX
-        fetch(`/prueba-php/public/admin/toggleUserStatus/${userId}`, {
+        fetch(`<?php echo URL_ROOT; ?>/admin/toggleUserStatus/${userId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

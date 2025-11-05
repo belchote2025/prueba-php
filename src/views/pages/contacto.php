@@ -93,7 +93,7 @@
                                 </div>
                                 
                                 <!-- Campos ocultos para FormSubmit -->
-                                <input type="hidden" name="_next" value="http://localhost/prueba-php/public/contacto?enviado=true">
+                                <input type="hidden" name="_next" value="http://localhost<?php echo URL_ROOT; ?>/contacto?enviado=true">
                                 <input type="hidden" name="_subject" value="Nuevo mensaje del formulario de contacto - Filá Mariscales">
                                 <input type="hidden" name="_captcha" value="false">
                                 <input type="hidden" name="_template" value="table">

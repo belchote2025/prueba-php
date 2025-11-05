@@ -1,7 +1,11 @@
-# Configuración mínima para Apache
-RewriteEngine On
+# SOLUCIÓN ALTERNATIVA: Eliminar el .htaccess de la raíz
+# Si el Document Root está en la raíz, este archivo NO debería existir
+# O debería estar completamente vacío/comentado
 
-# Permitir acceso a archivos PHP
-<Files "*.php">
-    Require all granted
-</Files> 
+# Si necesitas que la raíz redirija a public/, descomenta estas líneas:
+# RewriteEngine On
+# RewriteCond %{REQUEST_URI} ^/$
+# RewriteRule ^$ public/index.php [L]
+
+# IMPORTANTE: Si el Document Root puede configurarse en public/,
+# elimina este archivo completamente o deja solo comentarios.

@@ -73,7 +73,7 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="/prueba-php/public/">
+            <a class="navbar-brand" href="<?php echo URL_ROOT; ?>/">
                 <i class="bi bi-shield-fill me-2"></i>
                 Filá Mariscales
             </a>
@@ -85,7 +85,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav mx-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/prueba-php/public/">
+                        <a class="nav-link" href="<?php echo URL_ROOT; ?>/">
                             <i class="bi bi-house-door me-1"></i>Inicio
                         </a>
                     </li>
@@ -94,11 +94,11 @@
                             <i class="bi bi-people-fill me-1"></i>Quienes Somos
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/prueba-php/public/historia">Historia</a></li>
-                            <li><a class="dropdown-item" href="/prueba-php/public/directiva">Directiva</a></li>
-                            <li><a class="dropdown-item" href="/prueba-php/public/blog">Blog</a></li>
-                            <li><a class="dropdown-item" href="/prueba-php/public/libro">Libro</a></li>
-                            <li><a class="dropdown-item" href="/prueba-php/public/noticias">Noticias</a></li>
+                            <li><a class="dropdown-item" href="<?php echo URL_ROOT; ?>/historia">Historia</a></li>
+                            <li><a class="dropdown-item" href="<?php echo URL_ROOT; ?>/directiva">Directiva</a></li>
+                            <li><a class="dropdown-item" href="<?php echo URL_ROOT; ?>/blog">Blog</a></li>
+                            <li><a class="dropdown-item" href="<?php echo URL_ROOT; ?>/libro">Libro</a></li>
+                            <li><a class="dropdown-item" href="<?php echo URL_ROOT; ?>/noticias">Noticias</a></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
@@ -106,10 +106,10 @@
                             <i class="bi bi-tools me-1"></i>Utilidades
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/prueba-php/public/calendario">Calendario</a></li>
-                            <li><a class="dropdown-item" href="/prueba-php/public/musica">Música</a></li>
-                            <li><a class="dropdown-item" href="/prueba-php/public/descargas">Descargas</a></li>
-                            <li><a class="dropdown-item" href="/prueba-php/public/galeria">Galería</a></li>
+                            <li><a class="dropdown-item" href="<?php echo URL_ROOT; ?>/calendario">Calendario</a></li>
+                            <li><a class="dropdown-item" href="<?php echo URL_ROOT; ?>/musica">Música</a></li>
+                            <li><a class="dropdown-item" href="<?php echo URL_ROOT; ?>/descargas">Descargas</a></li>
+                            <li><a class="dropdown-item" href="<?php echo URL_ROOT; ?>/galeria">Galería</a></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
@@ -117,26 +117,26 @@
                             <i class="bi bi-collection me-1"></i>Recursos
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/prueba-php/public/interactiva">Zona Interactiva</a></li>
-                            <li><a class="dropdown-item" href="/prueba-php/public/tienda">Tienda</a></li>
-                            <li><a class="dropdown-item" href="/prueba-php/public/patrocinadores">Patrocinadores</a></li>
-                            <li><a class="dropdown-item" href="/prueba-php/public/hermanamientos">Hermanamientos</a></li>
+                            <li><a class="dropdown-item" href="<?php echo URL_ROOT; ?>/interactiva">Zona Interactiva</a></li>
+                            <li><a class="dropdown-item" href="<?php echo URL_ROOT; ?>/tienda">Tienda</a></li>
+                            <li><a class="dropdown-item" href="<?php echo URL_ROOT; ?>/patrocinadores">Patrocinadores</a></li>
+                            <li><a class="dropdown-item" href="<?php echo URL_ROOT; ?>/hermanamientos">Hermanamientos</a></li>
                         </ul>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/prueba-php/public/socios">
+                        <a class="nav-link" href="<?php echo URL_ROOT; ?>/socios">
                             <i class="bi bi-person-badge me-1"></i>Socios
                         </a>
                     </li>
                 </ul>
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="/prueba-php/public/login">
+                        <a class="nav-link" href="<?php echo URL_ROOT; ?>/login">
                             <i class="bi bi-box-arrow-in-right me-1"></i>Iniciar Sesión
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/prueba-php/public/registro">
+                        <a class="nav-link" href="<?php echo URL_ROOT; ?>/registro">
                             <i class="bi bi-person-plus me-1"></i>Registrarse
                         </a>
                     </li>

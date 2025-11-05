@@ -105,7 +105,7 @@
         <p class="error-message">
             Lo sentimos, la página que buscas no existe en nuestro reino templario.
         </p>
-        <a href="/prueba-php/public/" class="btn btn-home">
+        <a href="<?php echo URL_ROOT; ?>/" class="btn btn-home">
             Volver al Inicio
         </a>
     </div>

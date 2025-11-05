@@ -74,7 +74,7 @@ function getCategoryColor($category) {
                                 <h3 class="h5 card-title fw-bold mb-3"><?= htmlspecialchars($newsItem['titulo']) ?></h3>
                                 <p class="card-text text-muted mb-4"><?= htmlspecialchars($newsItem['resumen']) ?></p>
                                 <div class="d-flex align-items-center justify-content-between">
-                                    <a href="/prueba-php/public/ver-noticia/<?= $newsItem['id'] ?>" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                    <a href="<?php echo URL_ROOT; ?>/ver-noticia/<?= $newsItem['id'] ?>" class="btn btn-sm btn-outline-primary rounded-pill px-3">
                                         <span>Leer más</span>
                                         <i class="bi bi-arrow-right ms-1"></i>
                                     </a>
@@ -96,7 +96,7 @@ function getCategoryColor($category) {
                             <i class="bi bi-newspaper text-muted" style="font-size: 4rem;"></i>
                             <h3 class="mt-3 mb-3">No hay noticias disponibles</h3>
                             <p class="text-muted mb-4">Aún no se han publicado noticias. Vuelve pronto para estar al día con las últimas novedades de la Filá Mariscales.</p>
-                            <a href="/prueba-php/public/" class="btn btn-primary">
+                            <a href="<?php echo URL_ROOT; ?>/" class="btn btn-primary">
                                 <i class="bi bi-house me-2"></i>
                                 Volver al inicio
                             </a>
@@ -180,7 +180,7 @@ function getCategoryColor($category) {
                     <div class="form-check form-check-inline">
                         <input class="form-check-input" type="checkbox" id="privacyPolicy" required>
                         <label class="form-check-label small text-muted" for="privacyPolicy">
-                            Acepto la <a href="/prueba-php/public/privacidad" class="text-decoration-none">política de privacidad</a>
+                            Acepto la <a href="<?php echo URL_ROOT; ?>/privacidad" class="text-decoration-none">política de privacidad</a>
                         </label>
                     </div>
                 </div>
@@ -376,7 +376,7 @@ document.addEventListener('DOMContentLoaded', function() {
             privacy: privacyAccepted
         };
         
-        fetch('/prueba-php/public/newsletter-formsubmit.php', {
+        fetch('<?php echo URL_ROOT; ?>/newsletter-formsubmit.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

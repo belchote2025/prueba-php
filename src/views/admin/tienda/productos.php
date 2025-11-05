@@ -131,7 +131,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/prueba-php/public/admin/dashboard">
+            <a class="navbar-brand" href="<?php echo URL_ROOT; ?>/admin/dashboard">
                 <i class="fas fa-tachometer-alt me-2"></i>Panel Admin
             </a>
             
@@ -142,22 +142,22 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/prueba-php/public/admin/dashboard">
+                        <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/dashboard">
                             <i class="fas fa-home me-1"></i>Dashboard
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="/prueba-php/public/admin/productos">
+                        <a class="nav-link active" href="<?php echo URL_ROOT; ?>/admin/productos">
                             <i class="fas fa-shopping-cart me-1"></i>Tienda
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/prueba-php/public/admin/usuarios">
+                        <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/usuarios">
                             <i class="fas fa-users me-1"></i>Usuarios
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/prueba-php/public/admin/eventos">
+                        <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/eventos">
                             <i class="fas fa-calendar me-1"></i>Eventos
                         </a>
                     </li>
@@ -165,7 +165,7 @@
                 
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="/prueba-php/public/admin/logout">
+                        <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/logout">
                             <i class="fas fa-sign-out-alt me-1"></i>Cerrar Sesión
                         </a>
                     </li>
@@ -192,7 +192,7 @@
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h1 class="h3 mb-0"><?= htmlspecialchars($title) ?></h1>
-                <a href="/prueba-php/public/admin/nuevo-producto" class="btn btn-primary">
+                <a href="<?php echo URL_ROOT; ?>/admin/nuevo-producto" class="btn btn-primary">
                     <i class="fas fa-plus"></i> Nuevo Producto
                 </a>
             </div>
@@ -241,7 +241,7 @@
                                             <td><?= $product->id ?></td>
                                             <td>
                                                 <?php if (!empty($product->imagen)): ?>
-                                                    <img src="/prueba-php/public/uploads/products/<?= htmlspecialchars($product->imagen) ?>" 
+                                                    <img src="<?php echo URL_ROOT; ?>/uploads/products/<?= htmlspecialchars($product->imagen) ?>" 
                                                          alt="<?= htmlspecialchars($product->nombre) ?>" 
                                                          class="img-thumbnail" 
                                                          style="width: 50px; height: 50px; object-fit: cover;">
@@ -267,7 +267,7 @@
                                             </td>
                                             <td>
                                                 <div class="action-buttons">
-                                                    <a href="/prueba-php/public/admin/editar-producto/<?= $product->id ?>" class="action-btn btn-edit" title="Editar producto">
+                                                    <a href="<?php echo URL_ROOT; ?>/admin/editar-producto/<?= $product->id ?>" class="action-btn btn-edit" title="Editar producto">
                                                         <i class="fas fa-edit"></i>
                                                         <span>Editar</span>
                                                     </a>
@@ -291,7 +291,7 @@
                             <i class="fas fa-box fa-3x text-muted mb-3"></i>
                             <h5 class="text-muted">No hay productos</h5>
                             <p class="text-muted">Comienza creando tu primer producto.</p>
-                            <a href="/prueba-php/public/admin/nuevo-producto" class="btn btn-primary">
+                            <a href="<?php echo URL_ROOT; ?>/admin/nuevo-producto" class="btn btn-primary">
                                 <i class="fas fa-plus"></i> Crear Producto
                             </a>
                         </div>
@@ -452,7 +452,7 @@ function guardarFoto(productId) {
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Subiendo...';
     submitBtn.disabled = true;
     
-    fetch('/prueba-php/public/admin/upload-product-photo', {
+    fetch('<?php echo URL_ROOT; ?>/admin/upload-product-photo', {
         method: 'POST',
         body: formData
     })
@@ -488,7 +488,7 @@ function eliminarProducto(id, nombre) {
         boton.disabled = true;
         
         // Enviar petición de eliminación
-        fetch(`/prueba-php/public/admin/eliminar-producto/${id}`, {
+        fetch(`<?php echo URL_ROOT; ?>/admin/eliminar-producto/${id}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

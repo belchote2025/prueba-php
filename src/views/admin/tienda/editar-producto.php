@@ -30,7 +30,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/prueba-php/public/admin/dashboard">
+            <a class="navbar-brand" href="<?php echo URL_ROOT; ?>/admin/dashboard">
                 <i class="fas fa-tachometer-alt me-2"></i>Panel Admin
             </a>
             
@@ -41,22 +41,22 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/prueba-php/public/admin/dashboard">
+                        <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/dashboard">
                             <i class="fas fa-home me-1"></i>Dashboard
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="/prueba-php/public/admin/productos">
+                        <a class="nav-link active" href="<?php echo URL_ROOT; ?>/admin/productos">
                             <i class="fas fa-shopping-cart me-1"></i>Tienda
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/prueba-php/public/admin/usuarios">
+                        <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/usuarios">
                             <i class="fas fa-users me-1"></i>Usuarios
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/prueba-php/public/admin/eventos">
+                        <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/eventos">
                             <i class="fas fa-calendar me-1"></i>Eventos
                         </a>
                     </li>
@@ -64,7 +64,7 @@
                 
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="/prueba-php/public/admin/logout">
+                        <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/logout">
                             <i class="fas fa-sign-out-alt me-1"></i>Cerrar Sesión
                         </a>
                     </li>
@@ -91,7 +91,7 @@
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h1 class="h3 mb-0"><?= htmlspecialchars($title) ?></h1>
-                <a href="/prueba-php/public/admin/productos" class="btn btn-secondary">
+                <a href="<?php echo URL_ROOT; ?>/admin/productos" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i> Volver a Productos
                 </a>
             </div>
@@ -100,7 +100,7 @@
                 <div class="col-md-8">
                     <div class="card">
                         <div class="card-body">
-                            <form method="POST" action="/prueba-php/public/admin/editar-producto/<?= $product->id ?>" enctype="multipart/form-data" onsubmit="return actualizarProducto()">
+                            <form method="POST" action="<?php echo URL_ROOT; ?>/admin/editar-producto/<?= $product->id ?>" enctype="multipart/form-data" onsubmit="return actualizarProducto()">
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="mb-3">
@@ -127,7 +127,7 @@
                                         <div class="mb-2">
                                             <label class="form-label text-muted">Imagen actual:</label>
                                             <div>
-                                                <img src="/prueba-php/public/uploads/products/<?= htmlspecialchars($product->imagen) ?>" 
+                                                <img src="<?php echo URL_ROOT; ?>/uploads/products/<?= htmlspecialchars($product->imagen) ?>" 
                                                      alt="Imagen actual" 
                                                      class="img-thumbnail" 
                                                      style="max-width: 200px; max-height: 200px;">
@@ -175,7 +175,7 @@
                                     <button type="submit" class="btn btn-primary">
                                         <i class="fas fa-save"></i> Actualizar Producto
                                     </button>
-                                    <a href="/prueba-php/public/admin/productos" class="btn btn-secondary">
+                                    <a href="<?php echo URL_ROOT; ?>/admin/productos" class="btn btn-secondary">
                                         <i class="fas fa-times"></i> Cancelar
                                     </a>
                                 </div>
@@ -249,7 +249,7 @@
         .then(response => {
             if (response.ok) {
                 // Redireccionar a la página de productos
-                window.location.href = '/prueba-php/public/admin/productos';
+                window.location.href = '<?php echo URL_ROOT; ?>/admin/productos';
             } else {
                 alert('Error al actualizar el producto');
                 boton.innerHTML = textoOriginal;

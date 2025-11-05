@@ -79,17 +79,26 @@ class Pages extends Controller {
         // Cargar documentos dinámicamente
         $documents = [];
         $categories = [];
+        $error = null;
         
         try {
             if (class_exists('Document')) {
                 $documentModel = new Document();
-                $documentModel->createTable(); // Crear tabla si no existe
+                
+                // Intentar crear la tabla si no existe (puede fallar si no hay permisos, pero no es crítico)
+                try {
+                    $documentModel->createTable();
+                } catch (Exception $e) {
+                    // Si falla la creación, puede que la tabla ya exista, continuamos
+                    error_log("Warning: No se pudo crear tabla documentos (puede que ya exista): " . $e->getMessage());
+                }
                 
                 $page = $_GET['page'] ?? 1;
                 $perPage = 12;
                 $category = $_GET['category'] ?? null;
                 $search = $_GET['search'] ?? null;
                 
+                // Intentar obtener documentos
                 if ($search) {
                     $documents = $documentModel->searchDocuments($search, $page, $perPage);
                 } elseif ($category) {
@@ -98,18 +107,40 @@ class Pages extends Controller {
                     $documents = $documentModel->getAllDocuments($page, $perPage);
                 }
                 
-                $categories = $documentModel->getCategories();
+                // Si documents es null o false, establecer como array vacío
+                if (!is_array($documents)) {
+                    $documents = [];
+                }
+                
+                // Obtener categorías
+                try {
+                    $categories = $documentModel->getCategories();
+                    if (!is_array($categories)) {
+                        $categories = [];
+                    }
+                } catch (Exception $e) {
+                    $categories = [];
+                    error_log("Error al cargar categorías: " . $e->getMessage());
+                }
+            } else {
+                $error = "La clase Document no está disponible";
             }
         } catch (Exception $e) {
-            error_log("Error al cargar documentos: " . $e->getMessage());
+            $error = "Error al cargar documentos: " . $e->getMessage();
+            error_log($error);
+        } catch (Throwable $e) {
+            $error = "Error crítico al cargar documentos: " . $e->getMessage();
+            error_log($error);
         }
         
         $data = [
             'title' => 'Descargas',
             'description' => 'Documentos y archivos para descargar',
             'documents' => $documents,
-            'categories' => $categories
+            'categories' => $categories,
+            'error' => $error
         ];
+        
         $this->view('pages/descargas', $data);
     }
 
@@ -833,7 +864,7 @@ class Pages extends Controller {
                         'time' => $event->hora,
                         'location' => $event->lugar ?? 'Por determinar',
                         'status' => $event->es_publico ? 'Confirmado' : 'Próximamente',
-                        'image' => !empty($event->imagen_url) ? '/' . $event->imagen_url : 'https://via.placeholder.com/400x300/8B4513/FFFFFF?text=Evento'
+                        'image' => !empty($event->imagen_url) ? '/' . $event->imagen_url : null // Usar null para indicar que no hay imagen
                     ];
                 }
                 
@@ -852,7 +883,7 @@ class Pages extends Controller {
                 'time' => '20:00',
                 'location' => 'Sede Social',
                 'status' => 'Próximamente',
-                'image' => 'https://via.placeholder.com/400x300/8B4513/FFFFFF?text=Evento+1'
+                'image' => null // Sin imagen placeholder
             ],
             [
                 'title' => 'Cena de Hermandad',
@@ -861,7 +892,7 @@ class Pages extends Controller {
                 'time' => '21:00',
                 'location' => 'Restaurante El Rincón',
                 'status' => 'Confirmado',
-                'image' => 'https://via.placeholder.com/400x300/8B4513/FFFFFF?text=Evento+2'
+                'image' => null // Sin imagen placeholder
             ],
             [
                 'title' => 'Ensayo General',
@@ -870,7 +901,7 @@ class Pages extends Controller {
                 'time' => '18:00',
                 'location' => 'Punto de encuentro: Ayuntamiento',
                 'status' => 'Próximamente',
-                'image' => 'https://via.placeholder.com/400x300/8B4513/FFFFFF?text=Evento+3'
+                'image' => null // Sin imagen placeholder
             ]
         ];
     }
@@ -955,26 +986,8 @@ class Pages extends Controller {
         
         // Si no hay imágenes subidas, usar imágenes por defecto
         if (empty($images)) {
-            $images = [
-                [
-                    'thumb' => 'https://via.placeholder.com/300x200/8B4513/FFFFFF?text=Galería+1',
-                    'full' => 'https://via.placeholder.com/800x600/8B4513/FFFFFF?text=Galería+1',
-                    'caption' => 'Desfile de Moros y Cristianos 2023',
-                    'alt' => 'Desfile de Moros y Cristianos'
-                ],
-                [
-                    'thumb' => 'https://via.placeholder.com/300x200/8B4513/FFFFFF?text=Galería+2',
-                    'full' => 'https://via.placeholder.com/800x600/8B4513/FFFFFF?text=Galería+2',
-                    'caption' => 'Cena de Hermandad',
-                    'alt' => 'Cena de Hermandad'
-                ],
-                [
-                    'thumb' => 'https://via.placeholder.com/300x200/8B4513/FFFFFF?text=Galería+3',
-                    'full' => 'https://via.placeholder.com/800x600/8B4513/FFFFFF?text=Galería+3',
-                    'caption' => 'Presentación de la Filá',
-                    'alt' => 'Presentación de la Filá'
-                ]
-            ];
+            // No usar imágenes placeholder - devolver array vacío
+            $images = [];
         }
         
         return $images;
@@ -991,7 +1004,7 @@ class Pages extends Controller {
         $directUrl = '/' . $filePath;
         
         // Por ahora, usar el script servidor para asegurar que funcione
-        return '/prueba-php/public/serve-image.php?path=' . urlencode($filePath);
+        return URL_ROOT . '/serve-image.php?path=' . urlencode($filePath);
     }
 
     // Método para obtener noticias publicadas usando el modelo News
@@ -1025,8 +1038,8 @@ class Pages extends Controller {
                     'estado' => $item->estado,
                     'resumen' => $this->getNewsSummary($item->contenido),
                     'imagen_url' => $item->imagen_portada ? 
-                        'http://localhost/prueba-php/public/serve-image.php?path=uploads/news/' . $item->imagen_portada : 
-                        'http://localhost/prueba-php/public/serve-image.php?path=assets/images/backgrounds/knight-templar-background.jpg'
+                        URL_ROOT . '/serve-image.php?path=uploads/news/' . $item->imagen_portada : 
+                        URL_ROOT . '/serve-image.php?path=assets/images/backgrounds/knight-templar-background.jpg'
                 ];
             }
             

@@ -19,15 +19,15 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/prueba-php/public/admin/dashboard">
+            <a class="navbar-brand" href="<?php echo URL_ROOT; ?>/admin/dashboard">
                 <i class="fas fa-shield-alt me-2"></i>Panel de Administración
             </a>
             <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="/prueba-php/public/admin/dashboard">Dashboard</a>
-                <a class="nav-link" href="/prueba-php/public/admin/usuarios">Usuarios</a>
-                <a class="nav-link active" href="/prueba-php/public/admin/eventos">Eventos</a>
-                <a class="nav-link" href="/prueba-php/public/admin/galeria">Galería</a>
-                <a class="nav-link" href="/prueba-php/public/admin/logout">Cerrar Sesión</a>
+                <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/dashboard">Dashboard</a>
+                <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/usuarios">Usuarios</a>
+                <a class="nav-link active" href="<?php echo URL_ROOT; ?>/admin/eventos">Eventos</a>
+                <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/galeria">Galería</a>
+                <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/logout">Cerrar Sesión</a>
             </div>
         </div>
     </nav>
@@ -36,7 +36,7 @@
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
             <h1 class="h2">Gestión de Eventos</h1>
             <div class="btn-toolbar mb-2 mb-md-0">
-                <a href="/prueba-php/public/admin/nuevoEvento" class="btn btn-primary">
+                <a href="<?php echo URL_ROOT; ?>/admin/nuevoEvento" class="btn btn-primary">
                     <i class="fas fa-plus me-2"></i>Nuevo Evento
                 </a>
             </div>
@@ -103,12 +103,12 @@
                                         </td>
                                         <td>
                                             <div class="btn-group" role="group">
-                                                <a href="/prueba-php/public/admin/editarEvento/<?= $event->id ?>" 
+                                                <a href="<?php echo URL_ROOT; ?>/admin/editarEvento/<?= $event->id ?>" 
                                                    class="btn btn-sm btn-outline-primary"
                                                    title="Editar evento">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
-                                                <a href="/prueba-php/public/admin/eliminarEvento/<?= $event->id ?>" 
+                                                <a href="<?php echo URL_ROOT; ?>/admin/eliminarEvento/<?= $event->id ?>" 
                                                    class="btn btn-sm btn-outline-danger"
                                                    onclick="return confirm('¿Estás seguro de eliminar este evento? Esta acción no se puede deshacer.')"
                                                    title="Eliminar evento">
@@ -130,7 +130,7 @@
                     <ul class="pagination justify-content-center">
                         <?php for ($i = 1; $i <= $totalPages; $i++): ?>
                             <li class="page-item <?= $i == $currentPage ? 'active' : '' ?>">
-                                <a class="page-link" href="/prueba-php/public/admin/eventos/<?= $i ?>"><?= $i ?></a>
+                                <a class="page-link" href="<?php echo URL_ROOT; ?>/admin/eventos/<?= $i ?>"><?= $i ?></a>
                             </li>
                         <?php endfor; ?>
                     </ul>
@@ -141,7 +141,7 @@
                 <i class="fas fa-calendar-times fa-4x text-muted mb-3"></i>
                 <h4 class="text-muted">No hay eventos programados</h4>
                 <p class="text-muted">Crea tu primer evento para comenzar a gestionar la agenda.</p>
-                <a href="/prueba-php/public/admin/nuevoEvento" class="btn btn-primary">
+                <a href="<?php echo URL_ROOT; ?>/admin/nuevoEvento" class="btn btn-primary">
                     <i class="fas fa-plus me-2"></i>Crear Evento
                 </a>
             </div>

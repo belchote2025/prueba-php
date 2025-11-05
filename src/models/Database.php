@@ -10,6 +10,13 @@ class Database {
     private $error;
 
     public function __construct() {
+        // Verificar que las constantes estén definidas
+        if (!defined('DB_HOST') || !defined('DB_NAME') || !defined('DB_USER') || !defined('DB_PASS')) {
+            error_log("ERROR: Constantes de base de datos no definidas");
+            $this->error = "Configuración de base de datos no encontrada";
+            return;
+        }
+        
         // Set DSN
         $dsn = 'mysql:host=' . $this->host . ';dbname=' . $this->dbname . ';charset=utf8mb4';
         $options = array(
@@ -24,11 +31,25 @@ class Database {
             $this->dbh = new PDO($dsn, $this->user, $this->pass, $options);
         } catch(PDOException $e) {
             $this->error = $e->getMessage();
+            error_log("ERROR de conexión a BD: " . $this->error);
+            error_log("Intentando conectar a: host=" . $this->host . ", db=" . $this->dbname . ", user=" . $this->user);
+            // No lanzar excepción aquí, pero marcar el error
+            $this->dbh = null;
         }
     }
 
     // Prepare statement with query
     public function query($sql) {
+        if ($this->dbh === null) {
+            $errorMsg = "Error: No hay conexión a la base de datos. ";
+            if ($this->error) {
+                $errorMsg .= "Detalles: " . $this->error;
+            } else {
+                $errorMsg .= "Verifica la configuración en src/config/config.php";
+            }
+            error_log($errorMsg);
+            throw new Exception($errorMsg);
+        }
         $this->stmt = $this->dbh->prepare($sql);
     }
 

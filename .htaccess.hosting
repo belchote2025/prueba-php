@@ -1,0 +1,15 @@
+# Versión mínima para Hostinger - Copia este contenido a .htaccess
+# Si el error 403 persiste, prueba esta versión
+
+RewriteEngine On
+
+# Redirigir solo la raíz a public/index.php
+RewriteCond %{REQUEST_URI} ^/$
+RewriteRule ^(.*)$ public/index.php [L]
+
+# Redirigir todo lo demás a public/ si no existe como archivo/directorio
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !^/public/
+RewriteRule ^(.*)$ public/$1 [L]
+

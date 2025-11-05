@@ -70,7 +70,7 @@
                 <div class="card h-100 border-0 shadow-sm product-card">
                     <div class="position-relative">
                                 <?php if (!empty($product->imagen)): ?>
-                                    <img src="/prueba-php/public/uploads/products/<?= htmlspecialchars($product->imagen) ?>" 
+                                    <img src="<?php echo URL_ROOT; ?>/uploads/products/<?= htmlspecialchars($product->imagen) ?>" 
                                          class="card-img-top" 
                                          alt="<?= htmlspecialchars($product->nombre) ?>"
                                          style="height: 250px; object-fit: cover;">
@@ -163,7 +163,7 @@
                     </div>
                     <h3 class="text-muted mb-3">No hay productos disponibles</h3>
                     <p class="text-muted mb-4">Pronto tendremos productos oficiales de la Filá Mariscales disponibles para ti.</p>
-                    <a href="/prueba-php/public/contacto" class="btn btn-primary">
+                    <a href="<?php echo URL_ROOT; ?>/contacto" class="btn btn-primary">
                         <i class="bi bi-envelope me-2"></i>Contactar para más información
                     </a>
                 </div>
@@ -285,7 +285,7 @@ function addToCart(productId) {
     button.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>Añadiendo...';
     button.disabled = true;
     
-    fetch('/prueba-php/public/cart/add', {
+    fetch('<?php echo URL_ROOT; ?>/cart/add', {
         method: 'POST',
         body: formData
     })
@@ -341,7 +341,7 @@ function addToWishlist(productId) {
     button.innerHTML = '<i class="bi bi-hourglass-split"></i>';
     button.disabled = true;
     
-    fetch('/prueba-php/public/order/add-wishlist', {
+    fetch('<?php echo URL_ROOT; ?>/order/add-wishlist', {
         method: 'POST',
         body: formData
     })
@@ -434,7 +434,7 @@ function showCartMessage(type, message) {
 
 // Cargar contador del carrito al iniciar la página
 document.addEventListener('DOMContentLoaded', function() {
-    fetch('/prueba-php/public/cart/info')
+    fetch('<?php echo URL_ROOT; ?>/cart/info')
         .then(response => response.json())
         .then(data => {
             if (data.success && typeof updateCartCounter === 'function') {

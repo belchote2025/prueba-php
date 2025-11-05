@@ -1,0 +1,26 @@
+# Versión de debug del .htaccess
+# Si el principal no funciona, prueba renombrando este a .htaccess
+
+RewriteEngine On
+
+# Debug: Log de todas las peticiones
+RewriteLog /tmp/rewrite.log
+RewriteLogLevel 3
+
+# Si el REQUEST_URI contiene /public/, extraer solo la parte después
+RewriteCond %{REQUEST_URI} ^/public/(.+)$
+RewriteRule ^(.*)$ index.php?url=%1 [QSA,L]
+
+# Si es solo /public
+RewriteCond %{REQUEST_URI} ^/public/?$
+RewriteRule ^ index.php [L]
+
+# Archivos existentes
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Rutas sin /public/
+RewriteCond %{REQUEST_URI} !^/public/
+RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
+

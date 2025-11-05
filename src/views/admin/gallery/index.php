@@ -19,14 +19,14 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/prueba-php/public/admin/dashboard">
+            <a class="navbar-brand" href="<?php echo URL_ROOT; ?>/admin/dashboard">
                 <i class="fas fa-shield-alt me-2"></i>Panel de Administración
             </a>
             <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="/prueba-php/public/admin/dashboard">Dashboard</a>
-                <a class="nav-link" href="/prueba-php/public/admin/usuarios">Usuarios</a>
-                <a class="nav-link active" href="/prueba-php/public/admin/galeria">Galería</a>
-                <a class="nav-link" href="/prueba-php/public/admin/logout">Cerrar Sesión</a>
+                <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/dashboard">Dashboard</a>
+                <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/usuarios">Usuarios</a>
+                <a class="nav-link active" href="<?php echo URL_ROOT; ?>/admin/galeria">Galería</a>
+                <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/logout">Cerrar Sesión</a>
             </div>
         </div>
     </nav>

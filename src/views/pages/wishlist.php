@@ -11,7 +11,7 @@
                     <i class="bi bi-heart display-1 text-muted"></i>
                     <h3 class="mt-3">Tu lista de favoritos está vacía</h3>
                     <p class="text-muted">Añade productos que te gusten para verlos aquí</p>
-                    <a href="/prueba-php/public/tienda" class="btn btn-primary">
+                    <a href="<?php echo URL_ROOT; ?>/tienda" class="btn btn-primary">
                         <i class="bi bi-shop me-2"></i>Explorar Productos
                     </a>
                 </div>
@@ -23,7 +23,7 @@
                             <div class="card h-100 border-0 shadow-sm product-card">
                                 <div class="position-relative">
                                     <?php if (!empty($product->imagen)): ?>
-                                        <img src="/prueba-php/public/uploads/products/<?= htmlspecialchars($product->imagen) ?>" 
+                                        <img src="<?php echo URL_ROOT; ?>/uploads/products/<?= htmlspecialchars($product->imagen) ?>" 
                                              class="card-img-top" 
                                              alt="<?= htmlspecialchars($product->nombre) ?>"
                                              style="height: 250px; object-fit: cover;">
@@ -120,7 +120,7 @@
                                     <button class="btn btn-outline-danger" onclick="clearWishlist()">
                                         <i class="bi bi-trash me-2"></i>Limpiar Lista
                                     </button>
-                                    <a href="/prueba-php/public/tienda" class="btn btn-primary">
+                                    <a href="<?php echo URL_ROOT; ?>/tienda" class="btn btn-primary">
                                         <i class="bi bi-plus-circle me-2"></i>Seguir Explorando
                                     </a>
                                 </div>
@@ -145,7 +145,7 @@ function addToCart(productId) {
     button.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>Añadiendo...';
     button.disabled = true;
     
-    fetch('/prueba-php/public/cart/add', {
+    fetch('<?php echo URL_ROOT; ?>/cart/add', {
         method: 'POST',
         body: formData
     })
@@ -180,7 +180,7 @@ function addToCart(productId) {
 // Eliminar de wishlist
 function removeFromWishlist(productId) {
     if (confirm('¿Estás seguro de que quieres eliminar este producto de tus favoritos?')) {
-        fetch('/prueba-php/public/order/remove-wishlist', {
+        fetch('<?php echo URL_ROOT; ?>/order/remove-wishlist', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -230,7 +230,7 @@ function addAllToCart() {
             formData.append('product_id', productId);
             formData.append('quantity', 1);
             
-            fetch('/prueba-php/public/cart/add', {
+            fetch('<?php echo URL_ROOT; ?>/cart/add', {
                 method: 'POST',
                 body: formData
             })
@@ -265,7 +265,7 @@ function addAllToCart() {
 // Limpiar wishlist
 function clearWishlist() {
     if (confirm('¿Estás seguro de que quieres eliminar todos los productos de tus favoritos?')) {
-        fetch('/prueba-php/public/order/clear-wishlist', {
+        fetch('<?php echo URL_ROOT; ?>/order/clear-wishlist', {
             method: 'POST'
         })
         .then(response => response.json())

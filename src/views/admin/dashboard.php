@@ -11,9 +11,9 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" onerror="this.onerror=null;this.href='https://use.fontawesome.com/releases/v6.0.0/css/all.css';">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <!-- Admin CSS -->
-    <link href="/prueba-php/public/assets/css/admin.css" rel="stylesheet">
+    <link href="<?php echo URL_ROOT; ?>/assets/css/admin.css" rel="stylesheet">
     <!-- Font Awesome Fallback CSS -->
-    <link href="/prueba-php/public/assets/css/fontawesome-fallback.css" rel="stylesheet">
+    <link href="<?php echo URL_ROOT; ?>/assets/css/fontawesome-fallback.css" rel="stylesheet">
     
     <style>
         body { 
@@ -61,17 +61,17 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/prueba-php/public/admin/dashboard">
+            <a class="navbar-brand" href="<?php echo URL_ROOT; ?>/admin/dashboard">
                 <i class="fas fa-shield-alt me-2"></i>Panel de Administración
             </a>
             <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="/prueba-php/public/admin/dashboard">Dashboard</a>
-                <a class="nav-link" href="/prueba-php/public/admin/usuarios">Usuarios</a>
-                <a class="nav-link" href="/prueba-php/public/admin/eventos">Eventos</a>
-                <a class="nav-link" href="/prueba-php/public/admin/galeria">Galería</a>
-                <a class="nav-link" href="/prueba-php/public/admin/documentos">Documentos</a>
-                <a class="nav-link" href="/prueba-php/public/admin/visitas">Analíticas</a>
-                <a class="nav-link" href="/prueba-php/public/admin/logout">Cerrar Sesión</a>
+                <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/dashboard">Dashboard</a>
+                <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/usuarios">Usuarios</a>
+                <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/eventos">Eventos</a>
+                <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/galeria">Galería</a>
+                <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/documentos">Documentos</a>
+                <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/visitas">Analíticas</a>
+                <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/logout">Cerrar Sesión</a>
             </div>
         </div>
     </nav>
@@ -81,7 +81,7 @@
     <h1 class="h2">Panel de Control</h1>
     <div class="btn-toolbar mb-2 mb-md-0">
         <div class="btn-group me-2">
-            <a href="/prueba-php/public/admin/export/dashboard" class="btn btn-sm btn-outline-secondary" title="Exportar CSV">
+            <a href="<?php echo URL_ROOT; ?>/admin/export/dashboard" class="btn btn-sm btn-outline-secondary" title="Exportar CSV">
                 Exportar
             </a>
             <button type="button" class="btn btn-sm btn-outline-secondary" onclick="window.print()" title="Imprimir página">
@@ -172,11 +172,11 @@
                     <i class="fas fa-plus fa-2x opacity-50"></i>
                 </div>
                 <div class="mt-auto">
-                    <a href="/prueba-php/public/admin/crearUsuario" class="text-white d-block small">Nuevo usuario</a>
-                    <a href="/prueba-php/public/admin/nuevoEvento" class="text-white d-block small">Nuevo evento</a>
-                    <a href="/prueba-php/public/admin/galeria" class="text-white d-block small">Subir archivos</a>
-                    <a href="/prueba-php/public/admin/documentos" class="text-white d-block small">Gestionar documentos</a>
-                    <a href="/prueba-php/public/admin/noticias/nueva" class="text-white d-block small">Nueva noticia</a>
+                    <a href="<?php echo URL_ROOT; ?>/admin/crearUsuario" class="text-white d-block small">Nuevo usuario</a>
+                    <a href="<?php echo URL_ROOT; ?>/admin/nuevoEvento" class="text-white d-block small">Nuevo evento</a>
+                    <a href="<?php echo URL_ROOT; ?>/admin/galeria" class="text-white d-block small">Subir archivos</a>
+                    <a href="<?php echo URL_ROOT; ?>/admin/documentos" class="text-white d-block small">Gestionar documentos</a>
+                    <a href="<?php echo URL_ROOT; ?>/admin/noticias/nueva" class="text-white d-block small">Nueva noticia</a>
                 </div>
             </div>
         </div>
@@ -197,7 +197,7 @@
                     <i class="fas fa-shopping-cart fa-2x opacity-50"></i>
                 </div>
                 <div class="mt-auto">
-                    <a href="/prueba-php/public/admin/productos" class="btn btn-light btn-sm">
+                    <a href="<?php echo URL_ROOT; ?>/admin/productos" class="btn btn-light btn-sm">
                         <i class="fas fa-shopping-cart me-1"></i>Gestionar Tienda
                     </a>
                 </div>
@@ -274,7 +274,7 @@
                         <button class="btn btn-light btn-sm me-2" onclick="refreshVisitStats()">
                             <i class="fas fa-sync-alt me-1"></i>Actualizar
                         </button>
-                        <a href="/prueba-php/public/admin/visitas" class="btn btn-outline-light btn-sm">
+                        <a href="<?php echo URL_ROOT; ?>/admin/visitas" class="btn btn-outline-light btn-sm">
                             <i class="fas fa-chart-bar me-1"></i>Ver Detalles
                         </a>
                     </div>

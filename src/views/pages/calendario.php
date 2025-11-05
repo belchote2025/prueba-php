@@ -226,7 +226,7 @@ if (empty($eventosProximos)) {
                         <?php endif; ?>
                     </div>
                     <div class="card-footer text-center">
-                        <a href="/prueba-php/public/eventos" class="btn btn-sm btn-outline-primary">Ver todos los eventos</a>
+                        <a href="<?php echo URL_ROOT; ?>/eventos" class="btn btn-sm btn-outline-primary">Ver todos los eventos</a>
                     </div>
                 </div>
                 

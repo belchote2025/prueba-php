@@ -3,7 +3,7 @@ session_start();
 
 // Verificar autenticación
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
-    header('Location: /prueba-php/public/admin');
+    header('Location: <?php echo URL_ROOT; ?>/admin');
     exit;
 }
 
@@ -115,7 +115,7 @@ $flipbooks = $flipbookHelper->getFlipbooks();
                     <p class="mb-0">Administra los libros interactivos de la Filá Mariscales</p>
                 </div>
                 <div class="col-md-6 text-end">
-                    <a href="/prueba-php/public/admin" class="btn btn-light">
+                    <a href="<?php echo URL_ROOT; ?>/admin" class="btn btn-light">
                         <i class="bi bi-arrow-left me-1"></i>Volver al Panel
                     </a>
                 </div>
@@ -208,7 +208,7 @@ $flipbooks = $flipbookHelper->getFlipbooks();
                                         </div>
                                         
                                         <div class="mt-3">
-                                            <a href="/prueba-php/public/libro" class="btn btn-primary btn-sm me-2" target="_blank">
+                                            <a href="<?php echo URL_ROOT; ?>/libro" class="btn btn-primary btn-sm me-2" target="_blank">
                                                 <i class="bi bi-eye me-1"></i>Ver
                                             </a>
                                             

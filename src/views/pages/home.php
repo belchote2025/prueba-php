@@ -62,10 +62,10 @@ ob_start(); // Start output buffering
                 <h1 style="font-size: 3.5rem; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); color: white; margin-bottom: 1rem;">Bienvenidos a la Filá Mariscales</h1>
                 <p style="font-size: 1.5rem; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); color: white; margin-bottom: 2rem;">Caballeros Templarios de Elche</p>
                 <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
-                    <a href="/prueba-php/public/historia" style="background: linear-gradient(135deg, #FFFFFF 0%, #f0f0f0 100%); color: #8B0000; border: 2px solid #FFFFFF; padding: 12px 30px; border-radius: 25px; font-weight: bold; text-decoration: none; display: inline-block;">
+                    <a href="<?php echo URL_ROOT; ?>/historia" style="background: linear-gradient(135deg, #FFFFFF 0%, #f0f0f0 100%); color: #8B0000; border: 2px solid #FFFFFF; padding: 12px 30px; border-radius: 25px; font-weight: bold; text-decoration: none; display: inline-block;">
                         <i class="bi bi-shield-fill me-2"></i>Conócenos
                     </a>
-                    <a href="/prueba-php/public/calendario" style="background: linear-gradient(135deg, #FFFFFF 0%, #f0f0f0 100%); color: #8B0000; border: 2px solid #FFFFFF; padding: 12px 30px; border-radius: 25px; font-weight: bold; text-decoration: none; display: inline-block;">
+                    <a href="<?php echo URL_ROOT; ?>/calendario" style="background: linear-gradient(135deg, #FFFFFF 0%, #f0f0f0 100%); color: #8B0000; border: 2px solid #FFFFFF; padding: 12px 30px; border-radius: 25px; font-weight: bold; text-decoration: none; display: inline-block;">
                         <i class="bi bi-calendar-event me-2"></i>Próximos Eventos
                     </a>
                 </div>
@@ -99,7 +99,12 @@ ob_start(); // Start output buffering
             </div>
             <div class="col-lg-6">
                 <div class="position-relative">
-                    <img src="https://via.placeholder.com/600x400/8B4513/FFFFFF?text=Filá+Mariscales" alt="Filá Mariscales" class="img-fluid rounded-3 shadow-lg">
+                    <div class="bg-gradient-dark rounded-3 shadow-lg d-flex align-items-center justify-content-center" style="height: 400px; background: linear-gradient(135deg, #8B4513 0%, #654321 100%);">
+                        <div class="text-center text-white">
+                            <i class="bi bi-shield-fill" style="font-size: 5rem;"></i>
+                            <h3 class="mt-3">Filá Mariscales</h3>
+                        </div>
+                    </div>
                     <div class="position-absolute top-0 start-0 w-100 h-100 bg-gradient-dark rounded-3" style="opacity: 0.3;"></div>
                 </div>
             </div>
@@ -119,7 +124,16 @@ ob_start(); // Start output buffering
             <?php foreach ($upcoming_events as $event): ?>
             <div class="col-lg-4 col-md-6">
                 <div class="card hover-lift h-100">
-                    <img src="<?php echo $event['image']; ?>" class="card-img-top" alt="<?php echo $event['title']; ?>" style="height: 200px; object-fit: cover;">
+                    <?php if (!empty($event['image'])): ?>
+                        <img src="<?php echo $event['image']; ?>" class="card-img-top" alt="<?php echo $event['title']; ?>" style="height: 200px; object-fit: cover;">
+                    <?php else: ?>
+                        <div class="card-img-top bg-gradient-dark d-flex align-items-center justify-content-center" style="height: 200px; background: linear-gradient(135deg, #8B4513 0%, #654321 100%);">
+                            <div class="text-center text-white">
+                                <i class="bi bi-calendar-event" style="font-size: 3rem;"></i>
+                                <p class="mt-2 mb-0"><?php echo htmlspecialchars($event['title']); ?></p>
+                            </div>
+                        </div>
+                    <?php endif; ?>
                     <div class="card-body">
                         <h5 class="card-title"><?php echo $event['title']; ?></h5>
                         <p class="card-text"><?php echo $event['description']; ?></p>

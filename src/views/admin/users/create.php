@@ -18,15 +18,15 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/prueba-php/public/admin/dashboard">
+            <a class="navbar-brand" href="<?php echo URL_ROOT; ?>/admin/dashboard">
                 <i class="fas fa-shield-alt me-2"></i>Panel de Administración
             </a>
             <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="/prueba-php/public/admin/dashboard">Dashboard</a>
-                <a class="nav-link" href="/prueba-php/public/admin/usuarios">Usuarios</a>
-                <a class="nav-link" href="/prueba-php/public/admin/eventos">Eventos</a>
-                <a class="nav-link" href="/prueba-php/public/admin/galeria">Galería</a>
-                <a class="nav-link" href="/prueba-php/public/admin/logout">Cerrar Sesión</a>
+                <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/dashboard">Dashboard</a>
+                <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/usuarios">Usuarios</a>
+                <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/eventos">Eventos</a>
+                <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/galeria">Galería</a>
+                <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/logout">Cerrar Sesión</a>
             </div>
         </div>
     </nav>
@@ -34,7 +34,7 @@
     <div class="container-fluid mt-4">
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
             <h1 class="h2">Crear Nuevo Usuario</h1>
-            <a href="/prueba-php/public/admin/usuarios" class="btn btn-secondary">
+            <a href="<?php echo URL_ROOT; ?>/admin/usuarios" class="btn btn-secondary">
                 <i class="fas fa-arrow-left me-2"></i>Volver a Usuarios
             </a>
         </div>
@@ -52,7 +52,7 @@
                         <h5 class="mb-0">Información del Usuario</h5>
                     </div>
                     <div class="card-body">
-                        <form action="/prueba-php/public/admin/crearUsuario" method="POST">
+                        <form action="<?php echo URL_ROOT; ?>/admin/crearUsuario" method="POST">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="nombre" class="form-label">Nombre *</label>
@@ -163,7 +163,7 @@
                             </div>
                             
                             <div class="d-flex justify-content-end gap-2">
-                                <a href="/prueba-php/public/admin/usuarios" class="btn btn-secondary">
+                                <a href="<?php echo URL_ROOT; ?>/admin/usuarios" class="btn btn-secondary">
                                     <i class="fas fa-times me-2"></i>Cancelar
                                 </a>
                                 <button type="submit" class="btn btn-primary">

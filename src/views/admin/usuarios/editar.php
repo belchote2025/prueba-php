@@ -29,7 +29,7 @@ $isNew = empty($user->id);
     </div>
 <?php endif; ?>
 
-<form method="POST" action="/prueba-php/public/admin/editarUsuario/<?= $user->id ?>">
+<form method="POST" action="<?php echo URL_ROOT; ?>/admin/editarUsuario/<?= $user->id ?>">
     <input type="hidden" name="csrf_token" value="<?= generateCsrfToken() ?>">
     <input type="hidden" name="user_id" value="<?= $user->id ?>">
     
@@ -130,7 +130,7 @@ $isNew = empty($user->id);
     </div>
     
     <div class="d-flex justify-content-between mt-4">
-        <a href="/prueba-php/public/admin/usuarios" class="btn btn-secondary">
+        <a href="<?php echo URL_ROOT; ?>/admin/usuarios" class="btn btn-secondary">
             <i class="fas fa-arrow-left me-1"></i> Volver
         </a>
         
@@ -250,7 +250,7 @@ document.addEventListener('DOMContentLoaded', function() {
 function confirmDelete(id, name) {
     const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
     document.getElementById('entityName').textContent = name;
-    document.getElementById('deleteForm').action = `/prueba-php/public/admin/eliminarUsuario/${id}`;
+    document.getElementById('deleteForm').action = `<?php echo URL_ROOT; ?>/admin/eliminarUsuario/${id}`;
     modal.show();
 }
 </script>

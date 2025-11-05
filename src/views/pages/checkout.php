@@ -153,7 +153,7 @@
                                 </div>
                                 
                                 <div class="d-flex justify-content-between mt-4">
-                                    <a href="/prueba-php/public/cart" class="btn btn-outline-secondary">
+                                    <a href="<?php echo URL_ROOT; ?>/cart" class="btn btn-outline-secondary">
                                         <i class="bi bi-arrow-left me-2"></i>Volver al Carrito
                                     </a>
                                     <button type="submit" class="btn btn-success btn-lg">
@@ -179,7 +179,7 @@
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <div class="d-flex align-items-center">
                                         <?php if (!empty($item['imagen'])): ?>
-                                            <img src="/prueba-php/public/uploads/products/<?= htmlspecialchars($item['imagen']) ?>" 
+                                            <img src="<?php echo URL_ROOT; ?>/uploads/products/<?= htmlspecialchars($item['imagen']) ?>" 
                                                  alt="<?= htmlspecialchars($item['nombre']) ?>" 
                                                  class="img-thumbnail me-2" 
                                                  style="width: 40px; height: 40px; object-fit: cover;">
@@ -248,7 +248,7 @@ function validateCoupon() {
     formData.append('codigo', codigo);
     formData.append('total', total);
     
-    fetch('/prueba-php/public/order/validate-coupon', {
+    fetch('<?php echo URL_ROOT; ?>/order/validate-coupon', {
         method: 'POST',
         body: formData
     })
@@ -307,7 +307,7 @@ document.getElementById('checkoutForm').addEventListener('submit', function(e) {
     submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Procesando...';
     submitBtn.disabled = true;
     
-    fetch('/prueba-php/public/order/process', {
+    fetch('<?php echo URL_ROOT; ?>/order/process', {
         method: 'POST',
         body: formData
     })
@@ -322,7 +322,7 @@ document.getElementById('checkoutForm').addEventListener('submit', function(e) {
                 alert('¡Pedido procesado correctamente! ID: ' + data.pedido_id);
                 
                 // Redirigir a página de confirmación
-                window.location.href = '/prueba-php/public/order/confirmation/' + data.pedido_id;
+                window.location.href = '<?php echo URL_ROOT; ?>/order/confirmation/' + data.pedido_id;
             }
         } else {
             alert('Error: ' + data.message);
@@ -355,7 +355,7 @@ function processPayment(pedido_id, total, payment_method, formData) {
         case 'contra_entrega':
             // Para contra entrega, no se requiere pago online
             alert('¡Pedido confirmado! Te contactaremos para coordinar la entrega y el pago.');
-            window.location.href = '/prueba-php/public/order/confirmation/' + pedido_id;
+            window.location.href = '<?php echo URL_ROOT; ?>/order/confirmation/' + pedido_id;
             break;
         default:
             alert('Método de pago no válido');
@@ -374,7 +374,7 @@ function processStripePayment(pedido_id, total, email) {
         pedido_id: pedido_id
     };
     
-    fetch('/prueba-php/public/payment/stripe', {
+    fetch('<?php echo URL_ROOT; ?>/payment/stripe', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -385,7 +385,7 @@ function processStripePayment(pedido_id, total, email) {
     .then(data => {
         if (data.success) {
             alert('¡Pago procesado correctamente! ID de transacción: ' + data.transaction_id);
-            window.location.href = '/prueba-php/public/order/confirmation/' + pedido_id;
+            window.location.href = '<?php echo URL_ROOT; ?>/order/confirmation/' + pedido_id;
         } else {
             alert('Error en el pago: ' + data.message);
         }
@@ -404,7 +404,7 @@ function processPayPalPayment(pedido_id, total, email) {
         pedido_id: pedido_id
     };
     
-    fetch('/prueba-php/public/payment/paypal', {
+    fetch('<?php echo URL_ROOT; ?>/payment/paypal', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -419,7 +419,7 @@ function processPayPalPayment(pedido_id, total, email) {
                 window.location.href = data.redirect_url;
             } else {
                 alert('¡Pago procesado correctamente! ID de transacción: ' + data.transaction_id);
-                window.location.href = '/prueba-php/public/order/confirmation/' + pedido_id;
+                window.location.href = '<?php echo URL_ROOT; ?>/order/confirmation/' + pedido_id;
             }
         } else {
             alert('Error en el pago: ' + data.message);
@@ -438,7 +438,7 @@ function processBankTransfer(pedido_id, email) {
         email: email
     };
     
-    fetch('/prueba-php/public/payment/bank-transfer', {
+    fetch('<?php echo URL_ROOT; ?>/payment/bank-transfer', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -449,7 +449,7 @@ function processBankTransfer(pedido_id, email) {
     .then(data => {
         if (data.success) {
             alert('¡Instrucciones de transferencia enviadas por correo! Revisa tu email para completar el pago.');
-            window.location.href = '/prueba-php/public/order/confirmation/' + pedido_id;
+            window.location.href = '<?php echo URL_ROOT; ?>/order/confirmation/' + pedido_id;
         } else {
             alert('Error: ' + data.message);
         }

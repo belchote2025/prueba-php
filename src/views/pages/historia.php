@@ -9,7 +9,7 @@
     /* Estilos translúcidos para historia con blur de 3 */
     body {
         background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.1) 100%), 
-                    url('/prueba-php/public/assets/images/backgrounds/knight-templar-background.jpg') center/cover fixed;
+                    url('<?php echo URL_ROOT; ?>/assets/images/backgrounds/knight-templar-background.jpg') center/cover fixed;
         min-height: 100vh;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         position: relative;
@@ -256,8 +256,12 @@
         </div>
         <div class="col-lg-6">
             <div class="card medieval-border h-100">
-                <img src="https://via.placeholder.com/600x400/8B4513/FFFFFF?text=Orígenes+Mariscales" 
-                     class="card-img-top" alt="Orígenes de la Filá Mariscales">
+                <div class="bg-gradient-dark rounded-3 shadow-lg d-flex align-items-center justify-content-center" style="height: 400px; background: linear-gradient(135deg, #8B4513 0%, #654321 100%);">
+                    <div class="text-center text-white">
+                        <i class="bi bi-clock-history" style="font-size: 5rem;"></i>
+                        <h3 class="mt-3">Orígenes Mariscales</h3>
+                    </div>
+                </div>
                 <div class="card-body">
                     <h3 class="card-title text-danger">Fundación</h3>
                     <p class="card-text">
@@ -379,8 +383,9 @@
         <div class="col-md-6 col-lg-3 mb-4">
             <div class="card medieval-border text-center">
                 <div class="card-body">
-                    <img src="https://via.placeholder.com/150x150/8B4513/FFFFFF?text=Fundador" 
-                         class="rounded-circle mb-3" alt="Fundador">
+                    <div class="rounded-circle mb-3 mx-auto d-flex align-items-center justify-content-center bg-gradient-dark" style="width: 150px; height: 150px; background: linear-gradient(135deg, #8B4513 0%, #654321 100%);">
+                        <i class="bi bi-person-fill text-white" style="font-size: 4rem;"></i>
+                    </div>
                     <h5 class="card-title text-danger">Don Carlos Mariscal</h5>
                     <p class="card-text text-muted">Fundador y Primer Capitán</p>
                     <p class="card-text small">
@@ -392,8 +397,9 @@
         <div class="col-md-6 col-lg-3 mb-4">
             <div class="card medieval-border text-center">
                 <div class="card-body">
-                    <img src="https://via.placeholder.com/150x150/8B4513/FFFFFF?text=Capitán" 
-                         class="rounded-circle mb-3" alt="Capitán Actual">
+                    <div class="rounded-circle mb-3 mx-auto d-flex align-items-center justify-content-center bg-gradient-dark" style="width: 150px; height: 150px; background: linear-gradient(135deg, #8B4513 0%, #654321 100%);">
+                        <i class="bi bi-person-badge-fill text-white" style="font-size: 4rem;"></i>
+                    </div>
                     <h5 class="card-title text-danger">Don Antonio García</h5>
                     <p class="card-text text-muted">Capitán Actual</p>
                     <p class="card-text small">
@@ -405,8 +411,9 @@
         <div class="col-md-6 col-lg-3 mb-4">
             <div class="card medieval-border text-center">
                 <div class="card-body">
-                    <img src="https://via.placeholder.com/150x150/8B4513/FFFFFF?text=Maestro" 
-                         class="rounded-circle mb-3" alt="Maestro de Armas">
+                    <div class="rounded-circle mb-3 mx-auto d-flex align-items-center justify-content-center bg-gradient-dark" style="width: 150px; height: 150px; background: linear-gradient(135deg, #8B4513 0%, #654321 100%);">
+                        <i class="bi bi-shield-fill text-white" style="font-size: 4rem;"></i>
+                    </div>
                     <h5 class="card-title text-danger">Don Miguel Rodríguez</h5>
                     <p class="card-text text-muted">Maestro de Armas</p>
                     <p class="card-text small">
@@ -418,8 +425,9 @@
         <div class="col-md-6 col-lg-3 mb-4">
             <div class="card medieval-border text-center">
                 <div class="card-body">
-                    <img src="https://via.placeholder.com/150x150/8B4513/FFFFFF?text=Heraldo" 
-                         class="rounded-circle mb-3" alt="Heraldo">
+                    <div class="rounded-circle mb-3 mx-auto d-flex align-items-center justify-content-center bg-gradient-dark" style="width: 150px; height: 150px; background: linear-gradient(135deg, #8B4513 0%, #654321 100%);">
+                        <i class="bi bi-megaphone-fill text-white" style="font-size: 4rem;"></i>
+                    </div>
                     <h5 class="card-title text-danger">Don Francisco López</h5>
                     <p class="card-text text-muted">Heraldo de la Filá</p>
                     <p class="card-text small">
@@ -503,10 +511,10 @@
                         Únete a la Filá Mariscales y forma parte de una tradición centenaria. 
                         Descubre el honor, la hermandad y la nobleza de los Caballeros Templarios.
                     </p>
-                    <a href="/prueba-php/public/registro" class="btn btn-warning btn-lg me-3">
+                    <a href="<?php echo URL_ROOT; ?>/registro" class="btn btn-warning btn-lg me-3">
                         <i class="bi bi-person-plus me-2"></i>Únete a la Filá
                     </a>
-                    <a href="/prueba-php/public/contacto" class="btn btn-outline-light btn-lg">
+                    <a href="<?php echo URL_ROOT; ?>/contacto" class="btn btn-outline-light btn-lg">
                         <i class="bi bi-envelope me-2"></i>Contáctanos
                     </a>
                 </div>

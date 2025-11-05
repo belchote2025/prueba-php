@@ -18,15 +18,15 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/prueba-php/public/admin/dashboard">
+            <a class="navbar-brand" href="<?php echo URL_ROOT; ?>/admin/dashboard">
                 <i class="fas fa-shield-alt me-2"></i>Panel de Administración
             </a>
             <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="/prueba-php/public/admin/dashboard">Dashboard</a>
-                <a class="nav-link" href="/prueba-php/public/admin/usuarios">Usuarios</a>
-                <a class="nav-link" href="/prueba-php/public/admin/eventos">Eventos</a>
-                <a class="nav-link" href="/prueba-php/public/admin/galeria">Galería</a>
-                <a class="nav-link" href="/prueba-php/public/admin/logout">Cerrar Sesión</a>
+                <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/dashboard">Dashboard</a>
+                <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/usuarios">Usuarios</a>
+                <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/eventos">Eventos</a>
+                <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/galeria">Galería</a>
+                <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/logout">Cerrar Sesión</a>
             </div>
         </div>
     </nav>
@@ -34,7 +34,7 @@
     <div class="container-fluid mt-4">
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
             <h1 class="h2"><?= $title ?></h1>
-            <a href="/prueba-php/public/admin/eventos" class="btn btn-secondary">
+            <a href="<?php echo URL_ROOT; ?>/admin/eventos" class="btn btn-secondary">
                 <i class="fas fa-arrow-left me-2"></i>Volver a Eventos
             </a>
         </div>
@@ -45,7 +45,7 @@
             </div>
         <?php endif; ?>
 
-        <form method="POST" action="/prueba-php/public/admin/nuevoEvento" enctype="multipart/form-data">
+        <form method="POST" action="<?php echo URL_ROOT; ?>/admin/nuevoEvento" enctype="multipart/form-data">
             <div class="row">
                 <div class="col-md-8">
                     <div class="card mb-4">
@@ -147,7 +147,7 @@
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fas fa-save me-2"></i>Guardar Evento
                                 </button>
-                                <a href="/prueba-php/public/admin/eventos" class="btn btn-secondary">
+                                <a href="<?php echo URL_ROOT; ?>/admin/eventos" class="btn btn-secondary">
                                     <i class="fas fa-times me-2"></i>Cancelar
                                 </a>
                             </div>

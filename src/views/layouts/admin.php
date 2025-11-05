@@ -136,7 +136,7 @@
     <!-- Top Navigation -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/prueba-php/public/admin/dashboard">
+            <a class="navbar-brand" href="<?php echo URL_ROOT; ?>/admin/dashboard">
                 <i class="bi bi-shield-fill me-2 text-danger"></i>
                 Panel de Administración
             </a>
@@ -148,11 +148,11 @@
                         <?php echo $_SESSION['admin_username'] ?? 'Admin'; ?>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="/prueba-php/public/admin/profile">
+                        <li><a class="dropdown-item" href="<?php echo URL_ROOT; ?>/admin/profile">
                             <i class="bi bi-person me-2"></i>Perfil
                         </a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="/prueba-php/public/admin/logout">
+                        <li><a class="dropdown-item" href="<?php echo URL_ROOT; ?>/admin/logout">
                             <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
                         </a></li>
                     </ul>
@@ -168,43 +168,43 @@
                 <div class="position-sticky pt-3">
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link <?php echo strpos($_SERVER['REQUEST_URI'], '/admin/dashboard') !== false ? 'active' : ''; ?>" href="/prueba-php/public/admin/dashboard">
+                            <a class="nav-link <?php echo strpos($_SERVER['REQUEST_URI'], '/admin/dashboard') !== false ? 'active' : ''; ?>" href="<?php echo URL_ROOT; ?>/admin/dashboard">
                                 <i class="bi bi-speedometer2"></i>
                                 Dashboard
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link <?php echo strpos($_SERVER['REQUEST_URI'], '/admin/usuarios') !== false ? 'active' : ''; ?>" href="/prueba-php/public/admin/usuarios">
+                            <a class="nav-link <?php echo strpos($_SERVER['REQUEST_URI'], '/admin/usuarios') !== false ? 'active' : ''; ?>" href="<?php echo URL_ROOT; ?>/admin/usuarios">
                                 <i class="bi bi-people"></i>
                                 Usuarios
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link <?php echo strpos($_SERVER['REQUEST_URI'], '/admin/eventos') !== false ? 'active' : ''; ?>" href="/prueba-php/public/admin/eventos">
+                            <a class="nav-link <?php echo strpos($_SERVER['REQUEST_URI'], '/admin/eventos') !== false ? 'active' : ''; ?>" href="<?php echo URL_ROOT; ?>/admin/eventos">
                                 <i class="bi bi-calendar-event"></i>
                                 Eventos
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link <?php echo strpos($_SERVER['REQUEST_URI'], '/admin/galeria') !== false ? 'active' : ''; ?>" href="/prueba-php/public/admin/galeria">
+                            <a class="nav-link <?php echo strpos($_SERVER['REQUEST_URI'], '/admin/galeria') !== false ? 'active' : ''; ?>" href="<?php echo URL_ROOT; ?>/admin/galeria">
                                 <i class="bi bi-images"></i>
                                 Galería
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link <?php echo strpos($_SERVER['REQUEST_URI'], '/admin/noticias') !== false ? 'active' : ''; ?>" href="/prueba-php/public/admin/noticias">
+                            <a class="nav-link <?php echo strpos($_SERVER['REQUEST_URI'], '/admin/noticias') !== false ? 'active' : ''; ?>" href="<?php echo URL_ROOT; ?>/admin/noticias">
                                 <i class="bi bi-newspaper"></i>
                                 Noticias
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link <?php echo strpos($_SERVER['REQUEST_URI'], '/admin/socios') !== false ? 'active' : ''; ?>" href="/prueba-php/public/admin/socios">
+                            <a class="nav-link <?php echo strpos($_SERVER['REQUEST_URI'], '/admin/socios') !== false ? 'active' : ''; ?>" href="<?php echo URL_ROOT; ?>/admin/socios">
                                 <i class="bi bi-person-check"></i>
                                 Socios
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/prueba-php/public/" target="_blank">
+                            <a class="nav-link" href="<?php echo URL_ROOT; ?>/" target="_blank">
                                 <i class="bi bi-box-arrow-up-right"></i>
                                 Ver Sitio
                             </a>

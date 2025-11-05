@@ -280,7 +280,7 @@ $documentos_socios = [
                             <i class="bi bi-check-circle me-1"></i>
                             <?php echo $socio_data['cuota_al_dia'] ? 'Cuota al día' : 'Cuota pendiente'; ?>
                         </span>
-                        <a href="/prueba-php/public/logout.php" class="btn btn-outline-light btn-sm ms-3">
+                        <a href="<?php echo URL_ROOT; ?>/logout.php" class="btn btn-outline-light btn-sm ms-3">
                             <i class="bi bi-box-arrow-right me-1"></i>Cerrar Sesión
                         </a>
                     </div>
@@ -1528,7 +1528,7 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
     submitBtn.disabled = true;
     
     // Send login request
-    fetch('/prueba-php/public/login', {
+    fetch('<?php echo URL_ROOT; ?>/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -2393,7 +2393,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // Logout function
 function logout() {
     if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
-        fetch('/prueba-php/public/logout', {
+        fetch('<?php echo URL_ROOT; ?>/logout', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',

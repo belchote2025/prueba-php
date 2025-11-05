@@ -10,7 +10,7 @@
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <!-- Admin CSS -->
-    <link href="/prueba-php/public/assets/css/admin.css" rel="stylesheet">
+    <link href="<?php echo URL_ROOT; ?>/assets/css/admin.css" rel="stylesheet">
     
     <style>
         body { 
@@ -200,7 +200,7 @@
                                             <tr>
                                                 <td>
                                                     <?php if (!empty($item->imagen_portada)): ?>
-                                                        <img src="http://localhost/prueba-php/public/serve-image.php?path=uploads/news/<?= urlencode($item->imagen_portada) ?>" 
+                                                        <img src="http://localhost<?php echo URL_ROOT; ?>/serve-image.php?path=uploads/news/<?= urlencode($item->imagen_portada) ?>" 
                                                              class="img-thumbnail" style="width: 60px; height: 60px; object-fit: cover;" alt="Imagen de portada">
                                                     <?php else: ?>
                                                         <div class="bg-light d-flex align-items-center justify-content-center" 

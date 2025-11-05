@@ -11,7 +11,7 @@
                     <i class="bi bi-cart-x display-1 text-muted"></i>
                     <h3 class="mt-3">Tu carrito está vacío</h3>
                     <p class="text-muted">Añade algunos productos para comenzar tu compra</p>
-                    <a href="/prueba-php/public/tienda" class="btn btn-primary">
+                    <a href="<?php echo URL_ROOT; ?>/tienda" class="btn btn-primary">
                         <i class="bi bi-shop me-2"></i>Ir a la Tienda
                     </a>
                 </div>
@@ -44,7 +44,7 @@
                                                     <td>
                                                         <div class="d-flex align-items-center">
                                                             <?php if (!empty($item['imagen'])): ?>
-                                                                <img src="/prueba-php/public/uploads/products/<?= htmlspecialchars($item['imagen']) ?>" 
+                                                                <img src="<?php echo URL_ROOT; ?>/uploads/products/<?= htmlspecialchars($item['imagen']) ?>" 
                                                                      alt="<?= htmlspecialchars($item['nombre']) ?>" 
                                                                      class="img-thumbnail me-3" 
                                                                      style="width: 60px; height: 60px; object-fit: cover;">
@@ -122,7 +122,7 @@
                                     <i class="bi bi-credit-card me-2"></i>Proceder al Pago
                                 </button>
                                 
-                                <a href="/prueba-php/public/tienda" class="btn btn-outline-primary w-100">
+                                <a href="<?php echo URL_ROOT; ?>/tienda" class="btn btn-outline-primary w-100">
                                     <i class="bi bi-arrow-left me-2"></i>Seguir Comprando
                                 </a>
                             </div>
@@ -159,7 +159,7 @@ function updateQuantity(productId, quantity) {
     formData.append('product_id', productId);
     formData.append('quantity', quantity);
     
-    fetch('/prueba-php/public/cart/update', {
+    fetch('<?php echo URL_ROOT; ?>/cart/update', {
         method: 'POST',
         body: formData
     })
@@ -184,7 +184,7 @@ function removeFromCart(productId) {
         const formData = new FormData();
         formData.append('product_id', productId);
         
-        fetch('/prueba-php/public/cart/remove', {
+        fetch('<?php echo URL_ROOT; ?>/cart/remove', {
             method: 'POST',
             body: formData
         })
@@ -220,7 +220,7 @@ function removeFromCart(productId) {
 // Función para vaciar carrito
 function clearCart() {
     if (confirm('¿Estás seguro de que quieres vaciar todo el carrito?')) {
-        fetch('/prueba-php/public/cart/clear', {
+        fetch('<?php echo URL_ROOT; ?>/cart/clear', {
             method: 'POST'
         })
         .then(response => response.json())
@@ -240,7 +240,7 @@ function clearCart() {
 
 // Función para proceder al pago
 function proceedToCheckout() {
-    window.location.href = '/prueba-php/public/order/checkout';
+    window.location.href = '<?php echo URL_ROOT; ?>/order/checkout';
 }
 
 </script>

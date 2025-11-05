@@ -3,7 +3,7 @@ session_start();
 
 // Verificar autenticación
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
-    header('Location: /prueba-php/public/admin');
+    header('Location: <?php echo URL_ROOT; ?>/admin');
     exit;
 }
 ?>
@@ -70,7 +70,7 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
                     <p class="mb-0">Administra los documentos disponibles para descarga</p>
                 </div>
                 <div class="col-md-6 text-end">
-                    <a href="/prueba-php/public/admin" class="btn btn-light">
+                    <a href="<?php echo URL_ROOT; ?>/admin" class="btn btn-light">
                         <i class="bi bi-arrow-left me-1"></i>Volver al Panel
                     </a>
                 </div>
@@ -100,7 +100,7 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
                 <h3 class="h5 mb-0">Subir Documento</h3>
             </div>
             <div class="card-body">
-                <form id="uploadForm" action="/prueba-php/public/admin/documentos/subir" method="POST" enctype="multipart/form-data">
+                <form id="uploadForm" action="<?php echo URL_ROOT; ?>/admin/documentos/subir" method="POST" enctype="multipart/form-data">
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="documentTitle" class="form-label">Título del Documento</label>
@@ -212,10 +212,10 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
                                         </div>
                                         
                                         <div class="d-flex gap-2">
-                                            <a href="/prueba-php/public/admin/documentos/<?php echo $document->id; ?>/editar" class="btn btn-sm btn-outline-primary">
+                                            <a href="<?php echo URL_ROOT; ?>/admin/documentos/<?php echo $document->id; ?>/editar" class="btn btn-sm btn-outline-primary">
                                                 <i class="bi bi-pencil me-1"></i>Editar
                                             </a>
-                                            <form method="POST" action="/prueba-php/public/admin/documentos/<?php echo $document->id; ?>/eliminar" class="d-inline" onsubmit="return confirm('¿Estás seguro de que quieres eliminar este documento?')">
+                                            <form method="POST" action="<?php echo URL_ROOT; ?>/admin/documentos/<?php echo $document->id; ?>/eliminar" class="d-inline" onsubmit="return confirm('¿Estás seguro de que quieres eliminar este documento?')">
                                                 <button type="submit" class="btn btn-sm btn-outline-danger">
                                                     <i class="bi bi-trash me-1"></i>Eliminar
                                                 </button>

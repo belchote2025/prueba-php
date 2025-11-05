@@ -31,7 +31,7 @@ ob_start(); // Start output buffering
                                 <p class="mb-0 small fw-bold">María López</p>
                                 <p class="mb-0 small text-muted">Directora de Comunicación</p>
                             </div>
-                            <a href="/prueba-php/public/blog" class="btn btn-outline-danger ms-auto">Leer más</a>
+                            <a href="<?php echo URL_ROOT; ?>/blog" class="btn btn-outline-danger ms-auto">Leer más</a>
                         </div>
                     </div>
                 </div>

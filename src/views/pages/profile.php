@@ -64,7 +64,7 @@
                             </h5>
                         </div>
                         <div class="card-body">
-                            <form method="POST" action="/prueba-php/public/update-profile" id="profile-form">
+                            <form method="POST" action="<?php echo URL_ROOT; ?>/update-profile" id="profile-form">
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="mb-3">
@@ -142,7 +142,7 @@
                             </h5>
                         </div>
                         <div class="card-body">
-                            <form method="POST" action="/prueba-php/public/change-password" id="password-form">
+                            <form method="POST" action="<?php echo URL_ROOT; ?>/change-password" id="password-form">
                                 <div class="mb-3">
                                     <label for="current_password" class="form-label">Contraseña Actual</label>
                                     <div class="input-group">
@@ -219,13 +219,13 @@
                         </div>
                         <div class="card-body">
                             <div class="d-grid gap-2">
-                                <a href="/prueba-php/public/socios" class="btn btn-outline-primary">
+                                <a href="<?php echo URL_ROOT; ?>/socios" class="btn btn-outline-primary">
                                     <i class="bi bi-house me-2"></i>Volver a Socios
                                 </a>
-                                <a href="/prueba-php/public/tienda" class="btn btn-outline-success">
+                                <a href="<?php echo URL_ROOT; ?>/tienda" class="btn btn-outline-success">
                                     <i class="bi bi-shop me-2"></i>Ir a Tienda
                                 </a>
-                                <a href="/prueba-php/public/contacto" class="btn btn-outline-info">
+                                <a href="<?php echo URL_ROOT; ?>/contacto" class="btn btn-outline-info">
                                     <i class="bi bi-envelope me-2"></i>Contactar
                                 </a>
                             </div>
@@ -278,7 +278,7 @@ document.getElementById('avatar-input').addEventListener('change', function(e) {
         const formData = new FormData();
         formData.append('avatar', file);
         
-        fetch('/prueba-php/public/upload-avatar', {
+        fetch('<?php echo URL_ROOT; ?>/upload-avatar', {
             method: 'POST',
             body: formData
         })
@@ -323,7 +323,7 @@ document.getElementById('profile-form').addEventListener('submit', function(e) {
     
     const formData = new FormData(this);
     
-    fetch('/prueba-php/public/update-profile', {
+    fetch('<?php echo URL_ROOT; ?>/update-profile', {
         method: 'POST',
         body: formData
     })
@@ -342,7 +342,7 @@ document.getElementById('password-form').addEventListener('submit', function(e) 
     
     const formData = new FormData(this);
     
-    fetch('/prueba-php/public/change-password', {
+    fetch('<?php echo URL_ROOT; ?>/change-password', {
         method: 'POST',
         body: formData
     })

@@ -58,10 +58,10 @@
                     </div>
                 </div>
                 <div class="mt-5">
-                    <a href="/prueba-php/public/historia" class="btn btn-primary btn-lg px-4 py-3 hover-lift me-3">
+                    <a href="<?php echo URL_ROOT; ?>/historia" class="btn btn-primary btn-lg px-4 py-3 hover-lift me-3">
                         <i class="bi bi-book me-2"></i>Más sobre nosotros
                     </a>
-                    <a href="/prueba-php/public/libro" class="btn btn-outline-primary btn-lg px-4 py-3 hover-lift">
+                    <a href="<?php echo URL_ROOT; ?>/libro" class="btn btn-outline-primary btn-lg px-4 py-3 hover-lift">
                         <i class="bi bi-journal-text me-2"></i>Historia de la Filá Mariscales
                     </a>
                 </div>
@@ -131,7 +131,7 @@
         </div>
         
         <div class="text-center mt-6" data-aos="fade-up" data-aos-delay="100">
-            <a href="/prueba-php/public/eventos" class="btn btn-primary btn-lg px-5 py-3 hover-lift">
+            <a href="<?php echo URL_ROOT; ?>/eventos" class="btn btn-primary btn-lg px-5 py-3 hover-lift">
                 <span class="d-flex align-items-center">
                     <span>Ver todos los eventos</span>
                     <i class="bi bi-arrow-right ms-2"></i>
@@ -180,7 +180,7 @@
         </div>
         
         <div class="text-center mt-6" data-aos="fade-up" data-aos-delay="100">
-            <a href="/prueba-php/public/galeria" class="btn btn-outline-danger btn-lg px-5 py-3 hover-lift">
+            <a href="<?php echo URL_ROOT; ?>/galeria" class="btn btn-outline-danger btn-lg px-5 py-3 hover-lift">
                 <span class="d-flex align-items-center">
                     <span>Ver galería completa</span>
                     <i class="bi bi-images ms-2"></i>

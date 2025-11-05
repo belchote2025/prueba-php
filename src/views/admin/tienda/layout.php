@@ -38,7 +38,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/prueba-php/public/admin/dashboard">
+            <a class="navbar-brand" href="<?php echo URL_ROOT; ?>/admin/dashboard">
                 <i class="fas fa-tachometer-alt me-2"></i>Panel Admin
             </a>
             
@@ -49,22 +49,22 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/prueba-php/public/admin/dashboard">
+                        <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/dashboard">
                             <i class="fas fa-home me-1"></i>Dashboard
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/prueba-php/public/admin/productos">
+                        <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/productos">
                             <i class="fas fa-shopping-cart me-1"></i>Tienda
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/prueba-php/public/admin/usuarios">
+                        <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/usuarios">
                             <i class="fas fa-users me-1"></i>Usuarios
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/prueba-php/public/admin/eventos">
+                        <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/eventos">
                             <i class="fas fa-calendar me-1"></i>Eventos
                         </a>
                     </li>
@@ -72,7 +72,7 @@
                 
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="/prueba-php/public/admin/logout">
+                        <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/logout">
                             <i class="fas fa-sign-out-alt me-1"></i>Cerrar Sesión
                         </a>
                     </li>

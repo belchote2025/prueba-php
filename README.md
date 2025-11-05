@@ -16,21 +16,17 @@ Sitio web moderno y optimizado para la **Filá Mariscales de Caballeros Templari
 
 ```
 fila-mariscales-web/
-├── index.html              # Página principal
-├── login.html              # Página de login
-├── assets/                 # Recursos estáticos
-│   ├── css/               # Estilos CSS
-│   ├── js/                # JavaScript
-│   └── images/            # Imágenes
-├── api/                   # API Backend
-│   ├── config/           # Configuración
-│   ├── noticias.php      # API de noticias
-│   ├── eventos.php       # API de eventos
-│   ├── galeria.php       # API de galería
-│   ├── productos.php     # API de productos
-│   └── contacto.php      # API de contacto
-├── admin/                # Panel de administración
-│   └── dashboard.html    # Dashboard principal
+├── public/               # Directorio público (punto de entrada)
+│   ├── index.php        # Punto de entrada principal
+│   └── assets/          # Recursos estáticos
+│       ├── css/         # Estilos CSS
+│       ├── js/          # JavaScript
+│       └── images/      # Imágenes
+├── src/                 # Código fuente
+│   ├── config/         # Configuración
+│   ├── controllers/    # Controladores
+│   ├── models/         # Modelos
+│   └── views/          # Vistas
 ├── database/             # Base de datos
 │   └── schema.sql        # Esquema de la BD
 └── uploads/              # Archivos subidos
@@ -74,12 +70,12 @@ chmod 755 uploads/news/
 
 5. **Acceder al sitio**
 - Frontend: `http://localhost/fila-mariscales-web/`
-- Admin: `http://localhost/fila-mariscales-web/admin/dashboard.html`
+- Admin: `http://localhost/prueba-php/public/admin/login`
 
 ## 🔧 Configuración
 
 ### Base de Datos
-Editar `api/config/database.php`:
+Editar `src/config/config.php`:
 ```php
 define('DB_CONFIG', [
     'host' => 'localhost',

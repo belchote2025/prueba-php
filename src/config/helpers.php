@@ -1,8 +1,32 @@
 <?php
 // Redirect to a specific URL
 function redirect($url) {
-    header("Location: " . URL_ROOT . $url);
+    // Si la URL ya empieza con http, usarla directamente
+    if (strpos($url, 'http') === 0) {
+        header("Location: " . $url);
+    } else {
+        // Si no empieza con /, agregarlo
+        if (strpos($url, '/') !== 0) {
+            $url = '/' . $url;
+        }
+        header("Location: " . URL_ROOT . $url);
+    }
     exit();
+}
+
+// Generate URL dynamically (helper function for views)
+function url($path = '') {
+    // Si la URL ya es absoluta, devolverla tal cual
+    if (strpos($path, 'http') === 0) {
+        return $path;
+    }
+    
+    // Si no empieza con /, agregarlo
+    if ($path !== '' && strpos($path, '/') !== 0) {
+        $path = '/' . $path;
+    }
+    
+    return URL_ROOT . $path;
 }
 
 // Check if user is logged in

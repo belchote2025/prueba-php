@@ -1,7 +1,7 @@
 <?php
 // Verificar autenticación de administrador
 if (!isAdminLoggedIn()) {
-    header('Location: /prueba-php/public/admin/login');
+    header('Location: <?php echo URL_ROOT; ?>/admin/login');
     exit;
 }
 
@@ -244,7 +244,7 @@ if (file_exists($videosFile)) {
                     <p class="mb-0">Administra carrusel, galería general y videos de la Filá Mariscales</p>
                 </div>
                 <div class="col-md-6 text-end">
-                    <a href="/prueba-php/public/admin" class="btn btn-light">
+                    <a href="<?php echo URL_ROOT; ?>/admin" class="btn btn-light">
                         <i class="bi bi-arrow-left me-1"></i>Volver al Panel
                     </a>
                 </div>

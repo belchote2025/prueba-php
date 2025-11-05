@@ -57,10 +57,10 @@
                     </div>
                     
                     <div class="mt-4">
-                        <a href="/prueba-php/public/tienda" class="btn btn-primary me-3">
+                        <a href="<?php echo URL_ROOT; ?>/tienda" class="btn btn-primary me-3">
                             <i class="bi bi-shop me-2"></i>Seguir Comprando
                         </a>
-                        <a href="/prueba-php/public/" class="btn btn-outline-secondary">
+                        <a href="<?php echo URL_ROOT; ?>/" class="btn btn-outline-secondary">
                             <i class="bi bi-house me-2"></i>Volver al Inicio
                         </a>
                     </div>

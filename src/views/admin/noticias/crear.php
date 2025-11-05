@@ -55,7 +55,7 @@
                         <p class="text-muted mb-0">Crea una nueva noticia para la Filá Mariscales</p>
                     </div>
                     <div>
-                        <a href="http://localhost/prueba-php/public/admin/noticias" class="btn btn-outline-secondary">
+                        <a href="http://localhost<?php echo URL_ROOT; ?>/admin/noticias" class="btn btn-outline-secondary">
                             <i class="fas fa-arrow-left me-1"></i>Volver a Noticias
                         </a>
                     </div>
@@ -177,7 +177,7 @@
                                             <i class="fas fa-save me-1"></i>
                                             Crear Noticia
                                         </button>
-                                        <a href="http://localhost/prueba-php/public/admin/noticias" class="btn btn-outline-secondary">
+                                        <a href="http://localhost<?php echo URL_ROOT; ?>/admin/noticias" class="btn btn-outline-secondary">
                                             <i class="fas fa-times me-1"></i>Cancelar
                                         </a>
                                     </div>

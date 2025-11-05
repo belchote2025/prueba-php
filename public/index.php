@@ -7,6 +7,51 @@ require_once 'src/config/config.php';
 require_once 'src/config/helpers.php';
 require_once 'src/config/admin_credentials.php';
 
+// Aplicar headers de seguridad (si SecurityHelper está disponible)
+if (file_exists('src/helpers/SecurityHelper.php')) {
+    require_once 'src/helpers/SecurityHelper.php';
+    if (class_exists('SecurityHelper')) {
+        SecurityHelper::setSecurityHeaders();
+    }
+}
+
+// SOLUCIÓN DEFINITIVA: Extraer siempre la URL del REQUEST_URI
+// Esto garantiza que funcione incluso si el .htaccess falla
+if (!isset($_GET['url']) || empty($_GET['url'])) {
+    $requestUri = $_SERVER['REQUEST_URI'] ?? '';
+    $requestUri = strtok($requestUri, '?'); // Limpiar query string
+    
+    // Si REQUEST_URI es /public/index.php o /public/, es la raíz
+    if (preg_match('#^/public/index\.php$#', $requestUri) || 
+        preg_match('#^/public/?$#', $requestUri)) {
+        $_GET['url'] = '';
+    }
+    // Si REQUEST_URI contiene /public/ seguido de algo que NO sea index.php
+    elseif (preg_match('#/public/(.+)$#', $requestUri, $matches)) {
+        $path = $matches[1];
+        // Si es index.php, es la raíz
+        if ($path === 'index.php') {
+            $_GET['url'] = '';
+        } else {
+            $_GET['url'] = $path;
+        }
+    }
+    // Si REQUEST_URI no contiene /public/
+    elseif (strpos($requestUri, '/public/') === false) {
+        // Si no es la raíz, extraer la parte después de /
+        if ($requestUri !== '/' && $requestUri !== '' && $requestUri !== '/index.php') {
+            $_GET['url'] = ltrim($requestUri, '/');
+        } else {
+            $_GET['url'] = '';
+        }
+    }
+    
+    // Si aún no está definido, usar vacío (ruta raíz)
+    if (!isset($_GET['url'])) {
+        $_GET['url'] = '';
+    }
+}
+
 // Iniciar sesión para el tracking de visitas
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
@@ -41,6 +86,9 @@ if (file_exists('src/controllers/AdminController.php')) {
 
 // Parse the URL
 $url = isset($_GET['url']) ? explode('/', filter_var(rtrim($_GET['url'], '/'), FILTER_SANITIZE_URL)) : [''];
+
+// Debug: Log para verificar qué URL se está parseando (solo en desarrollo)
+// error_log("URL parseado: " . print_r($url, true));
 
 // Create controller instances
 $controller = new Pages();
@@ -96,6 +144,25 @@ if (empty($url[0])) {
     $controller->changePassword();
 } elseif ($url[0] === 'upload-avatar') {
     $controller->uploadAvatar();
+} elseif ($url[0] === 'api') {
+    // API routes
+    $endpoint = isset($url[1]) ? $url[1] : '';
+    
+    header('Content-Type: application/json');
+    
+    if ($endpoint === 'textos') {
+        // Endpoint para textos (devuelve JSON vacío por ahora)
+        echo json_encode(['success' => true, 'textos' => []]);
+        exit;
+    } elseif ($endpoint === 'fondos') {
+        // Endpoint para fondos (devuelve JSON vacío por ahora)
+        echo json_encode(['success' => true, 'fondos' => []]);
+        exit;
+    } else {
+        http_response_code(404);
+        echo json_encode(['success' => false, 'message' => 'Endpoint no encontrado']);
+        exit;
+    }
 } elseif ($url[0] === 'cart') {
     // Cart routes
     $action = isset($url[1]) ? $url[1] : 'show';
@@ -169,13 +236,13 @@ if (empty($url[0])) {
 
     if ($action === 'logout') {
         logoutAdmin();
-        header('Location: /prueba-php/public/admin/login');
+        header('Location: ' . URL_ROOT . '/admin/login');
         exit;
     }
 
     // Any other admin route requires authentication
     if (!isAdminLoggedIn()) {
-        header('Location: /prueba-php/public/admin/login');
+        header('Location: ' . URL_ROOT . '/admin/login');
         exit;
     }
 
@@ -202,11 +269,11 @@ if (empty($url[0])) {
                 }
             } elseif ($action === 'crearUsuario') {
                 // Redirigir al formulario directo que funciona
-                header('Location: /prueba-php/public/admin/crear-usuario.php');
+                header('Location: ' . URL_ROOT . '/admin/crear-usuario.php');
                 exit;
             } elseif ($action === 'nuevoEvento') {
                 // Redirigir al formulario directo que funciona
-                header('Location: /prueba-php/public/admin/nuevo-evento.php');
+                header('Location: ' . URL_ROOT . '/admin/nuevo-evento.php');
                 exit;
             } elseif ($action === 'nuevo-producto') {
                 // Manejar la ruta nuevo-producto
