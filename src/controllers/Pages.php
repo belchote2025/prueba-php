@@ -54,11 +54,235 @@ class Pages extends Controller {
 
     // Página de blog
     public function blog() {
+        // Modo diagnóstico si se pasa ?debug=1
+        if (isset($_GET['debug']) && $_GET['debug'] == '1') {
+            $this->debugBlog();
+            return;
+        }
+        
+        try {
+            // Cargar modelo de noticias
+            $newsModel = $this->model('News');
+            
+            // Obtener página actual
+            $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+            if ($page < 1) $page = 1;
+            
+            $perPage = 9; // 9 posts por página (3 columnas x 3 filas)
+            
+            // Obtener noticias publicadas
+            $news = [];
+            $totalNews = 0;
+            $totalPages = 0;
+            
+            try {
+                $news = $newsModel->getPublishedNews($page, $perPage);
+                $totalNews = $newsModel->getNewsCountByStatus('publicado');
+                $totalPages = $totalNews > 0 ? ceil($totalNews / $perPage) : 0;
+            } catch (Exception $e) {
+                error_log("Error en blog - getPublishedNews: " . $e->getMessage());
+                // Continuar con arrays vacíos si hay error
+            }
+            
+            // Obtener post destacado (el más reciente)
+            $featuredNews = !empty($news) ? $news[0] : null;
+            
+            // Obtener categorías (simulado por ahora, se puede mejorar después)
+            $categories = [
+                ['name' => 'Fiestas', 'count' => 0, 'icon' => 'bi-people'],
+                ['name' => 'Cultura', 'count' => 0, 'icon' => 'bi-book'],
+                ['name' => 'Eventos', 'count' => 0, 'icon' => 'bi-calendar-event'],
+                ['name' => 'Historia', 'count' => 0, 'icon' => 'bi-hourglass-split'],
+                ['name' => 'Actualidad', 'count' => 0, 'icon' => 'bi-newspaper'],
+                ['name' => 'Logros', 'count' => 0, 'icon' => 'bi-trophy']
+            ];
+            
+            $data = [
+                'title' => 'Blog',
+                'description' => 'Artículos y publicaciones de la Filá Mariscales',
+                'news' => $news,
+                'featured_news' => $featuredNews,
+                'current_page' => $page,
+                'total_pages' => $totalPages,
+                'total_news' => $totalNews,
+                'categories' => $categories
+            ];
+            
+            $this->view('pages/blog', $data);
+        } catch (Exception $e) {
+            error_log("Error fatal en blog(): " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
+            
+            // Mostrar error amigable
+            $data = [
+                'title' => 'Error',
+                'description' => 'Error al cargar el blog',
+                'news' => [],
+                'featured_news' => null,
+                'current_page' => 1,
+                'total_pages' => 0,
+                'total_news' => 0,
+                'categories' => [],
+                'error' => 'Error al cargar las noticias. Por favor, inténtalo más tarde.'
+            ];
+            
+            $this->view('pages/blog', $data);
+        }
+    }
+    
+    // Diagnóstico del blog
+    private function debugBlog() {
+        header('Content-Type: text/html; charset=UTF-8');
+        echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Diagnóstico Blog</title>';
+        echo '<style>body{font-family:Arial;padding:20px;background:#f5f5f5;}';
+        echo '.container{max-width:800px;margin:0 auto;background:white;padding:20px;border-radius:8px;}';
+        echo '.success{color:#28a745;background:#d4edda;padding:10px;margin:10px 0;border-radius:4px;}';
+        echo '.error{color:#dc3545;background:#f8d7da;padding:10px;margin:10px 0;border-radius:4px;}';
+        echo '.info{color:#004085;background:#d1ecf1;padding:10px;margin:10px 0;border-radius:4px;}';
+        echo 'pre{background:#f8f9fa;padding:15px;border-radius:4px;overflow-x:auto;}</style></head><body>';
+        echo '<div class="container"><h1>🔍 Diagnóstico del Blog</h1>';
+        
+        // 1. Verificar configuración
+        echo '<h2>1. Verificar Configuración</h2>';
+        $configFile = dirname(dirname(__DIR__)) . '/src/config/config.php';
+        if (file_exists($configFile)) {
+            echo '<div class="success">✓ config.php existe</div>';
+            require_once $configFile;
+        } else {
+            echo '<div class="error">✗ config.php NO existe</div>';
+            echo '</div></body></html>';
+            exit;
+        }
+        
+        // 2. Verificar modelo News
+        echo '<h2>2. Verificar Modelo News</h2>';
+        $newsModelFile = dirname(dirname(__DIR__)) . '/src/models/News.php';
+        if (file_exists($newsModelFile)) {
+            echo '<div class="success">✓ News.php existe</div>';
+            require_once dirname(dirname(__DIR__)) . '/src/models/Database.php';
+            require_once $newsModelFile;
+        } else {
+            echo '<div class="error">✗ News.php NO existe</div>';
+            echo '</div></body></html>';
+            exit;
+        }
+        
+        // 3. Verificar BD
+        echo '<h2>3. Verificar Base de Datos</h2>';
+        try {
+            if (defined('DB_HOST') && defined('DB_NAME')) {
+                echo '<div class="info">DB_HOST: ' . DB_HOST . '</div>';
+                echo '<div class="info">DB_NAME: ' . DB_NAME . '</div>';
+                $pdo = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME, DB_USER, DB_PASS);
+                $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                echo '<div class="success">✓ Conexión a BD exitosa</div>';
+            } else {
+                echo '<div class="error">✗ Constantes de BD no definidas</div>';
+                echo '</div></body></html>';
+                exit;
+            }
+        } catch (Exception $e) {
+            echo '<div class="error">✗ Error de conexión: ' . htmlspecialchars($e->getMessage()) . '</div>';
+            echo '</div></body></html>';
+            exit;
+        }
+        
+        // 4. Verificar tabla noticias
+        echo '<h2>4. Verificar Tabla noticias</h2>';
+        try {
+            $stmt = $pdo->query("DESCRIBE noticias");
+            $columns = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            echo '<div class="success">✓ Tabla noticias existe</div>';
+            echo '<div class="info">Columnas:</div><ul>';
+            $hasEstado = false;
+            $hasActiva = false;
+            foreach ($columns as $col) {
+                echo '<li><strong>' . htmlspecialchars($col['Field']) . '</strong> (' . htmlspecialchars($col['Type']) . ')</li>';
+                if ($col['Field'] === 'estado') $hasEstado = true;
+                if ($col['Field'] === 'activa') $hasActiva = true;
+            }
+            echo '</ul>';
+            echo '<div class="info">Estado: ' . ($hasEstado ? '✓' : '✗') . ' | Activa: ' . ($hasActiva ? '✓' : '✗') . '</div>';
+        } catch (Exception $e) {
+            echo '<div class="error">✗ Error: ' . htmlspecialchars($e->getMessage()) . '</div>';
+        }
+        
+        // 5. Probar modelo News
+        echo '<h2>5. Probar Modelo News</h2>';
+        try {
+            $newsModel = new News();
+            echo '<div class="success">✓ Instancia de News creada</div>';
+            
+            // Probar getPublishedNews
+            try {
+                $news = $newsModel->getPublishedNews(1, 5);
+                echo '<div class="success">✓ getPublishedNews() ejecutado</div>';
+                echo '<div class="info">Posts encontrados: ' . count($news) . '</div>';
+            } catch (Exception $e) {
+                echo '<div class="error">✗ Error en getPublishedNews(): ' . htmlspecialchars($e->getMessage()) . '</div>';
+                echo '<pre>' . htmlspecialchars($e->getTraceAsString()) . '</pre>';
+            }
+            
+            // Probar getNewsCountByStatus
+            try {
+                $count = $newsModel->getNewsCountByStatus('publicado');
+                echo '<div class="success">✓ getNewsCountByStatus() ejecutado</div>';
+                echo '<div class="info">Total publicados: ' . $count . '</div>';
+            } catch (Exception $e) {
+                echo '<div class="error">✗ Error en getNewsCountByStatus(): ' . htmlspecialchars($e->getMessage()) . '</div>';
+            }
+        } catch (Exception $e) {
+            echo '<div class="error">✗ Error al crear News: ' . htmlspecialchars($e->getMessage()) . '</div>';
+            echo '<pre>' . htmlspecialchars($e->getTraceAsString()) . '</pre>';
+        }
+        
+        // 6. Verificar vistas
+        echo '<h2>6. Verificar Vistas</h2>';
+        $blogView = dirname(dirname(__DIR__)) . '/src/views/pages/blog.php';
+        if (file_exists($blogView)) {
+            echo '<div class="success">✓ blog.php existe</div>';
+        } else {
+            echo '<div class="error">✗ blog.php NO existe</div>';
+        }
+        
+        echo '<hr><p><a href="' . URL_ROOT . '/blog">← Volver al blog (sin debug)</a></p>';
+        echo '</div></body></html>';
+        exit;
+    }
+    
+    // Ver post individual del blog
+    public function verPost($id = null) {
+        if (!$id) {
+            redirect('blog');
+        }
+        
+        $newsModel = $this->model('News');
+        $post = $newsModel->getNewsById($id);
+        
+        if (!$post || ($post->estado ?? 'borrador') !== 'publicado') {
+            // Si no existe o no está publicado, redirigir al blog
+            redirect('blog');
+        }
+        
+        // Incrementar vistas (si existe el campo)
+        // Esto se puede hacer con una actualización directa
+        
+        // Obtener posts relacionados (últimos 3 posts)
+        $relatedPosts = $newsModel->getPublishedNews(1, 3);
+        // Filtrar el post actual
+        $relatedPosts = array_filter($relatedPosts, function($item) use ($id) {
+            return ($item->id ?? $item['id'] ?? null) != $id;
+        });
+        $relatedPosts = array_slice($relatedPosts, 0, 3);
+        
         $data = [
-            'title' => 'Blog',
-            'description' => 'Artículos y publicaciones de la Filá Mariscales'
+            'title' => $post->titulo ?? $post['titulo'] ?? 'Post',
+            'description' => substr(strip_tags($post->contenido ?? $post['contenido'] ?? ''), 0, 160),
+            'post' => $post,
+            'related_posts' => $relatedPosts
         ];
-        $this->view('pages/blog', $data);
+        
+        $this->view('pages/blog-post', $data);
     }
 
     // Página de calendario

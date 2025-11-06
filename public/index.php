@@ -107,7 +107,11 @@ if (empty($url[0])) {
 } elseif ($url[0] === 'noticias') {
     $controller->noticias();
 } elseif ($url[0] === 'blog') {
-    $controller->blog();
+    if (isset($url[1]) && $url[1] === 'post' && isset($url[2])) {
+        $controller->verPost($url[2]);
+    } else {
+        $controller->blog();
+    }
 } elseif ($url[0] === 'calendario') {
     $controller->calendario();
 } elseif ($url[0] === 'galeria') {
