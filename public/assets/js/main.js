@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initMobileMenu();
     setActiveNavItem();
     initNavbarScroll();
+    initLazyLoading();
 });
 
 function initBootstrapComponents() {
@@ -99,4 +100,37 @@ function initNavbarScroll() {
             navbar.classList.remove('scrolled');
         }
     });
+}
+
+// Lazy Loading de imágenes para mejor performance
+function initLazyLoading() {
+    // Si el navegador soporta loading="lazy" nativo, agregarlo a todas las imágenes
+    if ('loading' in HTMLImageElement.prototype) {
+        const images = document.querySelectorAll('img:not([loading])');
+        images.forEach(img => {
+            // No aplicar a imágenes del carousel o hero (carga inmediata)
+            if (!img.closest('.carousel') && !img.closest('.hero')) {
+                img.loading = 'lazy';
+            }
+        });
+    } else {
+        // Fallback para navegadores antiguos usando Intersection Observer
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    if (img.dataset.src) {
+                        img.src = img.dataset.src;
+                        img.removeAttribute('data-src');
+                    }
+                    observer.unobserve(img);
+                }
+            });
+        });
+        
+        // Observar imágenes con data-src
+        document.querySelectorAll('img[data-src]').forEach(img => {
+            imageObserver.observe(img);
+        });
+    }
 }

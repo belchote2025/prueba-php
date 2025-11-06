@@ -54,3 +54,9 @@ dist/
 # Archivos de coverage
 coverage/
 .nyc_output/
+
+# Archivos de test/debug
+public/test-*.php
+public/debug-*.php
+public/check-db.php
+public/create-missing-tables.php

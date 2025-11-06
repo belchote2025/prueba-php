@@ -97,8 +97,12 @@ class SecurityHelper {
         return bin2hex(random_bytes($length));
     }
     
-    // Sanitizar entrada
+    // Sanitizar entrada (usar InputSanitizer si está disponible)
     public static function sanitizeInput($data) {
+        if (class_exists('InputSanitizer')) {
+            return InputSanitizer::sanitize($data);
+        }
+        // Fallback al método original
         if (is_array($data)) {
             return array_map([self::class, 'sanitizeInput'], $data);
         }

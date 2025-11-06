@@ -1,216 +1,143 @@
-# Filá Mariscales Web - Versión 2.0.0
+# 🛡️ Filá Mariscales - Caballeros Templarios
 
-Sitio web moderno y optimizado para la **Filá Mariscales de Caballeros Templarios de Elche**.
+Sitio web oficial de la Filá Mariscales de Caballeros Templarios de Elche.
+
+## 📋 Descripción
+
+Aplicación web desarrollada en PHP con arquitectura MVC para la gestión de la Filá Mariscales. Incluye sistema de noticias, eventos, galería, tienda online, panel de administración y más.
 
 ## 🚀 Características
 
-- **Frontend Moderno**: HTML5, CSS3, JavaScript ES6+ con Bootstrap 5
-- **Backend Optimizado**: PHP 8+ con arquitectura MVC
-- **Base de Datos**: MySQL con estructura optimizada
-- **API REST**: Comunicación frontend-backend
-- **Panel de Administración**: Moderno y responsive
-- **Responsive Design**: Compatible con todos los dispositivos
-- **SEO Optimizado**: Meta tags y estructura semántica
+- ✅ Sistema de noticias y publicaciones
+- ✅ Gestión de eventos y calendario
+- ✅ Galería de imágenes
+- ✅ Tienda online con carrito de compras
+- ✅ Sistema de contacto y newsletter
+- ✅ Panel de administración completo
+- ✅ Sistema de usuarios y autenticación
+- ✅ Estadísticas y analytics
 
-## 📁 Estructura del Proyecto
+## 🛠️ Tecnologías
 
-```
-fila-mariscales-web/
-├── public/               # Directorio público (punto de entrada)
-│   ├── index.php        # Punto de entrada principal
-│   └── assets/          # Recursos estáticos
-│       ├── css/         # Estilos CSS
-│       ├── js/          # JavaScript
-│       └── images/      # Imágenes
-├── src/                 # Código fuente
-│   ├── config/         # Configuración
-│   ├── controllers/    # Controladores
-│   ├── models/         # Modelos
-│   └── views/          # Vistas
-├── database/             # Base de datos
-│   └── schema.sql        # Esquema de la BD
-└── uploads/              # Archivos subidos
-```
+- **Backend**: PHP 8.4+
+- **Base de datos**: MySQL/MariaDB
+- **Frontend**: Bootstrap 5.3, JavaScript, HTML5, CSS3
+- **Servidor**: Apache con mod_rewrite
 
-## 🛠️ Instalación
+## 📦 Instalación
 
 ### Requisitos
-- PHP 8.0+
-- MySQL 8.0+
-- Servidor web (Apache/Nginx)
-- XAMPP/WAMP/LAMP
+
+- PHP 8.0 o superior
+- MySQL 5.7+ o MariaDB 10.2+
+- Apache con mod_rewrite
+- Extensiones PHP: PDO, mysqli, mbstring, gd
 
 ### Pasos de Instalación
 
 1. **Clonar el repositorio**
    ```bash
-git clone https://github.com/tu-usuario/fila-mariscales-web.git
-cd fila-mariscales-web
+   git clone https://github.com/belchote2025/prueba-php.git
+   cd prueba-php
    ```
 
-2. **Configurar la base de datos**
-```bash
-# Importar el esquema
-mysql -u root -p < database/schema.sql
+2. **Configurar base de datos**
+   - Importar el archivo `database/schema.sql` en tu base de datos
+   - O ejecutar `public/create-missing-tables.php` para crear tablas faltantes
+
+3. **Configurar variables de entorno**
+   - Copiar `.env.example` a `.env` (si existe)
+   - O editar `src/config/config.php` directamente
+   - Configurar credenciales de base de datos:
+     ```php
+     DB_HOST=localhost
+     DB_NAME=nombre_base_datos
+     DB_USER=usuario
+     DB_PASS=contraseña
+     ```
+
+4. **Configurar Document Root**
+   - En local: Apuntar a `public/` o usar `http://localhost/prueba-php/public/`
+   - En hosting: Configurar Document Root a `public_html/public/` o similar
+
+5. **Permisos**
+   - Asegurar permisos de escritura en `uploads/` (755)
+   - Archivos: 644, Directorios: 755
+
+## 🌐 Configuración de Hosting
+
+### Hostinger / cPanel
+
+1. Subir todos los archivos al servidor
+2. Configurar Document Root a `public_html/public/`
+3. Verificar que `.htaccess` esté habilitado
+4. Configurar credenciales de base de datos en `.env` o `config.php`
+
+### Verificación
+
+Después de la instalación, verifica que todo funcione:
+- Base de datos: `https://tudominio.com/public/check-db.php`
+- Página principal: `https://tudominio.com/`
+
+## 📁 Estructura del Proyecto
+
 ```
-
-3. **Configurar la aplicación**
-```bash
-# Editar la configuración de la base de datos
-nano api/config/database.php
-```
-
-4. **Configurar permisos**
-```bash
-chmod 755 uploads/
-chmod 755 uploads/images/
-chmod 755 uploads/gallery/
-chmod 755 uploads/news/
-```
-
-5. **Acceder al sitio**
-- Frontend: `http://localhost/fila-mariscales-web/`
-- Admin: `http://localhost/prueba-php/public/admin/login`
-
-## 🔧 Configuración
-
-### Base de Datos
-Editar `src/config/config.php`:
-```php
-define('DB_CONFIG', [
-    'host' => 'localhost',
-    'dbname' => 'fila_mariscales_web',
-    'username' => 'root',
-    'password' => 'tu_password'
-]);
-```
-
-### Email
-Configurar en `api/config/database.php`:
-```php
-define('EMAIL_CONFIG', [
-    'smtp_host' => 'smtp.gmail.com',
-    'smtp_port' => 587,
-    'smtp_username' => 'tu_email@gmail.com',
-    'smtp_password' => 'tu_password'
-]);
-```
-
-## 📱 Funcionalidades
-
-### Frontend
-- ✅ Página principal con hero section
-- ✅ Sección de noticias dinámicas
-- ✅ Calendario de eventos
-- ✅ Galería de imágenes
-- ✅ Tienda online
-- ✅ Formulario de contacto
-- ✅ Sistema de login/registro
-- ✅ Diseño responsive
-
-### Panel de Administración
-- ✅ Dashboard con estadísticas
-- ✅ Gestión de noticias
-- ✅ Gestión de eventos
-- ✅ Gestión de galería
-- ✅ Gestión de productos
-- ✅ Gestión de pedidos
-- ✅ Gestión de mensajes
-- ✅ Gestión de usuarios
-- ✅ Configuración del sistema
-
-### API REST
-- ✅ Endpoints para todas las funcionalidades
-- ✅ Autenticación JWT
-- ✅ Validación de datos
-- ✅ Manejo de errores
-- ✅ Documentación automática
-
-## 🎨 Personalización
-
-### Colores
-Los colores principales se definen en `assets/css/style.css`:
-```css
-:root {
-    --primary-color: #8B4513;
-    --secondary-color: #D2691E;
-    --accent-color: #CD853F;
-    --dark-color: #2C1810;
-}
-```
-
-### Fuentes
-```css
-font-family: 'Cinzel', serif;  /* Títulos */
-font-family: 'Open Sans', sans-serif;  /* Texto */
+prueba-php/
+├── public/                 # Punto de entrada (Document Root)
+│   ├── index.php          # Router principal
+│   ├── assets/            # CSS, JS, imágenes
+│   └── .htaccess          # Configuración Apache
+├── src/
+│   ├── config/            # Configuración
+│   ├── controllers/       # Controladores MVC
+│   ├── models/            # Modelos de datos
+│   ├── views/             # Vistas
+│   └── helpers/           # Funciones auxiliares
+├── database/
+│   └── schema.sql         # Esquema de base de datos
+├── uploads/               # Archivos subidos
+└── .env                   # Variables de entorno (no subir)
 ```
 
 ## 🔒 Seguridad
 
-- ✅ Validación de entrada
-- ✅ Sanitización de datos
-- ✅ Protección CSRF
-- ✅ Autenticación segura
-- ✅ Headers de seguridad
-- ✅ Límites de rate limiting
+⚠️ **IMPORTANTE**: Antes de subir a producción:
 
-## 📊 Rendimiento
+1. Eliminar archivos de test/debug:
+   - `public/test-*.php`
+   - `public/debug-*.php`
+   - `public/check-db.php`
+   - `public/create-missing-tables.php`
 
-- ✅ Optimización de imágenes
-- ✅ Minificación de CSS/JS
-- ✅ Caché de consultas
-- ✅ Compresión gzip
-- ✅ CDN para recursos estáticos
+2. Proteger archivos sensibles:
+   - `.env` está en `.gitignore`
+   - No subir credenciales al repositorio
 
-## 🚀 Despliegue
+3. Configurar permisos correctos
+4. Habilitar HTTPS
 
-### Producción
-1. Configurar servidor web
-2. Configurar SSL/HTTPS
-3. Optimizar base de datos
-4. Configurar backup automático
-5. Monitoreo de rendimiento
+## 📝 Scripts Útiles
 
-### Docker (Opcional)
-```bash
-docker-compose up -d
-```
+- `public/check-db.php` - Verificar estado de base de datos
+- `public/create-missing-tables.php` - Crear tablas faltantes
+- `database/create-missing-tables.sql` - SQL para crear tablas
 
-## 📝 Changelog
-
-### v2.0.0 (2024-01-06)
-- ✨ Migración completa a arquitectura moderna
-- ✨ Nuevo panel de administración
-- ✨ API REST completa
-- ✨ Diseño responsive mejorado
-- ✨ Optimización de rendimiento
-- ✨ Mejoras de seguridad
-
-## 🤝 Contribución
+## 🤝 Contribuir
 
 1. Fork el proyecto
-2. Crear una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
 3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
 4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abrir un Pull Request
+5. Abre un Pull Request
 
 ## 📄 Licencia
 
-Este proyecto está bajo la Licencia MIT. Ver `LICENSE` para más detalles.
+Este proyecto es privado y propiedad de la Filá Mariscales de Caballeros Templarios.
 
-## 📞 Contacto
+## 👥 Contacto
 
-- **Email**: info@filamariscales.com
-- **Teléfono**: +34 965 123 456
-- **Web**: https://filamariscales.com
-
-## 🙏 Agradecimientos
-
-- Bootstrap 5 por el framework CSS
-- Font Awesome por los iconos
-- Chart.js por los gráficos
-- Google Fonts por las tipografías
+Para más información, contacta con la administración de la Filá Mariscales.
 
 ---
 
-**Desarrollado con ❤️ para la Filá Mariscales de Caballeros Templarios de Elche**
+**Desarrollado para la Filá Mariscales de Caballeros Templarios de Elche** 🛡️

@@ -32,11 +32,11 @@ ob_start(); // Start output buffering
         </div>
         
         <!-- Controles del Carrusel -->
-        <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev" style="width: 50px; height: 50px; background: rgba(139, 0, 0, 0.5); border: 2px solid #FFFFFF; border-radius: 50%; top: 50%; transform: translateY(-50%); z-index: 10;">
+        <button class="carousel-control-prev carousel-control-custom" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Anterior</span>
         </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next" style="width: 50px; height: 50px; background: rgba(139, 0, 0, 0.5); border: 2px solid #FFFFFF; border-radius: 50%; top: 50%; transform: translateY(-50%); z-index: 10;">
+        <button class="carousel-control-next carousel-control-custom" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
             <span class="carousel-control-next-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Siguiente</span>
         </button>
@@ -56,16 +56,16 @@ ob_start(); // Start output buffering
     </div>
     
     <!-- Contenido del Hero -->
-    <div class="container" style="position: relative; z-index: 10;">
+    <div class="container hero-content" style="position: relative; z-index: 10;">
         <div class="row justify-content-center">
-            <div class="col-lg-10 text-center">
-                <h1 style="font-size: 3.5rem; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); color: white; margin-bottom: 1rem;">Bienvenidos a la Filá Mariscales</h1>
-                <p style="font-size: 1.5rem; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); color: white; margin-bottom: 2rem;">Caballeros Templarios de Elche</p>
-                <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
-                    <a href="<?php echo URL_ROOT; ?>/historia" style="background: linear-gradient(135deg, #FFFFFF 0%, #f0f0f0 100%); color: #8B0000; border: 2px solid #FFFFFF; padding: 12px 30px; border-radius: 25px; font-weight: bold; text-decoration: none; display: inline-block;">
+            <div class="col-lg-10 col-md-11 col-12 text-center">
+                <h1 class="hero-title">Bienvenidos a la Filá Mariscales</h1>
+                <p class="hero-subtitle">Caballeros Templarios de Elche</p>
+                <div class="hero-buttons">
+                    <a href="<?php echo URL_ROOT; ?>/historia" class="btn-hero btn-hero-primary">
                         <i class="bi bi-shield-fill me-2"></i>Conócenos
                     </a>
-                    <a href="<?php echo URL_ROOT; ?>/calendario" style="background: linear-gradient(135deg, #FFFFFF 0%, #f0f0f0 100%); color: #8B0000; border: 2px solid #FFFFFF; padding: 12px 30px; border-radius: 25px; font-weight: bold; text-decoration: none; display: inline-block;">
+                    <a href="<?php echo URL_ROOT; ?>/calendario" class="btn-hero btn-hero-secondary">
                         <i class="bi bi-calendar-event me-2"></i>Próximos Eventos
                     </a>
                 </div>
@@ -75,37 +75,36 @@ ob_start(); // Start output buffering
 </div>
 
 <!-- About Section -->
-<section class="py-7">
+<section class="py-7 about-section">
     <div class="container">
         <div class="row align-items-center">
-            <div class="col-lg-6">
+            <div class="col-lg-6 col-md-12 mb-4 mb-lg-0">
                 <h2 class="text-gradient mb-4">Sobre la Filá Mariscales</h2>
                 <p class="lead mb-4">Somos una de las filaes más tradicionales y respetadas de las Fiestas de Moros y Cristianos de Elche, fundada en 1985.</p>
                 <p class="mb-4">Nuestra filá representa a los Caballeros Templarios, una de las órdenes militares más importantes de la Edad Media. Con más de 35 años de historia, hemos mantenido viva la tradición y el espíritu de las fiestas.</p>
-                <div class="d-flex gap-3">
-                    <div class="text-center">
+                <div class="d-flex gap-3 flex-wrap stats-container">
+                    <div class="text-center stat-item">
                         <h3 class="text-gradient mb-0">150+</h3>
                         <p class="small text-muted">Miembros</p>
                     </div>
-                    <div class="text-center">
+                    <div class="text-center stat-item">
                         <h3 class="text-gradient mb-0">35</h3>
                         <p class="small text-muted">Años de Historia</p>
                     </div>
-                    <div class="text-center">
+                    <div class="text-center stat-item">
                         <h3 class="text-gradient mb-0">25+</h3>
                         <p class="small text-muted">Eventos Anuales</p>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6">
-                <div class="position-relative">
-                    <div class="bg-gradient-dark rounded-3 shadow-lg d-flex align-items-center justify-content-center" style="height: 400px; background: linear-gradient(135deg, #8B4513 0%, #654321 100%);">
+            <div class="col-lg-6 col-md-12">
+                <div class="position-relative about-image">
+                    <div class="bg-gradient-dark rounded-3 shadow-lg d-flex align-items-center justify-content-center about-image-container">
                         <div class="text-center text-white">
-                            <i class="bi bi-shield-fill" style="font-size: 5rem;"></i>
+                            <i class="bi bi-shield-fill about-icon"></i>
                             <h3 class="mt-3">Filá Mariscales</h3>
                         </div>
                     </div>
-                    <div class="position-absolute top-0 start-0 w-100 h-100 bg-gradient-dark rounded-3" style="opacity: 0.3;"></div>
                 </div>
             </div>
         </div>
@@ -254,10 +253,162 @@ ob_end_flush(); // End output buffering
     transform: scale(1.05);
 }
 
-/* Responsive para el carrusel */
+/* Hero Content Styles */
+.hero-content {
+    padding: 2rem 1rem;
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+    color: white;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+.hero-subtitle {
+    font-size: 1.5rem;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+    color: white;
+    margin-bottom: 2rem;
+}
+
+.hero-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.btn-hero {
+    background: linear-gradient(135deg, #FFFFFF 0%, #f0f0f0 100%);
+    color: #8B0000;
+    border: 2px solid #FFFFFF;
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-weight: bold;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.btn-hero:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+    color: #8B0000;
+}
+
+/* Carousel Controls */
+.carousel-control-custom {
+    width: 50px;
+    height: 50px;
+    background: rgba(139, 0, 0, 0.5);
+    border: 2px solid #FFFFFF;
+    border-radius: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    opacity: 0.8;
+    transition: all 0.3s ease;
+}
+
+.carousel-control-custom:hover {
+    opacity: 1;
+    background: rgba(139, 0, 0, 0.7);
+}
+
+/* About Section */
+.about-section {
+    padding: 4rem 0;
+}
+
+.stats-container {
+    justify-content: center;
+}
+
+.stat-item {
+    flex: 1;
+    min-width: 100px;
+}
+
+.about-image-container {
+    height: 400px;
+    background: linear-gradient(135deg, #8B4513 0%, #654321 100%);
+}
+
+.about-icon {
+    font-size: 5rem;
+}
+
+/* Responsive para el carrusel y hero */
+@media (max-width: 991.98px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.25rem;
+    }
+    
+    .btn-hero {
+        padding: 10px 25px;
+        font-size: 0.95rem;
+    }
+    
+    .carousel-control-custom {
+        width: 45px;
+        height: 45px;
+    }
+    
+    .about-image-container {
+        height: 350px;
+    }
+    
+    .about-icon {
+        font-size: 4rem;
+    }
+}
+
 @media (max-width: 768px) {
+    .hero {
+        min-height: 70vh;
+    }
+    
+    .hero-content {
+        padding: 1.5rem 1rem;
+    }
+    
+    .hero-title {
+        font-size: 2rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .btn-hero {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+        width: 100%;
+        max-width: 250px;
+    }
+    
+    .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
     .carousel-image-container {
         height: 100vh;
+    }
+    
+    .carousel-control-custom {
+        width: 40px;
+        height: 40px;
     }
     
     .carousel-caption h2 {
@@ -267,15 +418,89 @@ ob_end_flush(); // End output buffering
     .carousel-caption p {
         font-size: 1.2rem !important;
     }
+    
+    .about-section {
+        padding: 3rem 0;
+    }
+    
+    .about-image-container {
+        height: 300px;
+    }
+    
+    .about-icon {
+        font-size: 3.5rem;
+    }
+    
+    .stats-container {
+        gap: 1.5rem;
+    }
+    
+    .stat-item {
+        min-width: 80px;
+    }
 }
 
 @media (max-width: 576px) {
+    .hero {
+        min-height: 60vh;
+    }
+    
+    .hero-content {
+        padding: 1rem 0.75rem;
+    }
+    
+    .hero-title {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1rem;
+        margin-bottom: 1.25rem;
+    }
+    
+    .btn-hero {
+        padding: 8px 18px;
+        font-size: 0.85rem;
+        width: 100%;
+        max-width: 220px;
+    }
+    
+    .carousel-control-custom {
+        width: 35px;
+        height: 35px;
+    }
+    
     .carousel-caption h2 {
         font-size: 1.5rem !important;
     }
     
     .carousel-caption p {
         font-size: 1rem !important;
+    }
+    
+    .about-section {
+        padding: 2rem 0;
+    }
+    
+    .about-image-container {
+        height: 250px;
+    }
+    
+    .about-icon {
+        font-size: 3rem;
+    }
+    
+    .stats-container {
+        gap: 1rem;
+    }
+    
+    .stat-item h3 {
+        font-size: 1.5rem;
+    }
+    
+    .stat-item p {
+        font-size: 0.8rem;
     }
 }
 </style>

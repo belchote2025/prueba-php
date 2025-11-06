@@ -11,7 +11,44 @@ if (session_status() === PHP_SESSION_NONE) {
 // Intentar cargar desde .env si existe
 $envFile = dirname(dirname(__DIR__)) . '/.env';
 if (file_exists($envFile)) {
-    $env = parse_ini_file($envFile);
+    // Parsear .env de forma más robusta
+    $env = [];
+    $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    
+    if ($lines !== false) {
+        foreach ($lines as $line) {
+            // Ignorar comentarios y líneas vacías
+            $line = trim($line);
+            if (empty($line) || strpos($line, '#') === 0) {
+                continue;
+            }
+            
+            // Separar clave y valor
+            if (strpos($line, '=') !== false) {
+                list($key, $value) = explode('=', $line, 2);
+                $key = trim($key);
+                $value = trim($value);
+                
+                // Remover comillas si las tiene
+                if ((substr($value, 0, 1) === '"' && substr($value, -1) === '"') ||
+                    (substr($value, 0, 1) === "'" && substr($value, -1) === "'")) {
+                    $value = substr($value, 1, -1);
+                }
+                
+                if (!empty($key)) {
+                    $env[$key] = $value;
+                }
+            }
+        }
+    }
+    
+    // Si el parsing manual falló, intentar con parse_ini_file como fallback
+    if (empty($env)) {
+        $env = parse_ini_file($envFile);
+        if ($env === false) {
+            $env = [];
+        }
+    }
     
     // Detectar si estamos en producción (hosting) o desarrollo local
     $isProduction = (
@@ -21,12 +58,28 @@ if (file_exists($envFile)) {
     );
     
     if ($isProduction) {
-        // PRODUCCIÓN: Usar credenciales de hosting (pueden estar comentadas, usar valores directos)
-        // Si están definidas en .env, usarlas; si no, usar las hardcodeadas para Hostinger
-        define('DB_HOST', $env['DB_HOST'] ?? 'localhost');
-        define('DB_NAME', $env['DB_NAME'] ?? 'u600265163_HAggBlS0j_pruebaphp2');
-        define('DB_USER', $env['DB_USER'] ?? 'u600265163_HAggBlS0j_pruebaphp2');
-        define('DB_PASS', $env['DB_PASS'] ?? 'Belchote1#');
+        // PRODUCCIÓN: Usar credenciales de .env
+        // Verificar que estén definidas (pueden estar vacías pero deben existir)
+        $dbHost = trim($env['DB_HOST'] ?? '');
+        $dbName = trim($env['DB_NAME'] ?? '');
+        $dbUser = trim($env['DB_USER'] ?? '');
+        $dbPass = $env['DB_PASS'] ?? ''; // Puede ser string vacío
+        
+        // Si no están configuradas, mostrar error claro con instrucciones
+        if (empty($dbHost) || empty($dbName) || empty($dbUser)) {
+            die('ERROR: Las credenciales de base de datos deben estar configuradas en el archivo .env para producción.<br><br>' .
+                'Por favor, edita el archivo .env en la raíz del proyecto y asegúrate de que estas líneas estén descomentadas y tengan valores:<br>' .
+                'DB_HOST=localhost<br>' .
+                'DB_NAME=tu_base_datos<br>' .
+                'DB_USER=tu_usuario<br>' .
+                'DB_PASS=tu_contraseña<br><br>' .
+                'Si estás en desarrollo local, el sistema detectará automáticamente localhost y usará credenciales por defecto.');
+        }
+        
+        define('DB_HOST', $dbHost);
+        define('DB_NAME', $dbName);
+        define('DB_USER', $dbUser);
+        define('DB_PASS', $dbPass);
     } else {
         // DESARROLLO LOCAL: Usar credenciales de XAMPP
         define('DB_HOST', $env['DB_HOST'] ?? 'localhost');
@@ -43,11 +96,8 @@ if (file_exists($envFile)) {
     );
     
     if ($isProduction) {
-        // Producción sin .env
-        define('DB_HOST', 'localhost');
-        define('DB_NAME', 'u600265163_HAggBlS0j_pruebaphp2');
-        define('DB_USER', 'u600265163_HAggBlS0j_pruebaphp2');
-        define('DB_PASS', 'Belchote1#');
+        // Producción sin .env - ERROR: No permitir
+        die('ERROR CRÍTICO: El archivo .env es obligatorio en producción. Por favor, crea el archivo .env con las credenciales de base de datos.');
     } else {
         // Desarrollo local sin .env
         define('DB_HOST', 'localhost');
@@ -116,6 +166,7 @@ define('SITE_NAME', 'Filá Mariscales de Caballeros Templarios de Elche');
 define('APP_VERSION', '1.0.0');
 
 // Error reporting (set to 0 in production)
+// E_STRICT está deprecado y eliminado en PHP 8, usar E_ALL directamente
 error_reporting(E_ALL);
 ini_set('display_errors', 1); // Temporal para debug
 ini_set('display_startup_errors', 1);
@@ -127,7 +178,9 @@ date_default_timezone_set('Europe/Madrid');
 spl_autoload_register(function($className) {
     $paths = [
         dirname(__DIR__) . "/models/",
-        dirname(__DIR__) . "/controllers/"
+        dirname(__DIR__) . "/controllers/",
+        dirname(__DIR__) . "/services/",
+        dirname(__DIR__) . "/helpers/"
     ];
     
     foreach ($paths as $path) {
@@ -141,3 +194,14 @@ spl_autoload_register(function($className) {
 
 // Helper functions
 require_once 'helpers.php';
+
+// Cargar servicios esenciales
+require_once dirname(__DIR__) . '/services/ErrorHandler.php';
+require_once dirname(__DIR__) . '/services/InputSanitizer.php';
+require_once dirname(__DIR__) . '/services/Validator.php';
+require_once dirname(__DIR__) . '/services/CacheHelper.php';
+require_once dirname(__DIR__) . '/services/ImageOptimizer.php';
+require_once dirname(__DIR__) . '/services/FileUploadService.php';
+
+// Cargar helpers adicionales
+require_once dirname(__DIR__) . '/helpers/CsrfHelper.php';
