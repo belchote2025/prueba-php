@@ -28,17 +28,6 @@ function getExcerpt($content, $length = 150) {
 function getDefaultImage() {
     return URL_ROOT . '/assets/images/placeholder-blog.jpg';
 }
-
-// Función para formatear fecha
-function formatDate($date) {
-    $timestamp = is_string($date) ? strtotime($date) : $date;
-    $months = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 
-               'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
-    $day = date('d', $timestamp);
-    $month = $months[date('n', $timestamp) - 1];
-    $year = date('Y', $timestamp);
-    return "$day de $month, $year";
-}
 ?>
 
 <!-- Hero Section -->
@@ -78,7 +67,7 @@ function formatDate($date) {
                     <div class="card-body p-4">
                         <div class="d-flex align-items-center mb-3">
                             <span class="badge bg-danger me-2">Destacado</span>
-                            <small class="text-muted"><?php echo formatDate($featuredFecha); ?></small>
+                            <small class="text-muted"><?php echo formatDate($featuredFecha, 'blog'); ?></small>
                         </div>
                         <h2 class="card-title fw-bold"><?php echo htmlspecialchars($featuredTitulo); ?></h2>
                         <p class="card-text lead"><?php echo getExcerpt($featuredContenido, 200); ?></p>
@@ -134,7 +123,7 @@ function formatDate($date) {
                         <div class="d-flex align-items-center mb-2">
                             <small class="text-muted me-3">
                                 <i class="bi bi-calendar3 me-1"></i>
-                                <?php echo formatDate($postFecha); ?>
+                                <?php echo formatDate($postFecha, 'blog'); ?>
                             </small>
                         </div>
                         <h5 class="card-title fw-bold"><?php echo htmlspecialchars($postTitulo); ?></h5>

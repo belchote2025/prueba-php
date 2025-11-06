@@ -61,14 +61,13 @@ class News {
         if ($perPage <= 0) $perPage = 10;
         if ($offset < 0) $offset = 0;
         
-        // Intentar con estado primero, si falla usar activa
-        // Usar COALESCE para manejar ambos casos
+        // La tabla tiene campo 'estado', usar solo ese
         $this->db->query('SELECT n.*, 
                          COALESCE(u.nombre, "") as autor_nombre, 
                          COALESCE(u.apellidos, "") as autor_apellidos 
                          FROM noticias n 
                          LEFT JOIN users u ON n.autor_id = u.id 
-                         WHERE (n.estado = "publicado" OR (n.estado IS NULL AND COALESCE(n.activa, 1) = 1))
+                         WHERE n.estado = "publicado"
                          ORDER BY n.fecha_publicacion DESC 
                          LIMIT ' . (int)$perPage . ' OFFSET ' . (int)$offset);
         
@@ -182,30 +181,15 @@ class News {
     // Get count by status
     public function getNewsCountByStatus($status = null) {
         if ($status) {
-            // Intentar con estado primero
-            try {
-                $this->db->query('SELECT COUNT(*) as count FROM noticias WHERE estado = :estado');
-                $this->db->bind(':estado', $status);
-                $result = $this->db->single();
-                return $result ? (int)$result->count : 0;
-            } catch (Exception $e) {
-                // Si falla, usar activa (1 = activa, 0 = inactiva)
-                $activa = ($status === 'publicado') ? 1 : 0;
-                $this->db->query('SELECT COUNT(*) as count FROM noticias WHERE activa = :activa');
-                $this->db->bind(':activa', $activa);
-                $result = $this->db->single();
-                return $result ? (int)$result->count : 0;
-            }
+            // La tabla tiene campo 'estado'
+            $this->db->query('SELECT COUNT(*) as count FROM noticias WHERE estado = :estado');
+            $this->db->bind(':estado', $status);
+            $result = $this->db->single();
+            return $result ? (int)$result->count : 0;
         } else {
-            // Intentar agrupar por estado
-            try {
-                $this->db->query('SELECT estado, COUNT(*) as count FROM noticias GROUP BY estado');
-                return $this->db->resultSet();
-            } catch (Exception $e) {
-                // Si falla, agrupar por activa
-                $this->db->query('SELECT activa, COUNT(*) as count FROM noticias GROUP BY activa');
-                return $this->db->resultSet();
-            }
+            // Agrupar por estado
+            $this->db->query('SELECT estado, COUNT(*) as count FROM noticias GROUP BY estado');
+            return $this->db->resultSet();
         }
     }
     

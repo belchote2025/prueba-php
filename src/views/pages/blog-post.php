@@ -1,17 +1,6 @@
 <?php $content = '\n';
 ob_start(); // Start output buffering
 
-// Función para formatear fecha
-function formatDate($date) {
-    $timestamp = is_string($date) ? strtotime($date) : $date;
-    $months = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 
-               'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
-    $day = date('d', $timestamp);
-    $month = $months[date('n', $timestamp) - 1];
-    $year = date('Y', $timestamp);
-    return "$day de $month, $year";
-}
-
 // Obtener datos del post
 $post = $data['post'];
 $postId = is_object($post) ? $post->id : $post['id'];
@@ -37,7 +26,7 @@ $autorCompleto = trim($postAutor . ' ' . $postAutorApellidos);
         <h1 class="display-4 fw-bold mb-3"><?php echo htmlspecialchars($postTitulo); ?></h1>
         <p class="lead">
             <i class="bi bi-calendar3 me-2"></i>
-            <?php echo formatDate($postFecha); ?>
+            <?php echo formatDate($postFecha, 'blog'); ?>
             <span class="mx-3">|</span>
             <i class="bi bi-person me-2"></i>
             <?php echo htmlspecialchars($autorCompleto); ?>

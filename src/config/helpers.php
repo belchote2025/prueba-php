@@ -66,8 +66,21 @@ function sanitize($data) {
 }
 
 // Format date
-function formatDate($date) {
-    return date('d/m/Y', strtotime($date));
+function formatDate($date, $format = 'short') {
+    $timestamp = is_string($date) ? strtotime($date) : $date;
+    
+    if ($format === 'long' || $format === 'blog') {
+        // Formato largo: "15 de julio, 2025"
+        $months = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 
+                   'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+        $day = date('d', $timestamp);
+        $month = $months[date('n', $timestamp) - 1];
+        $year = date('Y', $timestamp);
+        return "$day de $month, $year";
+    } else {
+        // Formato corto: "15/07/2025"
+        return date('d/m/Y', $timestamp);
+    }
 }
 
 // Check if current page matches the given path
