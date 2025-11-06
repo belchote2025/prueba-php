@@ -72,7 +72,7 @@ $autorCompleto = trim($postAutor . ' ' . $postAutorApellidos);
                             <div class="text-muted">
                                 <small>
                                     <i class="bi bi-calendar3 me-1"></i>
-                                    Publicado el <?php echo formatDate($postFecha); ?>
+                                    Publicado el <?php echo formatDate($postFecha, 'blog'); ?>
                                 </small>
                             </div>
                         </div>
@@ -142,7 +142,7 @@ $autorCompleto = trim($postAutor . ' ' . $postAutorApellidos);
                                 </h6>
                                 <small class="text-muted">
                                     <i class="bi bi-calendar3 me-1"></i>
-                                    <?php echo formatDate($relatedFecha); ?>
+                                    <?php echo formatDate($relatedFecha, 'blog'); ?>
                                 </small>
                             </div>
                         </div>
