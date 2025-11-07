@@ -260,7 +260,8 @@ class AuthController extends Controller {
         // Check for POST
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Sanitize POST data
-            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+            // FILTER_SANITIZE_STRING está deprecado en PHP 8.1+
+            // Los campos se sanitizarán individualmente con htmlspecialchars() cuando se usen
             
             // Process form data
             $data = [
@@ -342,7 +343,8 @@ class AuthController extends Controller {
     public function forgotPassword() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Sanitize POST data
-            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+            // FILTER_SANITIZE_STRING está deprecado en PHP 8.1+
+            // Los campos se sanitizarán individualmente con htmlspecialchars() cuando se usen
             
             $email = trim($_POST['email']);
             
@@ -397,7 +399,8 @@ class AuthController extends Controller {
         
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Sanitize POST data
-            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+            // FILTER_SANITIZE_STRING está deprecado en PHP 8.1+
+            // Los campos se sanitizarán individualmente con htmlspecialchars() cuando se usen
             
             $data = [
                 'title' => 'Restablecer Contraseña',

@@ -1,61 +1,6 @@
 <?php
-// Datos de los videos (simulados - en producción vendrían de la base de datos)
-$videos = [
-    [
-        'id' => 'video1',
-        'title' => 'Desfile de Moros y Cristianos 2023',
-        'description' => 'Participación completa de la Filá Mariscales en las fiestas patronales de Elche. Un espectáculo lleno de tradición, honor y hermandad.',
-        'thumbnail' => 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
-        'date' => 'Agosto 2023',
-        'duration' => '15:30',
-        'src' => 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4'
-    ],
-    [
-        'id' => 'video2',
-        'title' => 'Ensayo General 2023',
-        'description' => 'Preparación y ensayo previo a las fiestas principales. Los caballeros templarios perfeccionan cada movimiento y coreografía.',
-        'thumbnail' => 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
-        'date' => 'Julio 2023',
-        'duration' => '8:45',
-        'src' => 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_2mb.mp4'
-    ],
-    [
-        'id' => 'video3',
-        'title' => 'Ceremonia de Iniciación',
-        'description' => 'Ritual de bienvenida para nuevos caballeros templarios. Una ceremonia llena de simbolismo y tradición medieval.',
-        'thumbnail' => 'https://images.unsplash.com/photo-1544966503-7cc5ac882d5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
-        'date' => 'Junio 2023',
-        'duration' => '12:20',
-        'src' => 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_5mb.mp4'
-    ],
-    [
-        'id' => 'video4',
-        'title' => 'Hermanamiento con Filá Templaria',
-        'description' => 'Intercambio cultural con otra filá templaria de Valencia. Un momento de unión entre hermandades templarias.',
-        'thumbnail' => 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
-        'date' => 'Mayo 2023',
-        'duration' => '22:15',
-        'src' => 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4'
-    ],
-    [
-        'id' => 'video5',
-        'title' => 'Conferencia Historia Templaria',
-        'description' => 'Charla educativa sobre la historia de los caballeros templarios. Conocimiento y tradición se unen en esta conferencia.',
-        'thumbnail' => 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
-        'date' => 'Abril 2023',
-        'duration' => '45:30',
-        'src' => 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_2mb.mp4'
-    ],
-    [
-        'id' => 'video6',
-        'title' => 'Comida de Hermandad',
-        'description' => 'Momento de convivencia entre todos los miembros de la filá. La hermandad se fortalece en estos encuentros.',
-        'thumbnail' => 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
-        'date' => 'Marzo 2023',
-        'duration' => '18:45',
-        'src' => 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_5mb.mp4'
-    ]
-];
+// Obtener videos de $data
+$videos = $data['videos'] ?? [];
 ?>
 
 <!-- Hero Section -->
@@ -69,7 +14,7 @@ $videos = [
                 <p class="lead mb-5">Revive los mejores momentos de la Filá Mariscales en acción</p>
                 <div class="gallery-stats d-flex justify-content-center gap-4 mb-5">
                     <div class="stat-item">
-                        <h3 class="text-gradient mb-0"><?php echo count($videos); ?></h3>
+                        <h3 class="text-gradient mb-0"><?php echo $data['video_count'] ?? count($videos); ?></h3>
                         <small class="text-muted">Videos</small>
                     </div>
                     <div class="stat-item">
@@ -102,28 +47,85 @@ $videos = [
                 <!-- Videos Grid -->
                 <div class="videos-grid">
                     <div class="row">
-                        <?php foreach ($videos as $video): ?>
-                        <div class="col-lg-4 col-md-6 mb-4">
-                            <div class="video-card">
-                                <div class="video-thumbnail">
-                                    <div class="video-overlay">
-                                        <button class="play-btn" data-video="<?php echo $video['id']; ?>">
-                                            <i class="bi bi-play-fill"></i>
-                                        </button>
+                        <?php if (!empty($videos)): ?>
+                            <?php foreach ($videos as $video): 
+                                $videoObj = is_object($video) ? $video : (object)$video;
+                                $videoId = $videoObj->id ?? 0;
+                                $videoTitulo = $videoObj->titulo ?? 'Sin título';
+                                $videoDescripcion = $videoObj->descripcion ?? '';
+                                $videoUrl = $videoObj->url_video ?? '';
+                                $videoThumbnail = $videoObj->url_thumbnail ?? '';
+                                $videoTipo = $videoObj->tipo ?? 'youtube';
+                                $videoFecha = $videoObj->fecha_subida ?? date('Y-m-d');
+                                $videoDuracion = $videoObj->duracion ?? 0;
+                                
+                                // Formatear duración
+                                $duracionFormato = '';
+                                if ($videoDuracion > 0) {
+                                    $minutos = floor($videoDuracion / 60);
+                                    $segundos = $videoDuracion % 60;
+                                    $duracionFormato = sprintf('%02d:%02d', $minutos, $segundos);
+                                }
+                                
+                                // Determinar URL del video según tipo
+                                $videoSrc = '';
+                                if ($videoTipo === 'youtube') {
+                                    $videoModel = new Video();
+                                    $youtubeId = $videoModel->extractYouTubeId($videoUrl);
+                                    if ($youtubeId) {
+                                        $videoSrc = 'https://www.youtube.com/embed/' . $youtubeId;
+                                        if (!$videoThumbnail) {
+                                            $videoThumbnail = 'https://img.youtube.com/vi/' . $youtubeId . '/maxresdefault.jpg';
+                                        }
+                                    }
+                                } elseif ($videoTipo === 'vimeo') {
+                                    $videoModel = new Video();
+                                    $vimeoId = $videoModel->extractVimeoId($videoUrl);
+                                    if ($vimeoId) {
+                                        $videoSrc = 'https://player.vimeo.com/video/' . $vimeoId;
+                                    }
+                                } else {
+                                    $videoSrc = $videoUrl;
+                                }
+                            ?>
+                            <div class="col-lg-4 col-md-6 mb-4">
+                                <div class="video-card">
+                                    <div class="video-thumbnail">
+                                        <div class="video-overlay">
+                                            <button class="play-btn" data-video-id="<?php echo $videoId; ?>" data-video-src="<?php echo htmlspecialchars($videoSrc); ?>" data-video-tipo="<?php echo $videoTipo; ?>">
+                                                <i class="bi bi-play-fill"></i>
+                                            </button>
+                                        </div>
+                                        <?php if ($videoThumbnail): ?>
+                                            <img src="<?php echo htmlspecialchars($videoThumbnail); ?>" alt="<?php echo htmlspecialchars($videoTitulo); ?>" 
+                                                 onerror="this.onerror=null; this.src='<?php echo URL_ROOT; ?>/assets/images/default-video.jpg';">
+                                        <?php else: ?>
+                                            <div class="bg-danger bg-opacity-10 d-flex align-items-center justify-content-center" style="height: 200px;">
+                                                <i class="bi bi-play-circle text-danger" style="font-size: 3rem;"></i>
+                                            </div>
+                                        <?php endif; ?>
                                     </div>
-                                    <img src="<?php echo $video['thumbnail']; ?>" alt="<?php echo htmlspecialchars($video['title']); ?>">
-                                </div>
-                                <div class="video-info">
-                                    <h4 class="video-title"><?php echo htmlspecialchars($video['title']); ?></h4>
-                                    <p class="video-description"><?php echo htmlspecialchars($video['description']); ?></p>
-                                    <div class="video-meta">
-                                        <span class="video-date"><i class="bi bi-calendar me-1"></i><?php echo $video['date']; ?></span>
-                                        <span class="video-duration"><i class="bi bi-clock me-1"></i><?php echo $video['duration']; ?></span>
+                                    <div class="video-info">
+                                        <h4 class="video-title"><?php echo htmlspecialchars($videoTitulo); ?></h4>
+                                        <?php if ($videoDescripcion): ?>
+                                            <p class="video-description"><?php echo htmlspecialchars(substr($videoDescripcion, 0, 100)) . (strlen($videoDescripcion) > 100 ? '...' : ''); ?></p>
+                                        <?php endif; ?>
+                                        <div class="video-meta">
+                                            <span class="video-date"><i class="bi bi-calendar me-1"></i><?php echo formatDate($videoFecha, 'blog'); ?></span>
+                                            <?php if ($duracionFormato): ?>
+                                                <span class="video-duration"><i class="bi bi-clock me-1"></i><?php echo $duracionFormato; ?></span>
+                                            <?php endif; ?>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <?php endforeach; ?>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <div class="col-12 text-center py-5">
+                                <i class="bi bi-play-circle text-muted" style="font-size: 4rem;"></i>
+                                <p class="text-muted mt-3">Aún no hay videos disponibles</p>
+                            </div>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -139,10 +141,7 @@ $videos = [
             <i class="bi bi-x-lg"></i>
         </button>
         <div class="video-container">
-            <video id="modalVideo" controls>
-                <source src="" type="video/mp4">
-                Tu navegador no soporta el elemento video.
-            </video>
+            <div id="videoPlayer"></div>
         </div>
         <div class="video-details">
             <h3 id="modalTitle"></h3>
@@ -561,61 +560,61 @@ $videos = [
 document.addEventListener('DOMContentLoaded', function() {
     // ===== FUNCIONALIDAD DE VIDEOS =====
     
-    // Datos de los videos
-    const videosData = {
-        <?php foreach ($videos as $video): ?>
-        '<?php echo $video['id']; ?>': {
-            title: '<?php echo addslashes($video['title']); ?>',
-            description: '<?php echo addslashes($video['description']); ?>',
-            src: '<?php echo $video['src']; ?>'
-        },
-        <?php endforeach; ?>
-    };
-    
     // Elementos del modal de video
     const videoModal = document.getElementById('videoModal');
     const modalOverlay = document.getElementById('modalOverlay');
     const modalClose = document.getElementById('modalClose');
-    const modalVideo = document.getElementById('modalVideo');
-    const modalTitle = document.getElementById('modalTitle');
-    const modalDescription = document.getElementById('modalDescription');
     
-    // Función para abrir el modal de video
-    function openVideoModal(videoId) {
-        const videoData = videosData[videoId];
-        if (!videoData) return;
+    // Función para abrir modal con video
+    function openVideoModal(videoSrc, videoTipo, videoTitulo, videoDescripcion) {
+        const videoPlayer = document.getElementById('videoPlayer');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalDescription = document.getElementById('modalDescription');
         
-        // Actualizar contenido del modal
-        modalTitle.textContent = videoData.title;
-        modalDescription.textContent = videoData.description;
-        modalVideo.src = videoData.src;
+        // Limpiar contenido anterior
+        videoPlayer.innerHTML = '';
         
-        // Mostrar modal
+        // Crear iframe según el tipo
+        if (videoTipo === 'youtube' || videoTipo === 'vimeo') {
+            const iframe = document.createElement('iframe');
+            iframe.src = videoSrc;
+            iframe.width = '100%';
+            iframe.height = '500';
+            iframe.frameBorder = '0';
+            iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+            iframe.allowFullscreen = true;
+            iframe.style.borderRadius = '10px';
+            videoPlayer.appendChild(iframe);
+        } else {
+            // Video local
+            const video = document.createElement('video');
+            video.src = videoSrc;
+            video.controls = true;
+            video.style.width = '100%';
+            video.style.borderRadius = '10px';
+            videoPlayer.appendChild(video);
+        }
+        
+        modalTitle.textContent = videoTitulo || 'Video';
+        modalDescription.textContent = videoDescripcion || '';
+        
         videoModal.classList.add('active');
         document.body.style.overflow = 'hidden';
-        
-        // Reproducir video automáticamente
-        modalVideo.play().catch(e => {
-            console.log('Autoplay no permitido:', e);
-        });
-    }
-    
-    // Función para cerrar el modal de video
-    function closeVideoModal() {
-        videoModal.classList.remove('active');
-        document.body.style.overflow = '';
-        
-        // Pausar video
-        modalVideo.pause();
-        modalVideo.currentTime = 0;
     }
     
     // Event listeners para los botones de play
     document.addEventListener('click', function(e) {
         if (e.target.closest('.play-btn')) {
             const playBtn = e.target.closest('.play-btn');
-            const videoId = playBtn.getAttribute('data-video');
-            openVideoModal(videoId);
+            const videoSrc = playBtn.getAttribute('data-video-src');
+            const videoTipo = playBtn.getAttribute('data-video-tipo') || 'local';
+            const videoCard = playBtn.closest('.video-card');
+            const videoTitulo = videoCard ? videoCard.querySelector('.video-title')?.textContent : '';
+            const videoDescripcion = videoCard ? videoCard.querySelector('.video-description')?.textContent : '';
+            
+            if (videoSrc) {
+                openVideoModal(videoSrc, videoTipo, videoTitulo, videoDescripcion);
+            }
         }
     });
     

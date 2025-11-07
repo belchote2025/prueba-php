@@ -26,11 +26,28 @@ if (!isset($_GET['url']) || empty($_GET['url'])) {
         preg_match('#^/public/?$#', $requestUri)) {
         $_GET['url'] = '';
     }
-    // Si REQUEST_URI contiene /public/ seguido de algo que NO sea index.php
+    // Si REQUEST_URI contiene /public/ seguido de algo
     elseif (preg_match('#/public/(.+)$#', $requestUri, $matches)) {
         $path = $matches[1];
         // Si es index.php, es la raíz
         if ($path === 'index.php') {
+            $_GET['url'] = '';
+        } 
+        // Si es un archivo PHP directo (como debug-url.php), no es una ruta
+        elseif (preg_match('#\.php$#', $path)) {
+            // Es un archivo PHP directo, no una ruta
+            $_GET['url'] = '';
+        } else {
+            // Es una ruta normal (ej: admin/videos/nuevo)
+            $_GET['url'] = $path;
+        }
+    }
+    // Si REQUEST_URI no contiene /public/ pero contiene /prueba-php/public/
+    elseif (preg_match('#/prueba-php/public/(.+)$#', $requestUri, $matches)) {
+        $path = $matches[1];
+        if ($path === 'index.php') {
+            $_GET['url'] = '';
+        } elseif (preg_match('#\.php$#', $path)) {
             $_GET['url'] = '';
         } else {
             $_GET['url'] = $path;
@@ -87,8 +104,6 @@ if (file_exists('src/controllers/AdminController.php')) {
 // Parse the URL
 $url = isset($_GET['url']) ? explode('/', filter_var(rtrim($_GET['url'], '/'), FILTER_SANITIZE_URL)) : [''];
 
-// Debug: Log para verificar qué URL se está parseando (solo en desarrollo)
-// error_log("URL parseado: " . print_r($url, true));
 
 // Create controller instances
 $controller = new Pages();
@@ -112,6 +127,12 @@ if (empty($url[0])) {
     } else {
         $controller->blog();
     }
+} elseif ($url[0] === 'crear-comentario' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    $controller->crearComentario();
+} elseif ($url[0] === 'evento' && isset($url[1])) {
+    $controller->verEvento($url[1]);
+} elseif ($url[0] === 'reservar-evento' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    $controller->reservarEvento();
 } elseif ($url[0] === 'calendario') {
     $controller->calendario();
 } elseif ($url[0] === 'galeria') {
@@ -227,6 +248,7 @@ if (empty($url[0])) {
 } elseif ($url[0] === 'admin') {
     // Admin routes (simple guard + custom login/logout)
     $action = isset($url[1]) ? $url[1] : (isAdminLoggedIn() ? 'dashboard' : 'login');
+    
 
     if ($action === 'login') {
         // Serve admin login page without constructing the controller
@@ -298,11 +320,6 @@ if (empty($url[0])) {
                 $adminController->uploadProductPhoto();
             } elseif ($action === 'nueva-noticia') {
                 // Manejar la ruta nueva-noticia
-                error_log("=== ROUTING DEBUG ===");
-                error_log("Action: nueva-noticia");
-                error_log("URL: " . print_r($url, true));
-                error_log("AdminController exists: " . (class_exists('AdminController') ? 'YES' : 'NO'));
-                error_log("Method exists: " . (method_exists($adminController, 'nuevaNoticia') ? 'YES' : 'NO'));
                 $adminController->nuevaNoticia();
             } elseif ($action === 'noticias') {
                 // Manejar la ruta noticias
@@ -327,22 +344,46 @@ if (empty($url[0])) {
                 $id = isset($url[2]) ? $url[2] : null;
                 $estado = isset($url[3]) ? $url[3] : null;
                 $adminController->cambiarEstadoNoticia($id, $estado);
-        } elseif ($action === 'gestion-galeria') {
-            // Manejar la ruta gestión de galería
-            if (file_exists('src/views/admin/gestion-galeria.php')) {
-                require 'src/views/admin/gestion-galeria.php';
-            } else {
-                echo "Error: No se encuentra la vista de gestión de galería";
-            }
-            return;
-        } elseif ($action === 'flipbooks') {
-            // Manejar la ruta gestión de flipbooks
-            if (file_exists('src/views/admin/flipbooks.php')) {
-                require 'src/views/admin/flipbooks.php';
-            } else {
-                echo "Error: No se encuentra la vista de gestión de flipbooks";
-            }
-            return;
+            } elseif ($action === 'videos') {
+                // Manejar la ruta videos
+                if (isset($url[2]) && $url[2] === 'nuevo') {
+                    $adminController->nuevoVideo();
+                } elseif (isset($url[2]) && $url[2] === 'editar' && isset($url[3])) {
+                    $adminController->editarVideo($url[3]);
+                } elseif (isset($url[2]) && $url[2] === 'eliminar' && isset($url[3])) {
+                    $adminController->eliminarVideo($url[3]);
+                } else {
+                    $adminController->videos();
+                }
+            } elseif ($action === 'cuotas') {
+                // Manejar rutas de cuotas
+                if (isset($url[2]) && $url[2] === 'nueva') {
+                    $adminController->nuevaCuota();
+                } elseif (isset($url[2]) && $url[2] === 'editar' && isset($url[3])) {
+                    $adminController->editarCuota($url[3]);
+                } elseif (isset($url[2]) && $url[2] === 'marcar-pagada' && isset($url[3])) {
+                    $adminController->marcarCuotaPagada($url[3]);
+                } elseif (isset($url[2]) && $url[2] === 'eliminar' && isset($url[3])) {
+                    $adminController->eliminarCuota($url[3]);
+                } else {
+                    $adminController->cuotas();
+                }
+            } elseif ($action === 'gestion-galeria') {
+                // Manejar la ruta gestión de galería
+                if (file_exists('src/views/admin/gestion-galeria.php')) {
+                    require 'src/views/admin/gestion-galeria.php';
+                } else {
+                    echo "Error: No se encuentra la vista de gestión de galería";
+                }
+                return;
+            } elseif ($action === 'flipbooks') {
+                // Manejar la ruta gestión de flipbooks
+                if (file_exists('src/views/admin/flipbooks.php')) {
+                    require 'src/views/admin/flipbooks.php';
+                } else {
+                    echo "Error: No se encuentra la vista de gestión de flipbooks";
+                }
+                return;
             } else {
                 $adminController->dashboard();
             }

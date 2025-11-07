@@ -78,6 +78,10 @@ class Database {
     // Execute the prepared statement
     public function execute() {
         try {
+            if ($this->stmt === null) {
+                error_log("ERROR: No hay statement preparado para ejecutar");
+                return false;
+            }
             
             $result = $this->stmt->execute();
             
@@ -85,6 +89,11 @@ class Database {
             
             return $result;
         } catch (PDOException $e) {
+            error_log("ERROR PDO al ejecutar: " . $e->getMessage());
+            error_log("SQL: " . ($this->stmt ? $this->stmt->queryString : 'N/A'));
+            return false;
+        } catch (Exception $e) {
+            error_log("ERROR general al ejecutar: " . $e->getMessage());
             return false;
         }
     }
@@ -104,5 +113,18 @@ class Database {
     // Get row count
     public function rowCount() {
         return $this->stmt->rowCount();
+    }
+    
+    // Get PDO connection (for advanced operations like triggers)
+    public function getConnection() {
+        return $this->dbh;
+    }
+    
+    // Get last insert ID
+    public function lastInsertId() {
+        if ($this->dbh === null) {
+            return false;
+        }
+        return $this->dbh->lastInsertId();
     }
 }

@@ -1,9 +1,12 @@
 <?php
-session_start();
+// La sesión ya está iniciada en index.php, no es necesario iniciarla de nuevo
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Verificar autenticación
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
-    header('Location: <?php echo URL_ROOT; ?>/admin');
+    header('Location: ' . URL_ROOT . '/admin');
     exit;
 }
 

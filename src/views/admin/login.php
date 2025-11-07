@@ -151,26 +151,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         border-left: 4px solid var(--templar-red);
     }
     
-    .credentials-info {
-        background: rgba(255, 193, 7, 0.1);
-        border: 1px solid var(--templar-gold);
-        border-radius: 10px;
-        padding: 1rem;
-        margin-top: 1rem;
-        font-size: 0.9rem;
-    }
-    
-    .credentials-info h6 {
-        color: var(--templar-gold);
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-    }
-    
-    .credentials-info p {
-        margin-bottom: 0.25rem;
-        color: #6c757d;
-    }
-    
     .back-link {
         text-align: center;
         margin-top: 1rem;
@@ -223,13 +203,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión
             </button>
         </form>
-        
-        <div class="credentials-info">
-            <h6><i class="bi bi-info-circle me-2"></i>Credenciales de Prueba</h6>
-            <p><strong>Usuario:</strong> admin</p>
-            <p><strong>Contraseña:</strong> admin123</p>
-            <p><small>O alternativamente: administrador / admin</small></p>
-        </div>
         
         <div class="back-link">
             <a href="<?php echo URL_ROOT; ?>/">

@@ -26,7 +26,7 @@ class AdminController extends Controller {
         // Verify admin session using custom admin auth
         if (function_exists('isAdminLoggedIn')) {
             if (!isAdminLoggedIn()) {
-                header('Location: /prueba-php/public/admin/login');
+                header('Location: ' . URL_ROOT . '/admin/login');
                 exit;
             }
         }
@@ -173,6 +173,18 @@ class AdminController extends Controller {
             $messagesCount = count($messageFiles);
         }
         
+        // Obtener estadísticas de videos
+        $videoCount = 0;
+        if (class_exists('Video')) {
+            try {
+                $videoModel = $this->model('Video');
+                $allVideos = $videoModel->getAllVideos(1, 1000, null, false);
+                $videoCount = count($allVideos);
+            } catch (Exception $e) {
+                $videoCount = 0;
+            }
+        }
+        
         // Obtener estadísticas de visitas
         $visitStats = [];
         $realTimeStats = [];
@@ -212,6 +224,7 @@ class AdminController extends Controller {
             'newsCount' => $newsCount,
             'messagesCount' => $messagesCount,
             'documentCount' => $documentCount,
+            'videoCount' => $videoCount,
             'recentUsers' => $recentUsers,
             'recentEvents' => $recentEvents,
             'visitStats' => $visitStats,
@@ -467,9 +480,15 @@ class AdminController extends Controller {
         $users = [];
         $totalUsers = 0;
         
-        if ($this->userModel) {
-            $users = $this->userModel->getAllUsers($page, $perPage);
-            $totalUsers = $this->userModel->countAllUsers();
+        try {
+            if ($this->userModel) {
+                $users = $this->userModel->getAllUsers($page, $perPage);
+                $totalUsers = $this->userModel->countAllUsers();
+            }
+        } catch (Exception $e) {
+            error_log("Error al cargar usuarios: " . $e->getMessage());
+            $users = [];
+            $totalUsers = 0;
         }
         
         $data = [
@@ -480,15 +499,13 @@ class AdminController extends Controller {
             'timestamp' => time() // Add timestamp to force refresh
         ];
         
-        $this->view('admin/users/index', $data);
+        // Usar loadViewDirectly porque la vista ya tiene su propio HTML completo
+        $this->loadViewDirectly('admin/users/index', $data);
     }
     
     // Show edit user form
     public function editarUsuarioForm($id = null) {
-        error_log("editarUsuarioForm called with ID: " . $id);
-        
         if (!$id || !is_numeric($id)) {
-            error_log("Invalid ID provided: " . $id);
             setFlashMessage('error', 'ID de usuario inválido');
             $this->redirect('/admin/usuarios');
         }
@@ -527,27 +544,20 @@ class AdminController extends Controller {
             'errors' => []
         ];
         
-        $this->view('admin/users/index', $data);
+        $this->loadViewDirectly('admin/users/index', $data);
     }
     
     // Edit user
     public function editarUsuario($id = null) {
-        // Debug logging
-        error_log("editarUsuario called with ID: " . $id);
-        error_log("Request method: " . $_SERVER['REQUEST_METHOD']);
-        error_log("POST data: " . print_r($_POST, true));
-        error_log("User model available: " . ($this->userModel ? 'YES' : 'NO'));
-        
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Validate CSRF token if SecurityHelper exists and token is provided
             if ($this->securityHelper && isset($_POST['csrf_token'])) {
                 if (!$this->securityHelper->validateCsrfToken($_POST['csrf_token'])) {
-                    error_log("CSRF token validation failed, but continuing for testing");
-                    // setFlashMessage('error', 'Token de seguridad inválido.');
-                    // $this->redirect('/prueba-php/public/admin/usuarios');
+                    setFlashMessage('error', 'Token de seguridad inválido.');
+                    $this->redirect('/admin/usuarios');
+                    return;
                 }
             }
-            // If no SecurityHelper or no token, continue without validation for now
             
             // Process form data safely (without deprecated FILTER_SANITIZE_STRING)
             $userData = [
@@ -561,9 +571,12 @@ class AdminController extends Controller {
             ];
             
             // Validate data
-            if (empty($userData['nombre'])) $userData['errors']['nombre'] = 'Nombre requerido';
-            if (empty($userData['email'])) $userData['errors']['email'] = 'Email requerido';
-            if (!filter_var($userData['email'], FILTER_VALIDATE_EMAIL)) {
+            if (empty($userData['nombre'])) {
+                $userData['errors']['nombre'] = 'Nombre requerido';
+            }
+            if (empty($userData['email'])) {
+                $userData['errors']['email'] = 'Email requerido';
+            } elseif (!filter_var($userData['email'], FILTER_VALIDATE_EMAIL)) {
                 $userData['errors']['email'] = 'Email inválido';
             }
             
@@ -573,41 +586,19 @@ class AdminController extends Controller {
                 $userData['errors']['rol'] = 'Rol inválido. Debe ser: ' . implode(', ', $validRoles);
             }
             
-            // Debug: Log the data being processed
-            error_log("User data to update: " . print_r($userData, true));
-            error_log("POST data received: " . print_r($_POST, true));
-            error_log("ID from URL: " . $id);
-            error_log("ID from POST: " . ($_POST['user_id'] ?? 'not set'));
-            error_log("Activo field: " . (isset($_POST['activo']) ? $_POST['activo'] : 'not set'));
-            error_log("Activo processed: " . (isset($_POST['activo']) && $_POST['activo'] == '1' ? 1 : 0));
-            error_log("Rol field: " . ($_POST['rol'] ?? 'not set'));
-            error_log("Rol processed: " . trim(htmlspecialchars($_POST['rol'] ?? 'user')));
-            error_log("Email field: " . ($_POST['email'] ?? 'not set'));
-            error_log("Email processed: " . filter_var(trim($_POST['email'] ?? ''), FILTER_SANITIZE_EMAIL));
-            error_log("Nombre field: " . ($_POST['nombre'] ?? 'not set'));
-            error_log("Nombre processed: " . trim(htmlspecialchars($_POST['nombre'] ?? '')));
-            error_log("Apellidos field: " . ($_POST['apellidos'] ?? 'not set'));
-            error_log("Apellidos processed: " . trim(htmlspecialchars($_POST['apellidos'] ?? '')));
-            
             if (empty($userData['errors']) && $this->userModel) {
                 // Update user
                 if ($id && is_numeric($id)) {
-                    error_log("Attempting to update user with ID: " . $id);
                     $result = $this->userModel->updateUser($userData);
-                    error_log("Update result: " . ($result ? 'success' : 'failed'));
                     
                     if ($result) {
                         setFlashMessage('success', 'Usuario actualizado correctamente');
-                        // Redirigir con parámetros para forzar la recarga
-                        $this->redirect('/admin/usuarios?updated=1&t=' . time() . '&refresh=1');
+                        $this->redirect('/admin/usuarios');
                     } else {
                         setFlashMessage('error', 'Error al actualizar el usuario');
-                        // Mostrar debug en pantalla en lugar de redirigir
-                        $this->showDebugInfo($userData, $_POST, $id);
-                        return;
+                        $this->redirect('/admin/usuarios');
                     }
                 } else {
-                    error_log("Invalid ID provided: " . $id);
                     setFlashMessage('error', 'ID de usuario requerido para edición');
                     $this->redirect('/admin/usuarios');
                 }
@@ -758,7 +749,8 @@ class AdminController extends Controller {
             // If no SecurityHelper or no token, continue without validation for now
             
             // Process form
-            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+            // FILTER_SANITIZE_STRING está deprecado en PHP 8.1+
+            // Los campos se sanitizarán individualmente con htmlspecialchars() cuando se usen
             
             $eventData = [
                 'titulo' => trim($_POST['titulo']),
@@ -808,7 +800,8 @@ class AdminController extends Controller {
             // If no SecurityHelper or no token, continue without validation for now
             
             // Process form
-            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+            // FILTER_SANITIZE_STRING está deprecado en PHP 8.1+
+            // Los campos se sanitizarán individualmente con htmlspecialchars() cuando se usen
             
             $eventData = [
                 'id' => $id,
@@ -872,7 +865,8 @@ class AdminController extends Controller {
             'title' => 'Configuración del Sistema'
         ];
         
-        $this->view('admin/settings', $data);
+        // Vista de settings no implementada aún
+        echo "<h1>Configuración del Sistema</h1><p>Esta funcionalidad está en desarrollo.</p>";
     }
     
     // Profile
@@ -882,7 +876,8 @@ class AdminController extends Controller {
             'admin' => getAdminInfo()
         ];
         
-        $this->view('admin/profile', $data);
+        // Vista de profile no implementada aún
+        echo "<h1>Mi Perfil</h1><p>Esta funcionalidad está en desarrollo.</p>";
     }
     
     // Gallery Management
@@ -1209,7 +1204,8 @@ class AdminController extends Controller {
         ];
         
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+            // FILTER_SANITIZE_STRING está deprecado en PHP 8.1+
+            // Los campos se sanitizarán individualmente con htmlspecialchars() cuando se usen
             
             $userData = [
                 'nombre' => trim($_POST['nombre'] ?? ''),
@@ -1582,7 +1578,6 @@ class AdminController extends Controller {
     
     // News management
     public function noticias($page = 1) {
-        error_log("AdminController::noticias() called with page: " . $page);
         
         $perPage = 10;
         $news = [];
@@ -1637,7 +1632,6 @@ class AdminController extends Controller {
     
     // Messages management
     public function mensajes() {
-        error_log("AdminController::mensajes() called");
         
         // Get messages count and list
         $messagesCount = 0;
@@ -1677,7 +1671,7 @@ class AdminController extends Controller {
         ];
         
         try {
-            $this->view('admin/mensajes', $data);
+            $this->loadViewDirectly('admin/mensajes', $data);
         } catch (Exception $e) {
             error_log("Error loading mensajes view: " . $e->getMessage());
             // Fallback: mostrar página básica
@@ -1911,13 +1905,13 @@ class AdminController extends Controller {
             $product = $stmt->fetch(PDO::FETCH_OBJ);
             
             if (!$product) {
-                header('Location: /prueba-php/public/admin/productos');
-                exit;
+                $this->redirect('/admin/productos');
+                return;
             }
             
         } catch (Exception $e) {
-            header('Location: /prueba-php/public/admin/productos');
-            exit;
+            $this->redirect('/admin/productos');
+            return;
         }
         
         $data = [
@@ -1934,8 +1928,10 @@ class AdminController extends Controller {
             $pdo = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME, DB_USER, DB_PASS);
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             
-            $sql = "DELETE FROM productos WHERE id = $id";
-            $pdo->exec($sql);
+            // Usar prepared statement para evitar SQL injection
+            $sql = "DELETE FROM productos WHERE id = :id";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([':id' => $id]);
             
             // Devolver respuesta para JavaScript
             http_response_code(200);
@@ -2040,13 +2036,6 @@ class AdminController extends Controller {
     
     // Crear nueva noticia
     public function nuevaNoticia() {
-        error_log("=== NUEVA NOTICIA DEBUG ===");
-        error_log("AdminController::nuevaNoticia() called");
-        error_log("News model available: " . ($this->newsModel ? 'YES' : 'NO'));
-        error_log("Request method: " . $_SERVER['REQUEST_METHOD']);
-        error_log("URL: " . $_SERVER['REQUEST_URI']);
-        error_log("GET params: " . print_r($_GET, true));
-        error_log("POST params: " . print_r($_POST, true));
         
         // Asegurar que el modelo de noticias esté disponible
         if (!$this->newsModel && class_exists('News')) {
@@ -2159,11 +2148,6 @@ class AdminController extends Controller {
             'errors' => $formData['errors'] ?? [],
             'formData' => $formData
         ];
-        
-        error_log("Loading view: admin/noticias/crear");
-        error_log("View file path: " . dirname(dirname(__DIR__)) . '/src/views/admin/noticias/crear.php');
-        error_log("View file exists: " . (file_exists(dirname(dirname(__DIR__)) . '/src/views/admin/noticias/crear.php') ? 'YES' : 'NO'));
-        error_log("Data being passed: " . print_r($data, true));
         
         try {
             // Usar vista simplificada
@@ -2743,6 +2727,482 @@ class AdminController extends Controller {
         }
         
         $this->redirect('/admin/documentos');
+    }
+    
+    // ===== GESTIÓN DE VIDEOS =====
+    
+    /**
+     * Listar videos
+     */
+    public function videos() {
+        $videos = [];
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        if ($page < 1) $page = 1;
+        
+        if (class_exists('Video')) {
+            try {
+                $videoModel = $this->model('Video');
+                // En admin mostramos TODOS los videos (activos e inactivos)
+                $videos = $videoModel->getAllVideos($page, 20, null, false);
+            } catch (Exception $e) {
+                error_log("Error al cargar videos: " . $e->getMessage());
+            }
+        }
+        
+        $data = [
+            'title' => 'Gestión de Videos',
+            'videos' => $videos,
+            'current_page' => $page
+        ];
+        
+        $this->loadViewDirectly('admin/videos/index', $data);
+    }
+    
+    /**
+     * Crear nuevo video
+     */
+    public function nuevoVideo() {
+        $formData = [
+            'titulo' => '',
+            'descripcion' => '',
+            'url_video' => '',
+            'url_thumbnail' => '',
+            'tipo' => 'youtube',
+            'categoria' => '',
+            'evento_id' => null,
+            'duracion' => null,
+            'activo' => true,
+            'errors' => []
+        ];
+        
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            // Validar CSRF
+            if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
+                $formData['errors']['csrf'] = 'Token de seguridad inválido';
+            } else {
+                $formData['titulo'] = trim($_POST['titulo'] ?? '');
+                $formData['descripcion'] = trim($_POST['descripcion'] ?? '');
+                $formData['url_video'] = trim($_POST['url_video'] ?? '');
+                $formData['url_thumbnail'] = trim($_POST['url_thumbnail'] ?? '');
+                $formData['tipo'] = trim($_POST['tipo'] ?? 'youtube');
+                $formData['categoria'] = trim($_POST['categoria'] ?? '');
+                $formData['evento_id'] = !empty($_POST['evento_id']) ? intval($_POST['evento_id']) : null;
+                $formData['duracion'] = !empty($_POST['duracion']) ? intval($_POST['duracion']) : null;
+                $formData['activo'] = isset($_POST['activo']) && $_POST['activo'] == '1';
+                
+                // Validaciones
+                if (empty($formData['titulo'])) {
+                    $formData['errors']['titulo'] = 'El título es obligatorio';
+                }
+                
+                if (empty($formData['url_video'])) {
+                    $formData['errors']['url_video'] = 'La URL del video es obligatoria';
+                }
+                
+                // Validar URL según tipo
+                if ($formData['tipo'] === 'youtube' && !preg_match('/youtube\.com|youtu\.be/', $formData['url_video'])) {
+                    $formData['errors']['url_video'] = 'URL de YouTube inválida';
+                } elseif ($formData['tipo'] === 'vimeo' && !preg_match('/vimeo\.com/', $formData['url_video'])) {
+                    $formData['errors']['url_video'] = 'URL de Vimeo inválida';
+                }
+                
+                if (empty($formData['errors'])) {
+                    if (class_exists('Video')) {
+                        try {
+                            $videoModel = $this->model('Video');
+                            $videoId = $videoModel->createVideo($formData);
+                            
+                            if ($videoId) {
+                                setFlashMessage('success', 'Video creado correctamente');
+                                $this->redirect('/admin/videos?success=1');
+                            } else {
+                                error_log("Error: createVideo retornó false");
+                                $formData['errors']['general'] = 'Error al crear el video. Revisa los logs para más detalles.';
+                            }
+                        } catch (Exception $e) {
+                            error_log("Excepción al crear video: " . $e->getMessage());
+                            $formData['errors']['general'] = 'Error al crear el video: ' . $e->getMessage();
+                        }
+                    } else {
+                        $formData['errors']['general'] = 'Sistema de videos no disponible';
+                    }
+                }
+            }
+        }
+        
+        // Cargar eventos para el selector
+        $eventos = [];
+        if ($this->eventModel) {
+            try {
+                $eventos = $this->eventModel->getAllEvents();
+            } catch (Exception $e) {
+                error_log("Error al cargar eventos: " . $e->getMessage());
+            }
+        }
+        
+        $data = [
+            'title' => 'Nuevo Video',
+            'form_data' => $formData,
+            'eventos' => $eventos
+        ];
+        
+        $this->loadViewDirectly('admin/videos/crear', $data);
+    }
+    
+    /**
+     * Editar video
+     */
+    public function editarVideo($id) {
+        if (!class_exists('Video')) {
+            setFlashMessage('error', 'Sistema de videos no disponible');
+            $this->redirect('/admin/videos');
+            return;
+        }
+        
+        $videoModel = $this->model('Video');
+        $video = $videoModel->getVideoById($id);
+        
+        if (!$video) {
+            setFlashMessage('error', 'Video no encontrado');
+            $this->redirect('/admin/videos');
+            return;
+        }
+        
+        $formData = [
+            'titulo' => $video->titulo ?? '',
+            'descripcion' => $video->descripcion ?? '',
+            'url_video' => $video->url_video ?? '',
+            'url_thumbnail' => $video->url_thumbnail ?? '',
+            'tipo' => $video->tipo ?? 'youtube',
+            'categoria' => $video->categoria ?? '',
+            'evento_id' => $video->evento_id ?? null,
+            'duracion' => $video->duracion ?? null,
+            'activo' => $video->activo ?? true,
+            'errors' => []
+        ];
+        
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            // Validar CSRF
+            if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
+                $formData['errors']['csrf'] = 'Token de seguridad inválido';
+            } else {
+                $formData['titulo'] = trim($_POST['titulo'] ?? '');
+                $formData['descripcion'] = trim($_POST['descripcion'] ?? '');
+                $formData['url_video'] = trim($_POST['url_video'] ?? '');
+                $formData['url_thumbnail'] = trim($_POST['url_thumbnail'] ?? '');
+                $formData['tipo'] = trim($_POST['tipo'] ?? 'youtube');
+                $formData['categoria'] = trim($_POST['categoria'] ?? '');
+                $formData['evento_id'] = !empty($_POST['evento_id']) ? intval($_POST['evento_id']) : null;
+                $formData['duracion'] = !empty($_POST['duracion']) ? intval($_POST['duracion']) : null;
+                $formData['activo'] = isset($_POST['activo']) && $_POST['activo'] == '1';
+                
+                // Validaciones
+                if (empty($formData['titulo'])) {
+                    $formData['errors']['titulo'] = 'El título es obligatorio';
+                }
+                
+                if (empty($formData['url_video'])) {
+                    $formData['errors']['url_video'] = 'La URL del video es obligatoria';
+                }
+                
+                if (empty($formData['errors'])) {
+                    if ($videoModel->updateVideo($id, $formData)) {
+                        setFlashMessage('success', 'Video actualizado correctamente');
+                        $this->redirect('/admin/videos?success=1');
+                    } else {
+                        $formData['errors']['general'] = 'Error al actualizar el video';
+                    }
+                }
+            }
+        }
+        
+        // Cargar eventos
+        $eventos = [];
+        if ($this->eventModel) {
+            try {
+                $eventos = $this->eventModel->getAllEvents();
+            } catch (Exception $e) {
+                error_log("Error al cargar eventos: " . $e->getMessage());
+            }
+        }
+        
+        $data = [
+            'title' => 'Editar Video',
+            'form_data' => $formData,
+            'video' => $video,
+            'eventos' => $eventos
+        ];
+        
+        $this->loadViewDirectly('admin/videos/editar', $data);
+    }
+    
+    /**
+     * Eliminar video
+     */
+    public function eliminarVideo($id) {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/admin/videos');
+            return;
+        }
+        
+        if (!class_exists('Video')) {
+            setFlashMessage('error', 'Sistema de videos no disponible');
+            $this->redirect('/admin/videos');
+            return;
+        }
+        
+        $videoModel = $this->model('Video');
+        
+        if ($videoModel->deleteVideo($id)) {
+            setFlashMessage('success', 'Video eliminado correctamente');
+        } else {
+            setFlashMessage('error', 'Error al eliminar el video');
+        }
+        
+        $this->redirect('/admin/videos');
+    }
+    
+    /**
+     * Gestión de cuotas
+     */
+    public function cuotas() {
+        $cuotas = [];
+        $filtroEstado = isset($_GET['estado']) ? $_GET['estado'] : null;
+        $filtroUsuario = isset($_GET['usuario_id']) ? (int)$_GET['usuario_id'] : null;
+        
+        if (class_exists('Cuota')) {
+            try {
+                $cuotaModel = $this->model('Cuota');
+                $cuotas = $cuotaModel->getAllCuotas($filtroEstado, $filtroUsuario);
+            } catch (Exception $e) {
+                error_log("Error al cargar cuotas: " . $e->getMessage());
+            }
+        }
+        
+        // Obtener estadísticas
+        $pendientes = 0;
+        $vencidas = 0;
+        if (class_exists('Cuota')) {
+            try {
+                $cuotaModel = $this->model('Cuota');
+                $pendientes = $cuotaModel->getCuotasPendientes();
+                $vencidas = $cuotaModel->getCuotasVencidas();
+            } catch (Exception $e) {
+                error_log("Error al obtener estadísticas de cuotas: " . $e->getMessage());
+            }
+        }
+        
+        // Obtener lista de usuarios para el filtro
+        $usuarios = [];
+        if ($this->userModel) {
+            try {
+                $usuarios = $this->userModel->getAllUsers();
+            } catch (Exception $e) {
+                error_log("Error al cargar usuarios: " . $e->getMessage());
+            }
+        }
+        
+        $data = [
+            'title' => 'Gestión de Cuotas',
+            'cuotas' => $cuotas,
+            'pendientes' => $pendientes,
+            'vencidas' => $vencidas,
+            'usuarios' => $usuarios,
+            'filtroEstado' => $filtroEstado,
+            'filtroUsuario' => $filtroUsuario
+        ];
+        
+        $this->loadViewDirectly('admin/cuotas/index', $data);
+    }
+    
+    /**
+     * Crear nueva cuota
+     */
+    public function nuevaCuota() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Validar y crear cuota
+            $data = [
+                'usuario_id' => isset($_POST['usuario_id']) ? (int)$_POST['usuario_id'] : 0,
+                'año' => isset($_POST['año']) ? (int)$_POST['año'] : date('Y'),
+                'mes' => isset($_POST['mes']) && !empty($_POST['mes']) ? (int)$_POST['mes'] : null,
+                'monto' => isset($_POST['monto']) ? floatval($_POST['monto']) : 0,
+                'estado' => isset($_POST['estado']) ? $_POST['estado'] : 'pendiente',
+                'fecha_vencimiento' => isset($_POST['fecha_vencimiento']) && !empty($_POST['fecha_vencimiento']) ? $_POST['fecha_vencimiento'] : null,
+                'notas' => isset($_POST['notas']) ? trim($_POST['notas']) : null
+            ];
+            
+            if ($data['usuario_id'] > 0 && $data['monto'] > 0) {
+                if (class_exists('Cuota')) {
+                    try {
+                        $cuotaModel = $this->model('Cuota');
+                        $cuotaId = $cuotaModel->createCuota($data);
+                        if ($cuotaId) {
+                            $_SESSION['success_message'] = 'Cuota creada exitosamente';
+                            $this->redirect('/admin/cuotas');
+                            return;
+                        }
+                    } catch (Exception $e) {
+                        error_log("Error al crear cuota: " . $e->getMessage());
+                        $_SESSION['error_message'] = 'Error al crear la cuota: ' . $e->getMessage();
+                    }
+                }
+            } else {
+                $_SESSION['error_message'] = 'Por favor completa todos los campos requeridos';
+            }
+        }
+        
+        // Obtener usuarios para el formulario
+        $usuarios = [];
+        if ($this->userModel) {
+            try {
+                $usuarios = $this->userModel->getAllUsers();
+            } catch (Exception $e) {
+                error_log("Error al cargar usuarios: " . $e->getMessage());
+            }
+        }
+        
+        $data = [
+            'title' => 'Nueva Cuota',
+            'usuarios' => $usuarios,
+            'formData' => $_POST ?? []
+        ];
+        
+        $this->loadViewDirectly('admin/cuotas/crear', $data);
+    }
+    
+    /**
+     * Editar cuota
+     */
+    public function editarCuota($id = null) {
+        if (!$id) {
+            $this->redirect('/admin/cuotas');
+            return;
+        }
+        
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Validar y actualizar cuota
+            $data = [
+                'usuario_id' => isset($_POST['usuario_id']) ? (int)$_POST['usuario_id'] : 0,
+                'año' => isset($_POST['año']) ? (int)$_POST['año'] : date('Y'),
+                'mes' => isset($_POST['mes']) && !empty($_POST['mes']) ? (int)$_POST['mes'] : null,
+                'monto' => isset($_POST['monto']) ? floatval($_POST['monto']) : 0,
+                'estado' => isset($_POST['estado']) ? $_POST['estado'] : 'pendiente',
+                'fecha_vencimiento' => isset($_POST['fecha_vencimiento']) && !empty($_POST['fecha_vencimiento']) ? $_POST['fecha_vencimiento'] : null,
+                'fecha_pago' => isset($_POST['fecha_pago']) && !empty($_POST['fecha_pago']) ? $_POST['fecha_pago'] : null,
+                'metodo_pago' => isset($_POST['metodo_pago']) ? trim($_POST['metodo_pago']) : null,
+                'referencia_pago' => isset($_POST['referencia_pago']) ? trim($_POST['referencia_pago']) : null,
+                'notas' => isset($_POST['notas']) ? trim($_POST['notas']) : null
+            ];
+            
+            if ($data['usuario_id'] > 0 && $data['monto'] > 0) {
+                if (class_exists('Cuota')) {
+                    try {
+                        $cuotaModel = $this->model('Cuota');
+                        if ($cuotaModel->updateCuota($id, $data)) {
+                            $_SESSION['success_message'] = 'Cuota actualizada exitosamente';
+                            $this->redirect('/admin/cuotas');
+                            return;
+                        }
+                    } catch (Exception $e) {
+                        error_log("Error al actualizar cuota: " . $e->getMessage());
+                        $_SESSION['error_message'] = 'Error al actualizar la cuota: ' . $e->getMessage();
+                    }
+                }
+            } else {
+                $_SESSION['error_message'] = 'Por favor completa todos los campos requeridos';
+            }
+        }
+        
+        // Obtener cuota actual
+        $cuota = null;
+        if (class_exists('Cuota')) {
+            try {
+                $cuotaModel = $this->model('Cuota');
+                $cuota = $cuotaModel->getCuotaById($id);
+            } catch (Exception $e) {
+                error_log("Error al cargar cuota: " . $e->getMessage());
+            }
+        }
+        
+        if (!$cuota) {
+            $_SESSION['error_message'] = 'Cuota no encontrada';
+            $this->redirect('/admin/cuotas');
+            return;
+        }
+        
+        // Obtener usuarios para el formulario
+        $usuarios = [];
+        if ($this->userModel) {
+            try {
+                $usuarios = $this->userModel->getAllUsers();
+            } catch (Exception $e) {
+                error_log("Error al cargar usuarios: " . $e->getMessage());
+            }
+        }
+        
+        $data = [
+            'title' => 'Editar Cuota',
+            'cuota' => $cuota,
+            'usuarios' => $usuarios
+        ];
+        
+        $this->loadViewDirectly('admin/cuotas/editar', $data);
+    }
+    
+    /**
+     * Marcar cuota como pagada
+     */
+    public function marcarCuotaPagada($id = null) {
+        if (!$id || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/admin/cuotas');
+            return;
+        }
+        
+        if (class_exists('Cuota')) {
+            try {
+                $cuotaModel = $this->model('Cuota');
+                $fechaPago = isset($_POST['fecha_pago']) ? $_POST['fecha_pago'] : date('Y-m-d');
+                $metodoPago = isset($_POST['metodo_pago']) ? $_POST['metodo_pago'] : null;
+                $referenciaPago = isset($_POST['referencia_pago']) ? $_POST['referencia_pago'] : null;
+                
+                if ($cuotaModel->marcarComoPagada($id, $fechaPago, $metodoPago, $referenciaPago)) {
+                    $_SESSION['success_message'] = 'Cuota marcada como pagada';
+                } else {
+                    $_SESSION['error_message'] = 'Error al marcar la cuota como pagada';
+                }
+            } catch (Exception $e) {
+                error_log("Error al marcar cuota como pagada: " . $e->getMessage());
+                $_SESSION['error_message'] = 'Error: ' . $e->getMessage();
+            }
+        }
+        
+        $this->redirect('/admin/cuotas');
+    }
+    
+    /**
+     * Eliminar cuota
+     */
+    public function eliminarCuota($id = null) {
+        if (!$id) {
+            $this->redirect('/admin/cuotas');
+            return;
+        }
+        
+        if (class_exists('Cuota')) {
+            try {
+                $cuotaModel = $this->model('Cuota');
+                if ($cuotaModel->deleteCuota($id)) {
+                    $_SESSION['success_message'] = 'Cuota eliminada exitosamente';
+                } else {
+                    $_SESSION['error_message'] = 'Error al eliminar la cuota';
+                }
+            } catch (Exception $e) {
+                error_log("Error al eliminar cuota: " . $e->getMessage());
+                $_SESSION['error_message'] = 'Error: ' . $e->getMessage();
+            }
+        }
+        
+        $this->redirect('/admin/cuotas');
     }
 }
 

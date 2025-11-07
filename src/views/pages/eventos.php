@@ -175,7 +175,10 @@ ob_start();
                             </div>
 
                             <div class="card-footer bg-transparent border-0">
-                                <a href="#" class="btn btn-outline-danger btn-sm w-100">
+                                <?php 
+                                $eventId = isset($event->id) ? $event->id : (isset($event['id']) ? $event['id'] : 0);
+                                ?>
+                                <a href="<?php echo URL_ROOT; ?>/evento/<?php echo $eventId; ?>" class="btn btn-outline-danger btn-sm w-100">
                                     <i class="bi bi-info-circle me-1"></i>Más Información
                                 </a>
                             </div>

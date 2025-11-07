@@ -81,11 +81,14 @@ if (file_exists($envFile)) {
         define('DB_USER', $dbUser);
         define('DB_PASS', $dbPass);
     } else {
-        // DESARROLLO LOCAL: Usar credenciales de XAMPP
-        define('DB_HOST', $env['DB_HOST'] ?? 'localhost');
-        define('DB_NAME', $env['DB_NAME'] ?? 'mariscales_db');
-        define('DB_USER', $env['DB_USER'] ?? 'root');
-        define('DB_PASS', $env['DB_PASS'] ?? '');
+        // DESARROLLO LOCAL: SIEMPRE usar credenciales de XAMPP (ignorar .env si tiene credenciales de producción)
+        // Esto previene errores cuando el .env tiene credenciales de producción
+        define('DB_HOST', 'localhost');
+        define('DB_NAME', 'mariscales_db');
+        define('DB_USER', 'root');
+        define('DB_PASS', '');
+        
+        error_log("INFO: Usando credenciales de desarrollo local (XAMPP) - host: localhost, db: mariscales_db, user: root");
     }
 } else {
     // Valores por defecto si no existe .env
@@ -119,38 +122,55 @@ function getBaseUrl() {
     // Obtener el script actual y el request URI
     $script = $_SERVER['SCRIPT_NAME'] ?? '';
     $requestUri = $_SERVER['REQUEST_URI'] ?? '';
+    $documentRoot = $_SERVER['DOCUMENT_ROOT'] ?? '';
     
-    // Detectar si estamos ejecutando desde public/index.php
-    // El script será algo como: /public/index.php cuando accedemos desde /public/
-    if (strpos($script, '/public/index.php') !== false) {
-        // Estamos ejecutando desde public/index.php
-        // Extraer la parte antes de /public/
-        $beforePublic = substr($script, 0, strpos($script, '/public/'));
-        // Si beforePublic está vacío, estamos en la raíz del dominio
-        // URL_ROOT debe incluir /public
-        if ($beforePublic === '') {
-            $path = '/public';
-        } else {
+    // Detectar si estamos en desarrollo local (XAMPP)
+    $isLocal = (
+        strpos($host, 'localhost') !== false || 
+        strpos($host, '127.0.0.1') !== false ||
+        strpos($documentRoot, 'xampp') !== false ||
+        strpos($documentRoot, 'htdocs') !== false
+    );
+    
+    // Si estamos en local y el script contiene la subcarpeta, extraerla
+    if ($isLocal) {
+        // El script puede ser: /prueba-php/public/index.php o /public/index.php
+        if (preg_match('#/([^/]+)/public/#', $script, $matches)) {
             // Hay una subcarpeta antes de /public/ (ej: /prueba-php/public/)
-            $path = $beforePublic . '/public';
-        }
-    } elseif ($script === '/index.php' || (strpos($script, '/index.php') !== false && strpos($script, '/public/') === false)) {
-        // El document root está configurado directamente en public/, el script es solo /index.php
-        // En este caso, URL_ROOT debe ser solo el dominio (sin /public)
-        $path = '';
-    } else {
-        // Caso por defecto: usar el request URI para detectar
-        // Si el request URI contiene /public/, estamos en una estructura donde public/ está en la URL
-        if (strpos($requestUri, '/public/') === 0 || strpos($requestUri, '/public') === 0) {
+            $subfolder = $matches[1];
+            $path = '/' . $subfolder . '/public';
+        } elseif (preg_match('#/public/#', $script)) {
+            // Solo /public/ sin subcarpeta
             $path = '/public';
+        } elseif (preg_match('#/([^/]+)/public/#', $requestUri, $matches)) {
+            // Intentar extraer de REQUEST_URI si el script no tiene la info
+            $subfolder = $matches[1];
+            $path = '/' . $subfolder . '/public';
         } else {
-            // Por defecto, asumir que estamos en public/ y la URL base debe incluir /public
-            // Esto es lo más común cuando el document root está en public_html
+            // Por defecto en local, asumir que puede haber subcarpeta
+            // Intentar detectar desde DOCUMENT_ROOT
+            if (preg_match('#/([^/]+)/public#', $documentRoot, $matches)) {
+                $subfolder = $matches[1];
+                $path = '/' . $subfolder . '/public';
+            } else {
+                $path = '/public';
+            }
+        }
+    } else {
+        // Producción: el document root suele estar en public/ directamente
+        if (strpos($script, '/public/index.php') !== false) {
+            $beforePublic = substr($script, 0, strpos($script, '/public/'));
+            $path = ($beforePublic ? $beforePublic : '') . '/public';
+        } elseif ($script === '/index.php') {
+            $path = '';
+        } else {
             $path = '/public';
         }
     }
     
-    return $protocol . $host . $path;
+    $fullUrl = $protocol . $host . $path;
+    
+    return $fullUrl;
 }
 
 // Define URL_ROOT - detecta automáticamente el entorno

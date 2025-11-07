@@ -4,7 +4,8 @@ RewriteEngine On
 # Desactivar MultiViews
 Options -MultiViews
 
-# Permitir SOLO archivos físicos existentes (CSS, JS, imágenes)
+# Permitir SOLO archivos físicos existentes (CSS, JS, imágenes, PHP)
+# Esto incluye serve-image.php y otros scripts PHP directos
 RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule ^ - [L]
 
@@ -21,8 +22,10 @@ RewriteCond %{HTTP_HOST} !^127\.0\.0\.1 [NC]
 RewriteRule ^ - [F]
 
 # TODO LO DEMÁS va a index.php
-# NO intentar procesar la URL aquí - dejar que el fallback de PHP lo haga
-RewriteRule ^ index.php [L,QSA]
+# Pasar la URL como parámetro para que index.php la procese
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php?url=$1 [L,QSA]
 
 # Enable error reporting
 php_flag display_errors on

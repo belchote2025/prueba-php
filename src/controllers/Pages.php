@@ -275,14 +275,101 @@ class Pages extends Controller {
         });
         $relatedPosts = array_slice($relatedPosts, 0, 3);
         
+        // Cargar comentarios aprobados
+        $comments = [];
+        $commentCount = 0;
+        if (class_exists('Comment')) {
+            $commentModel = $this->model('Comment');
+            $comments = $commentModel->getCommentsWithReplies($id, true);
+            $commentCount = $commentModel->countCommentsByNewsId($id, true);
+        }
+        
         $data = [
             'title' => $post->titulo ?? $post['titulo'] ?? 'Post',
             'description' => substr(strip_tags($post->contenido ?? $post['contenido'] ?? ''), 0, 160),
             'post' => $post,
-            'related_posts' => $relatedPosts
+            'related_posts' => $relatedPosts,
+            'comments' => $comments,
+            'comment_count' => $commentCount,
+            'user_logged_in' => isset($_SESSION['user_id'])
         ];
         
         $this->view('pages/blog-post', $data);
+    }
+    
+    // Crear comentario (AJAX)
+    public function crearComentario() {
+        header('Content-Type: application/json');
+        
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            echo json_encode(['success' => false, 'message' => 'Método no permitido']);
+            exit;
+        }
+        
+        // Validar CSRF token
+        if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
+            echo json_encode(['success' => false, 'message' => 'Token de seguridad inválido']);
+            exit;
+        }
+        
+        $noticiaId = intval($_POST['noticia_id'] ?? 0);
+        $comentario = trim($_POST['comentario'] ?? '');
+        $nombre = trim($_POST['nombre'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $comentarioPadreId = !empty($_POST['comentario_padre_id']) ? intval($_POST['comentario_padre_id']) : null;
+        
+        // Validaciones
+        if (empty($noticiaId) || empty($comentario) || empty($nombre) || empty($email)) {
+            echo json_encode(['success' => false, 'message' => 'Todos los campos son obligatorios']);
+            exit;
+        }
+        
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            echo json_encode(['success' => false, 'message' => 'Email inválido']);
+            exit;
+        }
+        
+        if (strlen($comentario) < 10) {
+            echo json_encode(['success' => false, 'message' => 'El comentario debe tener al menos 10 caracteres']);
+            exit;
+        }
+        
+        // Verificar que la noticia existe
+        $newsModel = $this->model('News');
+        $noticia = $newsModel->getNewsById($noticiaId);
+        if (!$noticia) {
+            echo json_encode(['success' => false, 'message' => 'Noticia no encontrada']);
+            exit;
+        }
+        
+        // Crear comentario
+        if (class_exists('Comment')) {
+            $commentModel = $this->model('Comment');
+            $data = [
+                'noticia_id' => $noticiaId,
+                'usuario_id' => $_SESSION['user_id'] ?? null,
+                'nombre' => $nombre,
+                'email' => $email,
+                'comentario' => $comentario,
+                'comentario_padre_id' => $comentarioPadreId,
+                'aprobado' => false // Requiere aprobación del admin
+            ];
+            
+            $commentId = $commentModel->createComment($data);
+            
+            if ($commentId) {
+                echo json_encode([
+                    'success' => true, 
+                    'message' => 'Comentario enviado. Será publicado después de la aprobación del administrador.',
+                    'comment_id' => $commentId
+                ]);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Error al crear el comentario']);
+            }
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Sistema de comentarios no disponible']);
+        }
+        exit;
     }
 
     // Página de calendario
@@ -447,6 +534,142 @@ class Pages extends Controller {
         ];
         $this->view('pages/eventos', $data);
     }
+    
+    // Ver detalle de evento y reservar
+    public function verEvento($id = null) {
+        if (!$id) {
+            redirect('eventos');
+        }
+        
+        $eventModel = $this->model('Event');
+        $event = $eventModel->getEventById($id);
+        
+        if (!$event || !$event->activo) {
+            redirect('eventos');
+        }
+        
+        // Cargar reservas del usuario si está logueado
+        $userReservations = [];
+        $canReserve = false;
+        $plazasDisponibles = null;
+        
+        if (class_exists('EventReservation')) {
+            $reservationModel = $this->model('EventReservation');
+            
+            // Verificar disponibilidad
+            if ($event->inscripciones_abiertas && $event->capacidad) {
+                $reservadas = $reservationModel->countConfirmedReservations($id);
+                $plazasDisponibles = max(0, $event->capacidad - $reservadas);
+                $canReserve = $plazasDisponibles > 0;
+            } elseif ($event->inscripciones_abiertas) {
+                $canReserve = true; // Sin límite de capacidad
+            }
+            
+            // Si el usuario está logueado, obtener sus reservas
+            if (isset($_SESSION['user_id'])) {
+                $userReservations = $reservationModel->getReservationsByUserId($_SESSION['user_id']);
+                // Filtrar solo las de este evento
+                $userReservations = array_filter($userReservations, function($res) use ($id) {
+                    return ($res->evento_id ?? $res['evento_id'] ?? 0) == $id;
+                });
+            }
+        }
+        
+        $data = [
+            'title' => $event->titulo ?? 'Evento',
+            'description' => substr(strip_tags($event->descripcion ?? ''), 0, 160),
+            'event' => $event,
+            'can_reserve' => $canReserve,
+            'plazas_disponibles' => $plazasDisponibles,
+            'user_reservations' => $userReservations,
+            'user_logged_in' => isset($_SESSION['user_id'])
+        ];
+        
+        $this->view('pages/evento-detalle', $data);
+    }
+    
+    // Procesar reserva de evento
+    public function reservarEvento() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            redirect('eventos');
+        }
+        
+        // Validar CSRF
+        if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
+            setFlashMessage('error', 'Token de seguridad inválido');
+            redirect('eventos');
+        }
+        
+        $eventoId = intval($_POST['evento_id'] ?? 0);
+        $nombre = trim($_POST['nombre'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $telefono = trim($_POST['telefono'] ?? '');
+        $numPersonas = intval($_POST['num_personas'] ?? 1);
+        $notas = trim($_POST['notas'] ?? '');
+        
+        // Validaciones
+        if (empty($eventoId) || empty($nombre) || empty($email)) {
+            setFlashMessage('error', 'Todos los campos obligatorios deben completarse');
+            redirect('evento/' . $eventoId);
+        }
+        
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            setFlashMessage('error', 'Email inválido');
+            redirect('evento/' . $eventoId);
+        }
+        
+        if ($numPersonas < 1 || $numPersonas > 10) {
+            setFlashMessage('error', 'El número de personas debe estar entre 1 y 10');
+            redirect('evento/' . $eventoId);
+        }
+        
+        // Verificar que el evento existe y permite reservas
+        $eventModel = $this->model('Event');
+        $event = $eventModel->getEventById($eventoId);
+        
+        if (!$event || !$event->activo || !$event->inscripciones_abiertas) {
+            setFlashMessage('error', 'Este evento no permite reservas');
+            redirect('eventos');
+        }
+        
+        // Verificar disponibilidad
+        if (class_exists('EventReservation')) {
+            $reservationModel = $this->model('EventReservation');
+            
+            if ($event->capacidad && !$reservationModel->checkAvailability($eventoId, $numPersonas)) {
+                setFlashMessage('error', 'No hay suficientes plazas disponibles');
+                redirect('evento/' . $eventoId);
+            }
+            
+            // Crear reserva
+            $reservationData = [
+                'evento_id' => $eventoId,
+                'usuario_id' => $_SESSION['user_id'] ?? null,
+                'nombre' => $nombre,
+                'email' => $email,
+                'telefono' => $telefono ?: null,
+                'num_personas' => $numPersonas,
+                'estado' => 'pendiente',
+                'notas' => $notas ?: null
+            ];
+            
+            $reservationId = $reservationModel->createReservation($reservationData);
+            
+            if ($reservationId) {
+                // Obtener la reserva creada para mostrar el código
+                $reservation = $reservationModel->getReservationById($reservationId);
+                
+                setFlashMessage('success', 'Reserva realizada correctamente. Tu código de reserva es: ' . ($reservation->codigo_reserva ?? ''));
+                redirect('evento/' . $eventoId . '?reserva=' . $reservationId);
+            } else {
+                setFlashMessage('error', 'Error al crear la reserva. Por favor, inténtalo de nuevo.');
+                redirect('evento/' . $eventoId);
+            }
+        } else {
+            setFlashMessage('error', 'Sistema de reservas no disponible');
+            redirect('eventos');
+        }
+    }
 
     // Página del libro de la filá
     public function libro() {
@@ -459,9 +682,24 @@ class Pages extends Controller {
 
     // Página de galería multimedia
     public function galeriaMultimedia() {
+        // Cargar videos desde la base de datos
+        $videos = [];
+        $videoCount = 0;
+        
+        if (class_exists('Video')) {
+            $videoModel = $this->model('Video');
+            $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+            // En público solo mostramos videos activos
+            $videos = $videoModel->getActiveVideos($page, 12);
+            // Contar total (simplificado, se puede mejorar)
+            $videoCount = count($videos);
+        }
+        
         $data = [
             'title' => 'Galería Multimedia',
-            'description' => 'Videos de actuaciones y eventos de la Filá Mariscales'
+            'description' => 'Videos de actuaciones y eventos de la Filá Mariscales',
+            'videos' => $videos,
+            'video_count' => $videoCount
         ];
         $this->view('pages/galeria-multimedia', $data);
     }
@@ -828,7 +1066,8 @@ class Pages extends Controller {
             // Process form
             
             // Sanitize POST data
-            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+            // FILTER_SANITIZE_STRING está deprecado en PHP 8.1+
+            // Los campos se sanitizarán individualmente con htmlspecialchars() cuando se usen
             
             $data = [
                 'title' => 'Iniciar Sesión',
@@ -914,7 +1153,8 @@ class Pages extends Controller {
             // Process form
             
             // Sanitize POST data
-            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+            // FILTER_SANITIZE_STRING está deprecado en PHP 8.1+
+            // Los campos se sanitizarán individualmente con htmlspecialchars() cuando se usen
             
             $data = [
                 'title' => 'Registro',

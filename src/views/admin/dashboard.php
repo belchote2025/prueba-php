@@ -69,6 +69,7 @@
                 <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/usuarios">Usuarios</a>
                 <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/eventos">Eventos</a>
                 <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/noticias">Blog</a>
+                <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/videos">Videos</a>
                 <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/galeria">Galería</a>
                 <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/documentos">Documentos</a>
                 <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/visitas">Analíticas</a>
@@ -175,10 +176,28 @@
                 <div class="mt-auto">
                     <a href="<?php echo URL_ROOT; ?>/admin/crearUsuario" class="text-white d-block small">Nuevo usuario</a>
                     <a href="<?php echo URL_ROOT; ?>/admin/nuevoEvento" class="text-white d-block small">Nuevo evento</a>
+                    <a href="<?php echo URL_ROOT; ?>/admin/videos/nuevo" class="text-white d-block small">Nuevo video</a>
                     <a href="<?php echo URL_ROOT; ?>/admin/galeria" class="text-white d-block small">Subir archivos</a>
                     <a href="<?php echo URL_ROOT; ?>/admin/documentos" class="text-white d-block small">Gestionar documentos</a>
                     <a href="<?php echo URL_ROOT; ?>/admin/nueva-noticia" class="text-white d-block small">Nueva noticia</a>
                 </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card text-white h-100" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);">
+            <div class="card-body d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <h5 class="card-title mb-1">Videos</h5>
+                        <h2 class="mb-0"><?= isset($data['videoCount']) ? $data['videoCount'] : 0 ?></h2>
+                        <small class="opacity-75">Videos registrados</small>
+                    </div>
+                    <i class="fas fa-video fa-2x opacity-50"></i>
+                </div>
+                <a href="<?= URL_ROOT ?>/admin/videos" class="btn btn-light btn-sm mt-auto">
+                    <i class="fas fa-video me-1"></i>Gestionar videos
+                </a>
             </div>
         </div>
     </div>

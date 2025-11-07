@@ -169,6 +169,242 @@ $autorCompleto = trim($postAutor . ' ' . $postAutorApellidos);
                 </div>
             </div>
         </div>
+        
+        <!-- Comentarios Section -->
+        <div class="row mt-5">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white border-0 pb-0">
+                        <h4 class="fw-bold mb-0">
+                            <i class="bi bi-chat-dots me-2 text-danger"></i>
+                            Comentarios 
+                            <span class="badge bg-danger"><?php echo $data['comment_count'] ?? 0; ?></span>
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <!-- Formulario de comentario -->
+                        <div class="mb-4 p-3 bg-light rounded">
+                            <h5 class="fw-bold mb-3">Deja un comentario</h5>
+                            <form id="commentForm">
+                                <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?? ''; ?>">
+                                <input type="hidden" name="noticia_id" value="<?php echo $postId; ?>">
+                                
+                                <?php if (!isset($data['user_logged_in']) || !$data['user_logged_in']): ?>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="nombre" class="form-label">Nombre *</label>
+                                        <input type="text" class="form-control" id="nombre" name="nombre" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="email" class="form-label">Email *</label>
+                                        <input type="email" class="form-control" id="email" name="email" required>
+                                    </div>
+                                </div>
+                                <?php endif; ?>
+                                
+                                <div class="mb-3">
+                                    <label for="comentario" class="form-label">Comentario *</label>
+                                    <textarea class="form-control" id="comentario" name="comentario" rows="4" required minlength="10"></textarea>
+                                    <small class="text-muted">Mínimo 10 caracteres</small>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="bi bi-send me-2"></i>
+                                    Enviar comentario
+                                </button>
+                            </form>
+                            <div id="commentMessage" class="mt-3"></div>
+                        </div>
+                        
+                        <!-- Lista de comentarios -->
+                        <div id="commentsList">
+                            <?php if (!empty($data['comments'])): ?>
+                                <?php foreach ($data['comments'] as $comment): 
+                                    $commentObj = is_object($comment) ? $comment : (object)$comment;
+                                    $commentId = $commentObj->id ?? 0;
+                                    $commentNombre = htmlspecialchars($commentObj->nombre ?? 'Anónimo');
+                                    $commentTexto = nl2br(htmlspecialchars($commentObj->comentario ?? ''));
+                                    $commentFecha = $commentObj->fecha_creacion ?? '';
+                                    $respuestas = $commentObj->respuestas ?? [];
+                                ?>
+                                <div class="comment-item mb-4 pb-4 border-bottom" data-comment-id="<?php echo $commentId; ?>">
+                                    <div class="d-flex">
+                                        <div class="flex-shrink-0">
+                                            <div class="bg-danger bg-opacity-25 rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                                <i class="bi bi-person text-danger"></i>
+                                            </div>
+                                        </div>
+                                        <div class="flex-grow-1 ms-3">
+                                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                                <div>
+                                                    <h6 class="fw-bold mb-0"><?php echo $commentNombre; ?></h6>
+                                                    <small class="text-muted">
+                                                        <i class="bi bi-calendar3 me-1"></i>
+                                                        <?php echo formatDate($commentFecha, 'blog'); ?>
+                                                    </small>
+                                                </div>
+                                                <button class="btn btn-sm btn-outline-secondary reply-btn" data-comment-id="<?php echo $commentId; ?>">
+                                                    <i class="bi bi-reply me-1"></i> Responder
+                                                </button>
+                                            </div>
+                                            <p class="mb-0"><?php echo $commentTexto; ?></p>
+                                            
+                                            <!-- Respuestas -->
+                                            <?php if (!empty($respuestas)): ?>
+                                                <div class="mt-3 ms-4 ps-3 border-start border-2">
+                                                    <?php foreach ($respuestas as $reply): 
+                                                        $replyObj = is_object($reply) ? $reply : (object)$reply;
+                                                        $replyNombre = htmlspecialchars($replyObj->nombre ?? 'Anónimo');
+                                                        $replyTexto = nl2br(htmlspecialchars($replyObj->comentario ?? ''));
+                                                        $replyFecha = $replyObj->fecha_creacion ?? '';
+                                                    ?>
+                                                    <div class="mb-3">
+                                                        <div class="d-flex">
+                                                            <div class="flex-shrink-0">
+                                                                <div class="bg-secondary bg-opacity-25 rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                                    <i class="bi bi-person text-secondary"></i>
+                                                                </div>
+                                                            </div>
+                                                            <div class="flex-grow-1 ms-2">
+                                                                <h6 class="fw-bold mb-0 small"><?php echo $replyNombre; ?></h6>
+                                                                <small class="text-muted">
+                                                                    <i class="bi bi-calendar3 me-1"></i>
+                                                                    <?php echo formatDate($replyFecha, 'blog'); ?>
+                                                                </small>
+                                                                <p class="mb-0 small mt-1"><?php echo $replyTexto; ?></p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <?php endforeach; ?>
+                                                </div>
+                                            <?php endif; ?>
+                                            
+                                            <!-- Formulario de respuesta (oculto) -->
+                                            <div class="reply-form mt-3 ms-4 ps-3 border-start border-2" style="display: none;" data-parent-id="<?php echo $commentId; ?>">
+                                                <form class="reply-comment-form">
+                                                    <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?? ''; ?>">
+                                                    <input type="hidden" name="noticia_id" value="<?php echo $postId; ?>">
+                                                    <input type="hidden" name="comentario_padre_id" value="<?php echo $commentId; ?>">
+                                                    
+                                                    <?php if (!isset($data['user_logged_in']) || !$data['user_logged_in']): ?>
+                                                    <div class="row mb-2">
+                                                        <div class="col-md-6">
+                                                            <input type="text" class="form-control form-control-sm" name="nombre" placeholder="Nombre" required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <input type="email" class="form-control form-control-sm" name="email" placeholder="Email" required>
+                                                        </div>
+                                                    </div>
+                                                    <?php endif; ?>
+                                                    
+                                                    <textarea class="form-control form-control-sm mb-2" name="comentario" rows="2" placeholder="Escribe tu respuesta..." required minlength="10"></textarea>
+                                                    <div class="d-flex gap-2">
+                                                        <button type="submit" class="btn btn-sm btn-danger">Enviar</button>
+                                                        <button type="button" class="btn btn-sm btn-outline-secondary cancel-reply">Cancelar</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <p class="text-muted text-center py-4">
+                                    <i class="bi bi-chat-dots fs-1 d-block mb-2"></i>
+                                    Aún no hay comentarios. ¡Sé el primero en comentar!
+                                </p>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
+
+<script>
+// Manejo de formulario de comentarios
+document.addEventListener('DOMContentLoaded', function() {
+    const commentForm = document.getElementById('commentForm');
+    if (commentForm) {
+        commentForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(commentForm);
+            const messageDiv = document.getElementById('commentMessage');
+            
+            fetch('<?php echo URL_ROOT; ?>/crear-comentario', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    messageDiv.innerHTML = '<div class="alert alert-success">' + data.message + '</div>';
+                    commentForm.reset();
+                    // Recargar comentarios después de 2 segundos
+                    setTimeout(() => location.reload(), 2000);
+                } else {
+                    messageDiv.innerHTML = '<div class="alert alert-danger">' + data.message + '</div>';
+                }
+            })
+            .catch(error => {
+                messageDiv.innerHTML = '<div class="alert alert-danger">Error al enviar el comentario</div>';
+            });
+        });
+    }
+    
+    // Manejo de respuestas
+    document.querySelectorAll('.reply-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const commentId = this.getAttribute('data-comment-id');
+            const replyForm = document.querySelector(`.reply-form[data-parent-id="${commentId}"]`);
+            if (replyForm) {
+                replyForm.style.display = replyForm.style.display === 'none' ? 'block' : 'none';
+            }
+        });
+    });
+    
+    // Cancelar respuesta
+    document.querySelectorAll('.cancel-reply').forEach(btn => {
+        btn.addEventListener('click', function() {
+            this.closest('.reply-form').style.display = 'none';
+            this.closest('form').reset();
+        });
+    });
+    
+    // Enviar respuesta
+    document.querySelectorAll('.reply-comment-form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'alert mt-2';
+            this.appendChild(messageDiv);
+            
+            fetch('<?php echo URL_ROOT; ?>/crear-comentario', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    messageDiv.className = 'alert alert-success mt-2';
+                    messageDiv.textContent = data.message;
+                    this.reset();
+                    setTimeout(() => location.reload(), 2000);
+                } else {
+                    messageDiv.className = 'alert alert-danger mt-2';
+                    messageDiv.textContent = data.message;
+                }
+            })
+            .catch(error => {
+                messageDiv.className = 'alert alert-danger mt-2';
+                messageDiv.textContent = 'Error al enviar la respuesta';
+            });
+        });
+    });
+});
+</script>
 
