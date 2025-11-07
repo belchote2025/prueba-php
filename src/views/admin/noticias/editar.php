@@ -1,3 +1,26 @@
+<?php
+if (!function_exists('generateCsrfToken')) {
+    function generateCsrfToken() {
+        if (class_exists('SecurityHelper')) {
+            return SecurityHelper::generateCsrfToken();
+        }
+        return bin2hex(random_bytes(32));
+    }
+}
+
+$formData = $formData ?? [
+    'titulo' => $news->titulo ?? '',
+    'contenido' => $news->contenido ?? '',
+    'estado' => $news->estado ?? 'borrador',
+    'fecha_publicacion' => isset($news->fecha_publicacion) ? date('Y-m-d\TH:i', strtotime($news->fecha_publicacion)) : date('Y-m-d\TH:i'),
+    'imagen_portada' => $news->imagen_portada ?? null,
+    'errors' => []
+];
+
+$imagenActual = $news->imagen_portada ?? null;
+$nuevaImagen = $formData['imagen_portada'] ?? null;
+$imagenPreview = $nuevaImagen ? $nuevaImagen : $imagenActual;
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -69,6 +92,7 @@
         <div class="row">
             <div class="col-12">
                 <form method="POST" enctype="multipart/form-data" id="newsForm">
+                    <input type="hidden" name="csrf_token" value="<?= generateCsrfToken() ?>">
                     <div class="row">
                         <!-- Main Content -->
                         <div class="col-lg-8">
@@ -87,7 +111,7 @@
                                         </label>
                                         <input type="text" class="form-control <?= isset($errors['titulo']) ? 'is-invalid' : '' ?>" 
                                                id="titulo" name="titulo" 
-                                               value="<?= htmlspecialchars($news->titulo ?? '') ?>" 
+                                               value="<?= htmlspecialchars($formData['titulo'] ?? '') ?>" 
                                                placeholder="Ingresa el título de la noticia" required>
                                         <?php if (isset($errors['titulo'])): ?>
                                             <div class="invalid-feedback"><?= $errors['titulo'] ?></div>
@@ -101,7 +125,7 @@
                                         </label>
                                         <textarea class="form-control <?= isset($errors['contenido']) ? 'is-invalid' : '' ?>" 
                                                   id="contenido" name="contenido" rows="15" 
-                                                  placeholder="Escribe el contenido de la noticia aquí..." required><?= htmlspecialchars($news->contenido ?? '') ?></textarea>
+                                                  placeholder="Escribe el contenido de la noticia aquí..." required><?= htmlspecialchars($formData['contenido'] ?? '') ?></textarea>
                                         <?php if (isset($errors['contenido'])): ?>
                                             <div class="invalid-feedback"><?= $errors['contenido'] ?></div>
                                         <?php endif; ?>
@@ -128,13 +152,13 @@
                                         </label>
                                         <select class="form-select <?= isset($errors['estado']) ? 'is-invalid' : '' ?>" 
                                                 id="estado" name="estado">
-                                            <option value="borrador" <?= ($news->estado ?? 'borrador') == 'borrador' ? 'selected' : '' ?>>
+                                            <option value="borrador" <?= ($formData['estado'] ?? 'borrador') == 'borrador' ? 'selected' : '' ?>>
                                                 Borrador
                                             </option>
-                                            <option value="publicado" <?= ($news->estado ?? '') == 'publicado' ? 'selected' : '' ?>>
+                                            <option value="publicado" <?= ($formData['estado'] ?? '') == 'publicado' ? 'selected' : '' ?>>
                                                 Publicado
                                             </option>
-                                            <option value="archivado" <?= ($news->estado ?? '') == 'archivado' ? 'selected' : '' ?>>
+                                            <option value="archivado" <?= ($formData['estado'] ?? '') == 'archivado' ? 'selected' : '' ?>>
                                                 Archivado
                                             </option>
                                         </select>
@@ -150,7 +174,7 @@
                                         </label>
                                         <input type="datetime-local" class="form-control" 
                                                id="fecha_publicacion" name="fecha_publicacion" 
-                                               value="<?= $news ? date('Y-m-d\TH:i', strtotime($news->fecha_publicacion)) : date('Y-m-d\TH:i') ?>">
+                                               value="<?= htmlspecialchars($formData['fecha_publicacion'] ?? date('Y-m-d\TH:i')) ?>">
                                     </div>
                                 </div>
                             </div>
@@ -165,12 +189,12 @@
                                 </div>
                                 <div class="card-body">
                                     <!-- Current Image -->
-                                    <?php if ($news && !empty($news->imagen_portada)): ?>
+                                    <?php if ($imagenPreview): ?>
                                         <div class="image-preview-container">
-                                            <img src="http://localhost<?php echo URL_ROOT; ?>/serve-image.php?path=uploads/news/<?= urlencode($news->imagen_portada) ?>" 
+                                            <img src="<?= URL_ROOT ?>/serve-image.php?path=uploads/news/<?= urlencode($imagenPreview) ?>" 
                                                  class="image-preview" id="currentImage" alt="Imagen actual">
                                             <div class="mt-2">
-                                                <small class="text-muted">Imagen actual</small>
+                                                <small class="text-muted">Imagen <?= $nuevaImagen ? 'nueva (sin guardar aún)' : 'actual' ?></small>
                                             </div>
                                         </div>
                                     <?php endif; ?>
@@ -178,7 +202,7 @@
                                     <!-- Image Upload -->
                                     <div class="mb-3">
                                         <label for="imagen_portada" class="form-label">
-                                            <?= $news && !empty($news->imagen_portada) ? 'Cambiar Imagen' : 'Subir Imagen' ?>
+                                            <?= $imagenPreview ? 'Cambiar Imagen' : 'Subir Imagen' ?>
                                         </label>
                                         <input type="file" class="form-control <?= isset($errors['imagen']) ? 'is-invalid' : '' ?>" 
                                                id="imagen_portada" name="imagen_portada" 

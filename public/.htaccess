@@ -14,7 +14,10 @@ RewriteCond %{REQUEST_URI} ^/public/assets/
 RewriteRule ^ - [L]
 
 # BLOQUEAR otros directorios (previene que Apache busque cart/public/index.php)
+# PERO permitir en localhost para desarrollo
 RewriteCond %{REQUEST_FILENAME} -d
+RewriteCond %{HTTP_HOST} !^localhost [NC]
+RewriteCond %{HTTP_HOST} !^127\.0\.0\.1 [NC]
 RewriteRule ^ - [F]
 
 # TODO LO DEMÁS va a index.php

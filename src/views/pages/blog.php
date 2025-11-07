@@ -1,6 +1,4 @@
-<?php $content = '\n';
-ob_start(); // Start output buffering
-
+<?php
 // Función helper para obtener color de categoría
 function getCategoryColor($category) {
     $colors = [
@@ -31,10 +29,10 @@ function getDefaultImage() {
 ?>
 
 <!-- Hero Section -->
-<section class="hero-section text-white text-center py-5 mb-5" style="background: rgba(0, 0, 0, 0.1); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);">
+<section class="hero-section text-white text-center py-5 mb-5" style="background: linear-gradient(135deg, rgba(220, 20, 60, 0.9) 0%, rgba(139, 0, 0, 0.9) 100%); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);">
     <div class="container">
-        <h1 class="display-4 fw-bold mb-3">Blog</h1>
-        <p class="lead">Noticias, artículos y novedades de la Filá Mariscales</p>
+        <h1 class="display-4 fw-bold mb-3 text-white">Blog</h1>
+        <p class="lead text-white">Noticias, artículos y novedades de la Filá Mariscales</p>
     </div>
 </section>
 
@@ -56,9 +54,13 @@ function getDefaultImage() {
             <div class="col-lg-8 mx-auto">
                 <div class="card border-0 shadow-sm mb-5">
                     <?php if ($featuredImagen): ?>
-                        <img src="<?php echo URL_ROOT; ?>/uploads/news/<?php echo htmlspecialchars($featuredImagen); ?>" 
+                        <img src="<?php echo URL_ROOT; ?>/serve-image.php?path=uploads/news/<?php echo urlencode($featuredImagen); ?>" 
                              class="card-img-top" alt="<?php echo htmlspecialchars($featuredTitulo); ?>" 
-                             style="height: 400px; object-fit: cover;">
+                             style="height: 400px; object-fit: cover;"
+                             onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="card-img-top bg-danger bg-opacity-10 d-flex align-items-center justify-content-center" style="height: 400px; display: none;">
+                            <i class="bi bi-image text-danger" style="font-size: 4rem;"></i>
+                        </div>
                     <?php else: ?>
                         <div class="card-img-top bg-danger bg-opacity-10 d-flex align-items-center justify-content-center" style="height: 400px;">
                             <i class="bi bi-image text-danger" style="font-size: 4rem;"></i>
@@ -107,9 +109,13 @@ function getDefaultImage() {
                 <div class="card h-100 border-0 shadow-sm">
                     <div class="position-relative">
                         <?php if ($postImagen): ?>
-                            <img src="<?php echo URL_ROOT; ?>/uploads/news/<?php echo htmlspecialchars($postImagen); ?>" 
+                            <img src="<?php echo URL_ROOT; ?>/serve-image.php?path=uploads/news/<?php echo urlencode($postImagen); ?>" 
                                  class="card-img-top" alt="<?php echo htmlspecialchars($postTitulo); ?>"
-                                 style="height: 250px; object-fit: cover;">
+                                 style="height: 250px; object-fit: cover;"
+                                 onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="card-img-top bg-danger bg-opacity-10 d-flex align-items-center justify-content-center" style="height: 250px; display: none;">
+                                <i class="bi bi-image text-danger" style="font-size: 3rem;"></i>
+                            </div>
                         <?php else: ?>
                             <div class="card-img-top bg-danger bg-opacity-10 d-flex align-items-center justify-content-center" style="height: 250px;">
                                 <i class="bi bi-image text-danger" style="font-size: 3rem;"></i>
@@ -217,7 +223,7 @@ function getDefaultImage() {
 </section>
 
 <!-- Categories Section -->
-<section class="py-5" style="background: rgba(0, 0, 0, 0.1); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);">
+<section class="py-5" style="background: linear-gradient(135deg, rgba(220, 20, 60, 0.1) 0%, rgba(139, 0, 0, 0.1) 100%); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);">
     <div class="container">
         <div class="text-center mb-5">
             <h2 class="fw-bold">Explora por categorías</h2>
@@ -241,7 +247,3 @@ function getDefaultImage() {
         </div>
     </div>
 </section>
-
-<?php
-$content = ob_get_clean();
-?>

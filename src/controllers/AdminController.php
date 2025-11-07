@@ -2048,7 +2048,23 @@ class AdminController extends Controller {
         error_log("GET params: " . print_r($_GET, true));
         error_log("POST params: " . print_r($_POST, true));
         
-        $newsData = ['errors' => []];
+        // Asegurar que el modelo de noticias esté disponible
+        if (!$this->newsModel && class_exists('News')) {
+            try {
+                $this->newsModel = $this->model('News');
+            } catch (Exception $e) {
+                error_log('Error cargando News model: ' . $e->getMessage());
+            }
+        }
+
+        $formData = [
+            'titulo' => '',
+            'contenido' => '',
+            'estado' => 'borrador',
+            'fecha_publicacion' => date('Y-m-d\TH:i'),
+            'imagen_portada' => null,
+            'errors' => []
+        ];
         
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Validate CSRF token if SecurityHelper exists and token is provided
@@ -2060,28 +2076,26 @@ class AdminController extends Controller {
             }
             
             // Process form data
-            $newsData = [
-                'titulo' => trim($_POST['titulo'] ?? ''),
-                'contenido' => trim($_POST['contenido'] ?? ''),
-                'estado' => trim($_POST['estado'] ?? 'borrador'),
-                'fecha_publicacion' => trim($_POST['fecha_publicacion'] ?? date('Y-m-d H:i:s')),
-                'autor_id' => $_SESSION['user_id'] ?? null,
-                'errors' => []
-            ];
+            $formData['titulo'] = trim($_POST['titulo'] ?? '');
+            $formData['contenido'] = trim($_POST['contenido'] ?? '');
+            $formData['estado'] = trim($_POST['estado'] ?? 'borrador');
+            $formData['fecha_publicacion'] = trim($_POST['fecha_publicacion'] ?? date('Y-m-d\TH:i'));
+            $formData['autor_id'] = $_SESSION['user_id'] ?? null;
+            $formData['errors'] = [];
             
             // Validate data
-            if (empty($newsData['titulo'])) {
-                $newsData['errors']['titulo'] = 'Título requerido';
+            if (empty($formData['titulo'])) {
+                $formData['errors']['titulo'] = 'Título requerido';
             }
             
-            if (empty($newsData['contenido'])) {
-                $newsData['errors']['contenido'] = 'Contenido requerido';
+            if (empty($formData['contenido'])) {
+                $formData['errors']['contenido'] = 'Contenido requerido';
             }
             
             // Validate status
             $validStatuses = ['publicado', 'borrador', 'archivado'];
-            if (!in_array($newsData['estado'], $validStatuses)) {
-                $newsData['errors']['estado'] = 'Estado inválido';
+            if (!in_array($formData['estado'], $validStatuses)) {
+                $formData['errors']['estado'] = 'Estado inválido';
             }
             
             // Handle image upload
@@ -2097,44 +2111,44 @@ class AdminController extends Controller {
                     }
                     
                     $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-                    $newsData['imagen_portada'] = 'news_' . time() . '_' . rand(1000, 9999) . '.' . $extension;
-                    $filepath = $upload_dir . $newsData['imagen_portada'];
+                    $formData['imagen_portada'] = 'news_' . time() . '_' . rand(1000, 9999) . '.' . $extension;
+                    $filepath = $upload_dir . $formData['imagen_portada'];
                     
                     if (!move_uploaded_file($file['tmp_name'], $filepath)) {
-                        $newsData['errors']['imagen'] = 'Error al subir la imagen';
-                        $newsData['imagen_portada'] = null;
+                        $formData['errors']['imagen'] = 'Error al subir la imagen';
+                        $formData['imagen_portada'] = null;
                     }
                 } else {
-                    $newsData['errors']['imagen'] = 'Tipo de archivo no permitido o archivo demasiado grande';
+                    $formData['errors']['imagen'] = 'Tipo de archivo no permitido o archivo demasiado grande';
                 }
             }
             
-            if (empty($newsData['errors'])) {
-                // Crear noticia directamente con PDO
-                try {
-                    $pdo = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME, DB_USER, DB_PASS);
-                    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                    
-                    $sql = "INSERT INTO noticias (titulo, contenido, imagen_portada, autor_id, estado, fecha_publicacion) 
-                            VALUES (:titulo, :contenido, :imagen_portada, :autor_id, :estado, :fecha_publicacion)";
-                    
-                    $stmt = $pdo->prepare($sql);
-                    $stmt->bindParam(':titulo', $newsData['titulo']);
-                    $stmt->bindParam(':contenido', $newsData['contenido']);
-                    $stmt->bindParam(':imagen_portada', $newsData['imagen_portada']);
-                    $stmt->bindParam(':autor_id', $newsData['autor_id']);
-                    $stmt->bindParam(':estado', $newsData['estado']);
-                    $stmt->bindParam(':fecha_publicacion', $newsData['fecha_publicacion']);
-                    
-                    if ($stmt->execute()) {
-                        // Redirigir directamente
-                        header('Location: http://localhost/prueba-php/public/admin/noticias?success=1');
-                        exit;
-                    } else {
-                        $newsData['errors']['general'] = 'Error al crear la noticia';
+            if (empty($formData['errors'])) {
+                $payload = [
+                    'titulo' => $formData['titulo'],
+                    'contenido' => $formData['contenido'],
+                    'imagen_portada' => $formData['imagen_portada'] ?? null,
+                    'autor_id' => $formData['autor_id'] ?? ($_SESSION['user_id'] ?? null),
+                    'estado' => $formData['estado'],
+                ];
+
+                // Convertir fecha al formato correcto
+                $fechaPublicacion = $formData['fecha_publicacion'] ?? '';
+                $fechaConvertida = null;
+                if (!empty($fechaPublicacion)) {
+                    $fechaNormalizada = str_replace('T', ' ', $fechaPublicacion);
+                    $timestamp = strtotime($fechaNormalizada);
+                    if ($timestamp !== false) {
+                        $fechaConvertida = date('Y-m-d H:i:s', $timestamp);
                     }
-                } catch (Exception $e) {
-                    $newsData['errors']['general'] = 'Error de base de datos: ' . $e->getMessage();
+                }
+                $payload['fecha_publicacion'] = $fechaConvertida ?: date('Y-m-d H:i:s');
+
+                if ($this->newsModel && $this->newsModel->createNews($payload)) {
+                    setFlashMessage('success', 'Noticia creada correctamente');
+                    $this->redirect('/admin/noticias?success=1');
+                } else {
+                    $formData['errors']['general'] = 'Error al crear la noticia';
                 }
             }
         }
@@ -2142,7 +2156,8 @@ class AdminController extends Controller {
         $data = [
             'title' => 'Nueva Noticia',
             'news' => null,
-            'errors' => $newsData['errors'] ?? []
+            'errors' => $formData['errors'] ?? [],
+            'formData' => $formData
         ];
         
         error_log("Loading view: admin/noticias/crear");
@@ -2162,6 +2177,23 @@ class AdminController extends Controller {
     
     // Editar noticia
     public function editarNoticia($id = null) {
+        if (!$this->newsModel && class_exists('News')) {
+            try {
+                $this->newsModel = $this->model('News');
+            } catch (Exception $e) {
+                error_log('Error cargando News model: ' . $e->getMessage());
+            }
+        }
+
+        $formData = [
+            'titulo' => '',
+            'contenido' => '',
+            'estado' => 'borrador',
+            'fecha_publicacion' => date('Y-m-d\TH:i'),
+            'imagen_portada' => null,
+            'errors' => []
+        ];
+
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Validate CSRF token if SecurityHelper exists and token is provided
             if ($this->securityHelper && isset($_POST['csrf_token'])) {
@@ -2172,28 +2204,26 @@ class AdminController extends Controller {
             }
             
             // Process form data
-            $newsData = [
-                'id' => $id,
-                'titulo' => trim($_POST['titulo'] ?? ''),
-                'contenido' => trim($_POST['contenido'] ?? ''),
-                'estado' => trim($_POST['estado'] ?? 'borrador'),
-                'fecha_publicacion' => trim($_POST['fecha_publicacion'] ?? date('Y-m-d H:i:s')),
-                'errors' => []
-            ];
+            $formData['titulo'] = trim($_POST['titulo'] ?? '');
+            $formData['contenido'] = trim($_POST['contenido'] ?? '');
+            $formData['estado'] = trim($_POST['estado'] ?? 'borrador');
+            $formData['fecha_publicacion'] = trim($_POST['fecha_publicacion'] ?? date('Y-m-d\TH:i'));
+            $formData['errors'] = [];
+            $formData['id'] = $id;
             
             // Validate data
-            if (empty($newsData['titulo'])) {
-                $newsData['errors']['titulo'] = 'Título requerido';
+            if (empty($formData['titulo'])) {
+                $formData['errors']['titulo'] = 'Título requerido';
             }
             
-            if (empty($newsData['contenido'])) {
-                $newsData['errors']['contenido'] = 'Contenido requerido';
+            if (empty($formData['contenido'])) {
+                $formData['errors']['contenido'] = 'Contenido requerido';
             }
             
             // Validate status
             $validStatuses = ['publicado', 'borrador', 'archivado'];
-            if (!in_array($newsData['estado'], $validStatuses)) {
-                $newsData['errors']['estado'] = 'Estado inválido';
+            if (!in_array($formData['estado'], $validStatuses)) {
+                $formData['errors']['estado'] = 'Estado inválido';
             }
             
             // Handle image upload
@@ -2209,8 +2239,8 @@ class AdminController extends Controller {
                     }
                     
                     $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-                    $newsData['imagen_portada'] = 'news_' . $id . '_' . time() . '.' . $extension;
-                    $filepath = $upload_dir . $newsData['imagen_portada'];
+                    $formData['imagen_portada'] = 'news_' . $id . '_' . time() . '.' . $extension;
+                    $filepath = $upload_dir . $formData['imagen_portada'];
                     
                     if (move_uploaded_file($file['tmp_name'], $filepath)) {
                         // Eliminar imagen anterior si existe
@@ -2219,15 +2249,34 @@ class AdminController extends Controller {
                             unlink($upload_dir . $currentNews->imagen_portada);
                         }
                     } else {
-                        $newsData['errors']['imagen'] = 'Error al subir la imagen';
+                        $formData['errors']['imagen'] = 'Error al subir la imagen';
                     }
                 } else {
-                    $newsData['errors']['imagen'] = 'Tipo de archivo no permitido o archivo demasiado grande';
+                    $formData['errors']['imagen'] = 'Tipo de archivo no permitido o archivo demasiado grande';
                 }
             }
             
-            if (empty($newsData['errors']) && $this->newsModel) {
-                $result = $this->newsModel->updateNews($newsData);
+            if (empty($formData['errors']) && $this->newsModel) {
+                $payload = [
+                    'id' => $id,
+                    'titulo' => $formData['titulo'],
+                    'contenido' => $formData['contenido'],
+                    'estado' => $formData['estado'],
+                ];
+
+                if (!empty($formData['imagen_portada'])) {
+                    $payload['imagen_portada'] = $formData['imagen_portada'];
+                }
+
+                if (!empty($formData['fecha_publicacion'])) {
+                    $fechaNormalizada = str_replace('T', ' ', $formData['fecha_publicacion']);
+                    $timestamp = strtotime($fechaNormalizada);
+                    if ($timestamp !== false) {
+                        $payload['fecha_publicacion'] = date('Y-m-d H:i:s', $timestamp);
+                    }
+                }
+
+                $result = $this->newsModel->updateNews($payload);
                 
                 if ($result) {
                     setFlashMessage('success', 'Noticia actualizada correctamente');
@@ -2248,11 +2297,20 @@ class AdminController extends Controller {
             setFlashMessage('error', 'Noticia no encontrada');
             $this->redirect('/admin/noticias');
         }
+
+        if ($news) {
+            $formData['titulo'] = $formData['titulo'] ?: ($news->titulo ?? '');
+            $formData['contenido'] = $formData['contenido'] ?: ($news->contenido ?? '');
+            $formData['estado'] = $formData['estado'] ?: ($news->estado ?? 'borrador');
+            $formData['fecha_publicacion'] = $formData['fecha_publicacion'] ?: date('Y-m-d\TH:i', strtotime($news->fecha_publicacion ?? 'now'));
+            $formData['imagen_portada'] = $formData['imagen_portada'] ?? ($news->imagen_portada ?? null);
+        }
         
         $data = [
             'title' => $id ? 'Editar Noticia' : 'Nueva Noticia',
             'news' => $news,
-            'errors' => $newsData['errors'] ?? []
+            'errors' => $formData['errors'] ?? [],
+            'formData' => $formData
         ];
         
         $this->loadViewDirectly('admin/noticias/editar', $data);
@@ -2687,4 +2745,5 @@ class AdminController extends Controller {
         $this->redirect('/admin/documentos');
     }
 }
+
 

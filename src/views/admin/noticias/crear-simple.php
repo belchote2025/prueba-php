@@ -1,3 +1,20 @@
+<?php
+if (!function_exists('generateCsrfToken')) {
+    function generateCsrfToken() {
+        if (class_exists('SecurityHelper')) {
+            return SecurityHelper::generateCsrfToken();
+        }
+        return bin2hex(random_bytes(32));
+    }
+}
+
+$formData = $formData ?? [
+    'titulo' => '',
+    'contenido' => '',
+    'estado' => 'borrador',
+    'fecha_publicacion' => date('Y-m-d\TH:i')
+];
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -14,7 +31,7 @@
                 <h1>Nueva Noticia</h1>
                 <p>Formulario para crear una nueva noticia</p>
                 
-                <?php if (isset($errors) && !empty($errors)): ?>
+                <?php if (!empty($errors ?? [])): ?>
                     <div class="alert alert-danger">
                         <h5>Errores encontrados:</h5>
                         <ul class="mb-0">
@@ -26,22 +43,28 @@
                 <?php endif; ?>
                 
                 <form method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="csrf_token" value="<?= generateCsrfToken() ?>">
                     <div class="mb-3">
                         <label for="titulo" class="form-label">Título</label>
-                        <input type="text" class="form-control" id="titulo" name="titulo" required>
+                        <input type="text" class="form-control" id="titulo" name="titulo" value="<?= htmlspecialchars($formData['titulo'] ?? '') ?>" required>
                     </div>
                     
                     <div class="mb-3">
                         <label for="contenido" class="form-label">Contenido</label>
-                        <textarea class="form-control" id="contenido" name="contenido" rows="10" required></textarea>
+                        <textarea class="form-control" id="contenido" name="contenido" rows="10" required><?= htmlspecialchars($formData['contenido'] ?? '') ?></textarea>
                     </div>
                     
                     <div class="mb-3">
                         <label for="estado" class="form-label">Estado</label>
                         <select class="form-select" id="estado" name="estado">
-                            <option value="borrador">Borrador</option>
-                            <option value="publicado">Publicado</option>
+                            <option value="borrador" <?= ($formData['estado'] ?? 'borrador') === 'borrador' ? 'selected' : '' ?>>Borrador</option>
+                            <option value="publicado" <?= ($formData['estado'] ?? '') === 'publicado' ? 'selected' : '' ?>>Publicado</option>
                         </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="fecha_publicacion" class="form-label">Fecha de publicación</label>
+                        <input type="datetime-local" class="form-control" id="fecha_publicacion" name="fecha_publicacion" value="<?= htmlspecialchars($formData['fecha_publicacion'] ?? date('Y-m-d\TH:i')) ?>">
                     </div>
                     
                     <div class="mb-3">
@@ -58,7 +81,7 @@
                         <i class="fas fa-save me-1"></i>Crear Noticia
                     </button>
                     
-                    <a href="http://localhost<?php echo URL_ROOT; ?>/admin/noticias" class="btn btn-secondary">
+                    <a href="<?= URL_ROOT ?>/admin/noticias" class="btn btn-secondary">
                         <i class="fas fa-arrow-left me-1"></i>Volver
                     </a>
                 </form>

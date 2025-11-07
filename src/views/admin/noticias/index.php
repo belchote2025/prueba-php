@@ -88,7 +88,7 @@
                         <p class="text-muted mb-0">Administra las noticias y publicaciones de la Filá</p>
                     </div>
                     <div>
-                        <a href="http://localhost<?php echo URL_ROOT; ?>/admin/nueva-noticia" class="btn btn-primary me-2">
+                        <a href="<?= URL_ROOT ?>/admin/nueva-noticia" class="btn btn-primary me-2">
                             <i class="fas fa-plus me-1"></i>Nueva Noticia
                         </a>
                         <a href="<?= URL_ROOT ?>/admin/dashboard" class="btn btn-outline-secondary">
@@ -260,7 +260,7 @@
                                             <tr>
                                                 <td>
                                                     <?php if (!empty($item->imagen_portada)): ?>
-                                                        <img src="http://localhost<?php echo URL_ROOT; ?>/serve-image.php?path=uploads/news/<?= urlencode($item->imagen_portada) ?>" 
+                                                        <img src="<?= URL_ROOT ?>/serve-image.php?path=uploads/news/<?= urlencode($item->imagen_portada) ?>" 
                                                              class="news-image" alt="Imagen de portada">
                                                     <?php else: ?>
                                                         <div class="news-image bg-light d-flex align-items-center justify-content-center">
@@ -376,7 +376,7 @@
                                 <i class="fas fa-newspaper"></i>
                                 <h4>No hay noticias disponibles</h4>
                                 <p>No se encontraron noticias en el sistema.</p>
-                                <a href="http://localhost<?php echo URL_ROOT; ?>/admin/nueva-noticia" class="btn btn-primary">
+                                <a href="<?= URL_ROOT ?>/admin/nueva-noticia" class="btn btn-primary">
                                     <i class="fas fa-plus me-1"></i>Crear Primera Noticia
                                 </a>
                             </div>

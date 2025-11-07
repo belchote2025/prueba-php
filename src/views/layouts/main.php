@@ -356,36 +356,27 @@ if (!function_exists('isLoggedIn')) {
     <script>
         // Bootstrap-compatible dropdown functionality
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('Initializing dropdowns...');
-            
             // Try Bootstrap first, fallback to custom if needed
             if (typeof bootstrap !== 'undefined' && bootstrap.Dropdown) {
-                console.log('Using Bootstrap dropdowns');
                 try {
                     // Initialize Bootstrap dropdowns
                     var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
                     var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
                         return new bootstrap.Dropdown(dropdownToggleEl);
                     });
-                    console.log('Bootstrap dropdowns initialized:', dropdownList.length);
                 } catch (error) {
                     console.error('Bootstrap dropdown error:', error);
                     initializeCustomDropdowns();
                 }
             } else {
-                console.log('Bootstrap not available, using custom dropdowns');
                 initializeCustomDropdowns();
             }
             
             function initializeCustomDropdowns() {
-                console.log('Initializing custom dropdowns...');
-                
                 document.querySelectorAll('.dropdown-toggle').forEach(function(toggle) {
                     toggle.addEventListener('click', function(e) {
                         e.preventDefault();
                         e.stopPropagation();
-                        
-                        console.log('Custom dropdown clicked');
                         
                         var dropdown = this.closest('.dropdown');
                         var menu = dropdown.querySelector('.dropdown-menu');
@@ -400,7 +391,6 @@ if (!function_exists('isLoggedIn')) {
                             
                             // Toggle current dropdown
                             menu.classList.toggle('show');
-                            console.log('Custom dropdown toggled, show:', menu.classList.contains('show'));
                         }
                     });
                 });
@@ -571,10 +561,8 @@ if (!function_exists('isLoggedIn')) {
         // Función para obtener información del carrito
         function getCartInfo() {
             var cartUrl = '<?php echo URL_ROOT; ?>/cart/info';
-            console.log('Fetching cart info from:', cartUrl);
             fetch(cartUrl)
                 .then(response => {
-                    console.log('Cart response status:', response.status, response.statusText);
                     if (!response.ok) {
                         throw new Error('HTTP error! status: ' + response.status);
                     }
@@ -638,10 +626,8 @@ if (!function_exists('isLoggedIn')) {
         // Función para obtener información de la wishlist
         function getWishlistInfo() {
             var wishlistUrl = '<?php echo URL_ROOT; ?>/order/wishlist/info';
-            console.log('Fetching wishlist info from:', wishlistUrl);
             fetch(wishlistUrl)
                 .then(response => {
-                    console.log('Wishlist response status:', response.status, response.statusText);
                     if (!response.ok) {
                         throw new Error('HTTP error! status: ' + response.status);
                     }
@@ -667,8 +653,6 @@ if (!function_exists('isLoggedIn')) {
     <!-- JavaScript mejorado para manejar dropdowns en menú hamburguesa -->
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('JavaScript mejorado para dropdowns cargado');
-        
         // Detectar si estamos en móvil/tablet
         function isMobile() {
             return window.innerWidth <= 991.98;
@@ -680,8 +664,6 @@ if (!function_exists('isLoggedIn')) {
                 e.preventDefault();
                 e.stopPropagation();
                 e.stopImmediatePropagation();
-                
-                console.log('Click en dropdown detectado en móvil');
                 
                 const dropdown = this.closest('.dropdown');
                 const menu = dropdown.querySelector('.dropdown-menu');
@@ -698,10 +680,7 @@ if (!function_exists('isLoggedIn')) {
                     setTimeout(() => {
                         menu.classList.add('show');
                         menu.style.display = 'block';
-                        console.log('Dropdown abierto:', dropdown);
                     }, 50);
-                } else {
-                    console.log('Dropdown cerrado:', dropdown);
                 }
                 
                 return false;
@@ -719,8 +698,6 @@ if (!function_exists('isLoggedIn')) {
         // Configurar dropdowns para móviles
         function setupMobileDropdowns() {
             if (isMobile()) {
-                console.log('Configurando dropdowns para móviles');
-                
                 document.querySelectorAll('.navbar-collapse .dropdown-toggle').forEach(function(toggle) {
                     // Remover atributos de Bootstrap para evitar conflictos
                     toggle.removeAttribute('data-bs-toggle');
@@ -744,8 +721,6 @@ if (!function_exists('isLoggedIn')) {
         // Configurar dropdowns para desktop
         function setupDesktopDropdowns() {
             if (!isMobile()) {
-                console.log('Configurando dropdowns para desktop');
-                
                 document.querySelectorAll('.navbar-collapse .dropdown-toggle').forEach(function(toggle) {
                     // Restaurar atributos de Bootstrap
                     toggle.setAttribute('data-bs-toggle', 'dropdown');

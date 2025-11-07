@@ -68,6 +68,7 @@
                 <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/dashboard">Dashboard</a>
                 <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/usuarios">Usuarios</a>
                 <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/eventos">Eventos</a>
+                <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/noticias">Blog</a>
                 <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/galeria">Galería</a>
                 <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/documentos">Documentos</a>
                 <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/visitas">Analíticas</a>
@@ -176,7 +177,7 @@
                     <a href="<?php echo URL_ROOT; ?>/admin/nuevoEvento" class="text-white d-block small">Nuevo evento</a>
                     <a href="<?php echo URL_ROOT; ?>/admin/galeria" class="text-white d-block small">Subir archivos</a>
                     <a href="<?php echo URL_ROOT; ?>/admin/documentos" class="text-white d-block small">Gestionar documentos</a>
-                    <a href="<?php echo URL_ROOT; ?>/admin/noticias/nueva" class="text-white d-block small">Nueva noticia</a>
+                    <a href="<?php echo URL_ROOT; ?>/admin/nueva-noticia" class="text-white d-block small">Nueva noticia</a>
                 </div>
             </div>
         </div>

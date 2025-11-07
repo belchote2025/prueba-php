@@ -26,13 +26,50 @@ if (!$isAllowed || empty($imagePath)) {
     exit;
 }
 
-// Construir la ruta completa
-$fullPath = dirname(__DIR__) . '/' . $imagePath;
+// Construir la ruta completa - intentar múltiples ubicaciones posibles
+$rootDir = dirname(__DIR__);
+$fullPath = null;
+
+// Intentar diferentes rutas posibles
+$possiblePaths = [
+    $rootDir . '/' . $imagePath,  // Ruta desde raíz del proyecto
+    __DIR__ . '/../' . $imagePath, // Ruta relativa desde public
+    __DIR__ . '/' . $imagePath,    // Ruta dentro de public (por si están ahí)
+];
+
+foreach ($possiblePaths as $path) {
+    // Normalizar la ruta (eliminar .. y .)
+    $normalizedPath = realpath($path);
+    if ($normalizedPath !== false && file_exists($normalizedPath)) {
+        // Verificar que la ruta normalizada esté dentro de un directorio permitido
+        $isValid = false;
+        foreach ($allowedDirs as $dir) {
+            $allowedPath = realpath($rootDir . '/' . $dir);
+            if ($allowedPath !== false && strpos($normalizedPath, $allowedPath) === 0) {
+                $isValid = true;
+                break;
+            }
+        }
+        if ($isValid) {
+            $fullPath = $normalizedPath;
+            break;
+        }
+    }
+}
 
 // Verificar que el archivo existe
-if (!file_exists($fullPath)) {
+if ($fullPath === null || !file_exists($fullPath)) {
+    // Log para debugging
+    error_log("serve-image.php: Archivo no encontrado");
+    error_log("serve-image.php: imagePath recibido: " . $imagePath);
+    error_log("serve-image.php: rootDir: " . $rootDir);
+    foreach ($possiblePaths as $idx => $path) {
+        error_log("serve-image.php: Ruta intentada " . ($idx + 1) . ": " . $path . " (existe: " . (file_exists($path) ? 'sí' : 'no') . ")");
+    }
+    
     header('HTTP/1.0 404 Not Found');
-    echo 'Imagen no encontrada';
+    header('Content-Type: text/plain');
+    echo 'Imagen no encontrada: ' . htmlspecialchars($imagePath);
     exit;
 }
 

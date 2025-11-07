@@ -1,5 +1,4 @@
-<?php $content = '\n';
-ob_start(); // Start output buffering
+<?php
 
 // Obtener datos del post
 $post = $data['post'];
@@ -14,7 +13,7 @@ $autorCompleto = trim($postAutor . ' ' . $postAutorApellidos);
 ?>
 
 <!-- Hero Section -->
-<section class="hero-section text-white text-center py-5 mb-5" style="background: rgba(0, 0, 0, 0.1); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);">
+<section class="hero-section text-white text-center py-5 mb-5" style="background: linear-gradient(135deg, rgba(220, 20, 60, 0.9) 0%, rgba(139, 0, 0, 0.9) 100%); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);">
     <div class="container">
         <nav aria-label="breadcrumb" class="mb-4">
             <ol class="breadcrumb justify-content-center">
@@ -23,8 +22,8 @@ $autorCompleto = trim($postAutor . ' ' . $postAutorApellidos);
                 <li class="breadcrumb-item active text-white" aria-current="page"><?php echo htmlspecialchars($postTitulo); ?></li>
             </ol>
         </nav>
-        <h1 class="display-4 fw-bold mb-3"><?php echo htmlspecialchars($postTitulo); ?></h1>
-        <p class="lead">
+        <h1 class="display-4 fw-bold mb-3 text-white"><?php echo htmlspecialchars($postTitulo); ?></h1>
+        <p class="lead text-white">
             <i class="bi bi-calendar3 me-2"></i>
             <?php echo formatDate($postFecha, 'blog'); ?>
             <span class="mx-3">|</span>
@@ -42,9 +41,13 @@ $autorCompleto = trim($postAutor . ' ' . $postAutorApellidos);
             <div class="col-lg-8">
                 <article class="card border-0 shadow-sm mb-4">
                     <?php if ($postImagen): ?>
-                        <img src="<?php echo URL_ROOT; ?>/uploads/news/<?php echo htmlspecialchars($postImagen); ?>" 
+                        <img src="<?php echo URL_ROOT; ?>/serve-image.php?path=uploads/news/<?php echo urlencode($postImagen); ?>" 
                              class="card-img-top" alt="<?php echo htmlspecialchars($postTitulo); ?>"
-                             style="max-height: 500px; object-fit: cover;">
+                             style="max-height: 500px; object-fit: cover;"
+                             onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="card-img-top bg-danger bg-opacity-10 d-flex align-items-center justify-content-center" style="height: 400px; display: none;">
+                            <i class="bi bi-image text-danger" style="font-size: 4rem;"></i>
+                        </div>
                     <?php else: ?>
                         <div class="card-img-top bg-danger bg-opacity-10 d-flex align-items-center justify-content-center" style="height: 400px;">
                             <i class="bi bi-image text-danger" style="font-size: 4rem;"></i>
@@ -125,10 +128,14 @@ $autorCompleto = trim($postAutor . ' ' . $postAutorApellidos);
                         ?>
                         <div class="d-flex mb-3 pb-3 border-bottom">
                             <?php if ($relatedImagen): ?>
-                                <img src="<?php echo URL_ROOT; ?>/uploads/news/<?php echo htmlspecialchars($relatedImagen); ?>" 
+                                <img src="<?php echo URL_ROOT; ?>/serve-image.php?path=uploads/news/<?php echo urlencode($relatedImagen); ?>" 
                                      class="rounded me-3" 
                                      alt="<?php echo htmlspecialchars($relatedTitulo); ?>"
-                                     style="width: 80px; height: 80px; object-fit: cover;">
+                                     style="width: 80px; height: 80px; object-fit: cover;"
+                                     onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div class="bg-danger bg-opacity-10 rounded me-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; display: none;">
+                                    <i class="bi bi-image text-danger"></i>
+                                </div>
                             <?php else: ?>
                                 <div class="bg-danger bg-opacity-10 rounded me-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
                                     <i class="bi bi-image text-danger"></i>
@@ -164,8 +171,4 @@ $autorCompleto = trim($postAutor . ' ' . $postAutorApellidos);
         </div>
     </div>
 </section>
-
-<?php
-$content = ob_get_clean();
-?>
 
