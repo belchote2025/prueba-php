@@ -3352,6 +3352,14 @@ class AdminController extends Controller {
                 }
             }
             
+            // Generar thumbnail automáticamente si es YouTube y no se proporcionó uno
+            if (empty($urlThumbnail) && $tipo === 'youtube') {
+                $youtubeId = Video::extractYouTubeId($urlVideo);
+                if ($youtubeId) {
+                    $urlThumbnail = 'https://img.youtube.com/vi/' . $youtubeId . '/maxresdefault.jpg';
+                }
+            }
+            
             $data = [
                 'titulo' => htmlspecialchars(trim($_POST['titulo'] ?? '')),
                 'descripcion' => htmlspecialchars(trim($_POST['descripcion'] ?? '')),
@@ -3359,6 +3367,7 @@ class AdminController extends Controller {
                 'url_thumbnail' => $urlThumbnail,
                 'tipo' => $tipo,
                 'categoria' => htmlspecialchars(trim($_POST['categoria'] ?? 'general')),
+                'tags' => htmlspecialchars(trim($_POST['tags'] ?? '')),
                 'evento_id' => !empty($_POST['evento_id']) ? (int)$_POST['evento_id'] : null,
                 'duracion' => !empty($_POST['duracion']) ? (int)$_POST['duracion'] : 0,
                 'activo' => isset($_POST['activo']) ? 1 : 0

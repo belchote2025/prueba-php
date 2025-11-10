@@ -245,6 +245,28 @@ if (empty($url[0])) {
     } else {
         $paymentController->processStripePayment();
     }
+} elseif ($url[0] === 'api' && isset($url[1]) && $url[1] === 'video' && isset($url[2]) && $url[2] === 'increment-view' && isset($url[3])) {
+    // API endpoint para incrementar visualizaciones de videos
+    header('Content-Type: application/json');
+    
+    try {
+        require_once 'src/models/Database.php';
+        require_once 'src/models/Video.php';
+        
+        $videoId = (int)$url[3];
+        if ($videoId > 0) {
+            $videoModel = new Video();
+            $videoModel->incrementViews($videoId);
+            echo json_encode(['success' => true, 'message' => 'Visualización registrada']);
+        } else {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'ID de video inválido']);
+        }
+    } catch (Exception $e) {
+        http_response_code(500);
+        echo json_encode(['success' => false, 'message' => 'Error al registrar visualización']);
+    }
+    exit;
 } elseif ($url[0] === 'admin') {
     // Admin routes (simple guard + custom login/logout)
     $action = isset($url[1]) ? $url[1] : (isAdminLoggedIn() ? 'dashboard' : 'login');

@@ -102,7 +102,12 @@ $videos = $data['videos'] ?? [];
                                 <div class="video-card">
                                     <div class="video-thumbnail">
                                         <div class="video-overlay">
-                                            <button class="play-btn" data-video-id="<?php echo $videoId; ?>" data-video-src="<?php echo htmlspecialchars($videoSrc); ?>" data-video-tipo="<?php echo $videoTipo; ?>">
+                                            <button class="play-btn" 
+                                                    data-video-id="<?php echo $videoId; ?>" 
+                                                    data-video-src="<?php echo htmlspecialchars($videoSrc); ?>" 
+                                                    data-video-tipo="<?php echo $videoTipo; ?>"
+                                                    data-video-titulo="<?php echo htmlspecialchars($videoTitulo); ?>"
+                                                    data-video-descripcion="<?php echo htmlspecialchars($videoDescripcion); ?>">
                                                 <i class="bi bi-play-fill"></i>
                                             </button>
                                         </div>
@@ -704,9 +709,19 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Función para abrir modal con video
-    function openVideoModal(videoSrc, videoTipo, videoTitulo, videoDescripcion) {
+    function openVideoModal(videoSrc, videoTipo, videoTitulo, videoDescripcion, videoId) {
         const videoPlayer = document.getElementById('videoPlayer');
         const modalTitle = document.getElementById('modalTitle');
+        
+        // Incrementar contador de visualizaciones
+        if (videoId) {
+            fetch('<?php echo URL_ROOT; ?>/api/video/increment-view/' + videoId, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).catch(err => console.log('Error al registrar visualización:', err));
+        }
         const modalDescription = document.getElementById('modalDescription');
         
         // Verificar que los elementos existan
@@ -778,12 +793,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const playBtn = e.target.closest('.play-btn');
             const videoSrc = playBtn.getAttribute('data-video-src');
             const videoTipo = playBtn.getAttribute('data-video-tipo') || 'local';
-            const videoCard = playBtn.closest('.video-card');
-            const videoTitulo = videoCard ? videoCard.querySelector('.video-title')?.textContent : '';
-            const videoDescripcion = videoCard ? videoCard.querySelector('.video-description')?.textContent : '';
+            const videoId = playBtn.getAttribute('data-video-id');
+            const videoTitulo = playBtn.getAttribute('data-video-titulo') || '';
+            const videoDescripcion = playBtn.getAttribute('data-video-descripcion') || '';
             
             if (videoSrc) {
-                openVideoModal(videoSrc, videoTipo, videoTitulo, videoDescripcion);
+                openVideoModal(videoSrc, videoTipo, videoTitulo, videoDescripcion, videoId);
             }
         }
     });

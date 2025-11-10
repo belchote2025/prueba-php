@@ -79,8 +79,16 @@ class Video {
     
     // Create new video
     public function createVideo($data) {
-        $this->db->query('INSERT INTO videos (titulo, descripcion, url_video, url_thumbnail, tipo, categoria, evento_id, duracion, activo) 
-                         VALUES (:titulo, :descripcion, :url_video, :url_thumbnail, :tipo, :categoria, :evento_id, :duracion, :activo)');
+        // Generar thumbnail automáticamente si no se proporciona y es YouTube
+        if (empty($data['url_thumbnail']) && ($data['tipo'] ?? '') === 'youtube') {
+            $youtubeId = self::extractYouTubeId($data['url_video'] ?? '');
+            if ($youtubeId) {
+                $data['url_thumbnail'] = 'https://img.youtube.com/vi/' . $youtubeId . '/maxresdefault.jpg';
+            }
+        }
+        
+        $this->db->query('INSERT INTO videos (titulo, descripcion, url_video, url_thumbnail, tipo, categoria, tags, evento_id, duracion, activo) 
+                         VALUES (:titulo, :descripcion, :url_video, :url_thumbnail, :tipo, :categoria, :tags, :evento_id, :duracion, :activo)');
         
         $this->db->bind(':titulo', $data['titulo']);
         $this->db->bind(':descripcion', $data['descripcion'] ?? '');
@@ -88,6 +96,7 @@ class Video {
         $this->db->bind(':url_thumbnail', $data['url_thumbnail'] ?? '');
         $this->db->bind(':tipo', $data['tipo'] ?? 'youtube');
         $this->db->bind(':categoria', $data['categoria'] ?? 'general');
+        $this->db->bind(':tags', $data['tags'] ?? '');
         $this->db->bind(':evento_id', $data['evento_id'] ?? null);
         $this->db->bind(':duracion', $data['duracion'] ?? 0);
         $this->db->bind(':activo', $data['activo'] ?? 1);
@@ -100,6 +109,14 @@ class Video {
     
     // Update video
     public function updateVideo($id, $data) {
+        // Generar thumbnail automáticamente si no se proporciona y es YouTube
+        if (empty($data['url_thumbnail']) && ($data['tipo'] ?? '') === 'youtube') {
+            $youtubeId = self::extractYouTubeId($data['url_video'] ?? '');
+            if ($youtubeId) {
+                $data['url_thumbnail'] = 'https://img.youtube.com/vi/' . $youtubeId . '/maxresdefault.jpg';
+            }
+        }
+        
         $this->db->query('UPDATE videos SET 
                          titulo = :titulo, 
                          descripcion = :descripcion, 
@@ -107,6 +124,7 @@ class Video {
                          url_thumbnail = :url_thumbnail, 
                          tipo = :tipo, 
                          categoria = :categoria, 
+                         tags = :tags,
                          evento_id = :evento_id, 
                          duracion = :duracion, 
                          activo = :activo 
@@ -119,6 +137,7 @@ class Video {
         $this->db->bind(':url_thumbnail', $data['url_thumbnail'] ?? '');
         $this->db->bind(':tipo', $data['tipo'] ?? 'youtube');
         $this->db->bind(':categoria', $data['categoria'] ?? 'general');
+        $this->db->bind(':tags', $data['tags'] ?? '');
         $this->db->bind(':evento_id', $data['evento_id'] ?? null);
         $this->db->bind(':duracion', $data['duracion'] ?? 0);
         $this->db->bind(':activo', $data['activo'] ?? 1);

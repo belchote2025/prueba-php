@@ -222,17 +222,18 @@ error_log("admin/videos/index.php - Total videos: " . $totalVideos);
                 <div class="table-responsive">
                     <table class="table table-hover align-middle">
                         <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Thumbnail</th>
-                                <th>Título</th>
-                                <th>Tipo</th>
-                                <th>Categoría</th>
-                                <th>Vistas</th>
-                                <th>Estado</th>
-                                <th>Fecha</th>
-                                <th>Acciones</th>
-                            </tr>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Thumbnail</th>
+                                    <th>Título</th>
+                                    <th>Tipo</th>
+                                    <th>Categoría</th>
+                                    <th>Tags</th>
+                                    <th>Vistas</th>
+                                    <th>Estado</th>
+                                    <th>Fecha</th>
+                                    <th>Acciones</th>
+                                </tr>
                         </thead>
                         <tbody>
                             <?php foreach ($videos as $video): 
@@ -285,13 +286,37 @@ error_log("admin/videos/index.php - Total videos: " . $totalVideos);
                                         <br><small class="text-muted"><?php echo htmlspecialchars(substr($videoObj->descripcion, 0, 50)); ?>...</small>
                                     <?php endif; ?>
                                 </td>
-                                <td>
-                                    <span class="badge bg-<?php echo $videoTipo === 'youtube' ? 'danger' : ($videoTipo === 'vimeo' ? 'info' : 'secondary'); ?>">
-                                        <?php echo ucfirst($videoTipo); ?>
-                                    </span>
-                                </td>
-                                <td><?php echo htmlspecialchars($videoCategoria); ?></td>
-                                <td><?php echo number_format($videoVistas); ?></td>
+                                    <td>
+                                        <span class="badge bg-<?php echo $videoTipo === 'youtube' ? 'danger' : ($videoTipo === 'vimeo' ? 'info' : 'secondary'); ?>">
+                                            <?php echo ucfirst($videoTipo); ?>
+                                        </span>
+                                    </td>
+                                    <td><?php echo htmlspecialchars($videoCategoria); ?></td>
+                                    <td>
+                                        <?php if (!empty($videoObj->tags ?? '')): ?>
+                                            <?php 
+                                            $tags = explode(',', $videoObj->tags);
+                                            foreach (array_slice($tags, 0, 3) as $tag): 
+                                                $tag = trim($tag);
+                                                if ($tag):
+                                            ?>
+                                                <span class="badge bg-secondary me-1"><?php echo htmlspecialchars($tag); ?></span>
+                                            <?php 
+                                                endif;
+                                            endforeach; 
+                                            if (count($tags) > 3):
+                                            ?>
+                                                <span class="badge bg-light text-dark">+<?php echo count($tags) - 3; ?></span>
+                                            <?php endif; ?>
+                                        <?php else: ?>
+                                            <span class="text-muted">-</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info">
+                                            <i class="fas fa-eye me-1"></i><?php echo number_format($videoVistas); ?>
+                                        </span>
+                                    </td>
                                 <td>
                                     <span class="badge bg-<?php echo $videoActivo ? 'success' : 'secondary'; ?>">
                                         <?php echo $videoActivo ? 'Activo' : 'Inactivo'; ?>

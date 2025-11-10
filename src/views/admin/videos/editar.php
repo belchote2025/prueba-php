@@ -168,10 +168,23 @@ $videoObj = is_object($video) ? $video : (object)$video;
                             <div class="col-12 mb-3" id="url-video-container">
                                 <label for="url_video" class="form-label">URL del Video <span class="text-danger">*</span></label>
                                 <input type="url" class="form-control" id="url_video" name="url_video" 
-                                       value="<?php echo htmlspecialchars($videoObj->url_video ?? ''); ?>" required>
+                                       value="<?php echo htmlspecialchars($videoObj->url_video ?? ''); ?>" 
+                                       required onblur="validateVideoUrl()">
+                                <div id="url-validation" class="mt-2"></div>
                                 <small class="form-text text-muted">
                                     <span id="url-hint">URL del video</span>
                                 </small>
+                            </div>
+                            
+                            <!-- Previsualización del Video -->
+                            <div class="col-12 mb-3" id="video-preview-container" style="display: none;">
+                                <label class="form-label">Previsualización</label>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div id="video-preview"></div>
+                                        <div id="video-info" class="mt-2"></div>
+                                    </div>
+                                </div>
                             </div>
                             
                             <!-- Archivo de Video (para Local) -->
@@ -227,6 +240,14 @@ $videoObj = is_object($video) ? $video : (object)$video;
                             </div>
                             
                             <div class="col-12 mb-3">
+                                <label for="tags" class="form-label">Etiquetas/Tags (opcional)</label>
+                                <input type="text" class="form-control" id="tags" name="tags" 
+                                       value="<?php echo htmlspecialchars($videoObj->tags ?? ''); ?>"
+                                       placeholder="Ej: desfile, 2024, moros y cristianos (separadas por comas)">
+                                <small class="form-text text-muted">Separa las etiquetas con comas. Ejemplo: desfile, 2024, moros y cristianos</small>
+                            </div>
+                            
+                            <div class="col-12 mb-3">
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" id="activo" name="activo" 
                                            <?php echo ($videoObj->activo ?? 0) ? 'checked' : ''; ?>>
@@ -262,6 +283,130 @@ $videoObj = is_object($video) ? $video : (object)$video;
 </div>
 
 <script>
+// Funciones de validación y extracción de IDs
+function extractYouTubeId(url) {
+    const patterns = [
+        /(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/,
+        /youtube\.com\/embed\/([a-zA-Z0-9_-]+)/,
+        /youtube\.com\/v\/([a-zA-Z0-9_-]+)/
+    ];
+    
+    for (let pattern of patterns) {
+        const match = url.match(pattern);
+        if (match && match[1]) {
+            return match[1];
+        }
+    }
+    return null;
+}
+
+function extractVimeoId(url) {
+    const patterns = [
+        /vimeo\.com\/(\d+)/,
+        /vimeo\.com\/video\/(\d+)/,
+        /player\.vimeo\.com\/video\/(\d+)/
+    ];
+    
+    for (let pattern of patterns) {
+        const match = url.match(pattern);
+        if (match && match[1]) {
+            return match[1];
+        }
+    }
+    return null;
+}
+
+function validateVideoUrl() {
+    const tipo = document.getElementById('tipo').value;
+    const urlInput = document.getElementById('url_video');
+    const url = urlInput.value.trim();
+    const validationDiv = document.getElementById('url-validation');
+    const previewContainer = document.getElementById('video-preview-container');
+    const previewDiv = document.getElementById('video-preview');
+    const infoDiv = document.getElementById('video-info');
+    
+    // Limpiar validación anterior
+    validationDiv.innerHTML = '';
+    previewContainer.style.display = 'none';
+    previewDiv.innerHTML = '';
+    infoDiv.innerHTML = '';
+    
+    if (!url) {
+        return;
+    }
+    
+    let isValid = false;
+    let videoId = null;
+    let embedUrl = '';
+    let thumbnailUrl = '';
+    let message = '';
+    
+    if (tipo === 'youtube') {
+        videoId = extractYouTubeId(url);
+        if (videoId) {
+            isValid = true;
+            embedUrl = `https://www.youtube.com/embed/${videoId}`;
+            thumbnailUrl = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+            message = `<div class="alert alert-success"><i class="fas fa-check-circle me-2"></i>URL de YouTube válida. ID: ${videoId}</div>`;
+        } else {
+            message = `<div class="alert alert-danger"><i class="fas fa-times-circle me-2"></i>URL de YouTube no válida. Formato esperado: https://www.youtube.com/watch?v=VIDEO_ID o https://youtu.be/VIDEO_ID</div>`;
+        }
+    } else if (tipo === 'vimeo') {
+        videoId = extractVimeoId(url);
+        if (videoId) {
+            isValid = true;
+            embedUrl = `https://player.vimeo.com/video/${videoId}`;
+            message = `<div class="alert alert-success"><i class="fas fa-check-circle me-2"></i>URL de Vimeo válida. ID: ${videoId}</div>`;
+        } else {
+            message = `<div class="alert alert-danger"><i class="fas fa-times-circle me-2"></i>URL de Vimeo no válida. Formato esperado: https://vimeo.com/VIDEO_ID</div>`;
+        }
+    } else {
+        // Para otros tipos, solo validar que sea una URL válida
+        try {
+            new URL(url);
+            isValid = true;
+            message = `<div class="alert alert-info"><i class="fas fa-info-circle me-2"></i>URL válida</div>`;
+        } catch (e) {
+            message = `<div class="alert alert-warning"><i class="fas fa-exclamation-triangle me-2"></i>URL no válida</div>`;
+        }
+    }
+    
+    validationDiv.innerHTML = message;
+    
+    // Mostrar previsualización si es válida
+    if (isValid && (tipo === 'youtube' || tipo === 'vimeo')) {
+        previewContainer.style.display = 'block';
+        previewDiv.innerHTML = `
+            <div class="ratio ratio-16x9">
+                <iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        `;
+        
+        if (tipo === 'youtube' && thumbnailUrl) {
+            infoDiv.innerHTML = `
+                <div class="d-flex align-items-center gap-2">
+                    <img src="${thumbnailUrl}" alt="Thumbnail" style="max-width: 120px; border-radius: 4px;">
+                    <div>
+                        <small class="text-muted">Thumbnail generado automáticamente</small><br>
+                        <button type="button" class="btn btn-sm btn-outline-primary mt-1" onclick="setThumbnailUrl('${thumbnailUrl}')">
+                            <i class="fas fa-magic me-1"></i>Usar este thumbnail
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+    }
+}
+
+function setThumbnailUrl(url) {
+    document.getElementById('url_thumbnail').value = url;
+    const alert = document.createElement('div');
+    alert.className = 'alert alert-success alert-dismissible fade show mt-2';
+    alert.innerHTML = '<i class="fas fa-check me-2"></i>Thumbnail establecido automáticamente<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+    document.getElementById('url_thumbnail').parentElement.appendChild(alert);
+    setTimeout(() => alert.remove(), 3000);
+}
+
 function toggleVideoInput() {
     const tipo = document.getElementById('tipo').value;
     const urlContainer = document.getElementById('url-video-container');
@@ -269,6 +414,10 @@ function toggleVideoInput() {
     const urlInput = document.getElementById('url_video');
     const fileInput = document.getElementById('video_file');
     const urlHint = document.getElementById('url-hint');
+    const previewContainer = document.getElementById('video-preview-container');
+    
+    // Ocultar previsualización al cambiar tipo
+    previewContainer.style.display = 'none';
     
     if (tipo === 'local') {
         urlContainer.style.display = 'none';
@@ -290,11 +439,27 @@ function toggleVideoInput() {
             urlHint.textContent = 'URL del video';
         }
     }
+    
+    // Validar URL si ya hay una
+    if (urlInput.value) {
+        validateVideoUrl();
+    }
 }
 
 // Inicializar al cargar
 document.addEventListener('DOMContentLoaded', function() {
     toggleVideoInput();
+    
+    // Validar URL al cambiar
+    document.getElementById('url_video').addEventListener('input', function() {
+        clearTimeout(this.validationTimeout);
+        this.validationTimeout = setTimeout(validateVideoUrl, 500);
+    });
+    
+    // Validar URL inicial si existe
+    if (document.getElementById('url_video').value) {
+        validateVideoUrl();
+    }
 });
 </script>
 
