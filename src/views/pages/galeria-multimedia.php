@@ -894,3 +894,8 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Galería multimedia inicializada');
 });
 </script>
+
+<!-- Theme CSS -->
+<link href="<?php echo URL_ROOT; ?>/assets/css/theme.css" rel="stylesheet">
+<!-- Theme JS -->
+<script src="<?php echo URL_ROOT; ?>/assets/js/theme.js"></script>

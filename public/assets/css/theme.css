@@ -1,0 +1,465 @@
+/* ============================================
+   SISTEMA DE TEMA Y PERSONALIZACIÓN
+   ============================================ */
+
+:root {
+    /* Colores principales (modo claro) */
+    --primary-color: #8B0000;
+    --secondary-color: #DC143C;
+    --success-color: #228B22;
+    --info-color: #4682B4;
+    --warning-color: #FF4500;
+    --danger-color: #8B0000;
+    
+    /* Colores de fondo */
+    --bg-primary: #FFFFFF;
+    --bg-secondary: #F8F9FA;
+    --bg-tertiary: #E9ECEF;
+    
+    /* Colores de texto */
+    --text-primary: #212529;
+    --text-secondary: #6C757D;
+    --text-muted: #ADB5BD;
+    
+    /* Colores de bordes */
+    --border-color: #DEE2E6;
+    --border-radius: 8px;
+    --border-radius-lg: 12px;
+    
+    /* Sombras */
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+    --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
+    
+    /* Transiciones */
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s ease;
+    
+    /* Espaciado */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+}
+
+/* Modo oscuro */
+[data-theme="dark"] {
+    /* Colores principales (modo oscuro) */
+    --primary-color: #FF6B6B;
+    --secondary-color: #FF8E8E;
+    --success-color: #51CF66;
+    --info-color: #74C0FC;
+    --warning-color: #FFD43B;
+    --danger-color: #FF6B6B;
+    
+    /* Colores de fondo */
+    --bg-primary: #1A1A1A;
+    --bg-secondary: #2D2D2D;
+    --bg-tertiary: #3D3D3D;
+    
+    /* Colores de texto */
+    --text-primary: #FFFFFF;
+    --text-secondary: #B0B0B0;
+    --text-muted: #808080;
+    
+    /* Colores de bordes */
+    --border-color: #404040;
+    
+    /* Sombras ajustadas para modo oscuro */
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+    --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.6);
+}
+
+/* ============================================
+   ANIMACIONES Y TRANSICIONES
+   ============================================ */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(-100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -1000px 0;
+    }
+    100% {
+        background-position: 1000px 0;
+    }
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Clases de animación */
+.animate-fade-in {
+    animation: fadeIn var(--transition-normal);
+}
+
+.animate-slide-in {
+    animation: slideIn var(--transition-normal);
+}
+
+.animate-pulse {
+    animation: pulse 2s infinite;
+}
+
+.animate-bounce {
+    animation: bounce 1s infinite;
+}
+
+/* Transiciones suaves para elementos interactivos */
+.transition-all {
+    transition: all var(--transition-normal);
+}
+
+.transition-colors {
+    transition: color var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.transition-transform {
+    transition: transform var(--transition-normal);
+}
+
+/* ============================================
+   COMPONENTES BASE
+   ============================================ */
+
+body {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    transition: background-color var(--transition-normal), color var(--transition-normal);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Cards con animación */
+.card {
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-normal);
+    animation: fadeIn var(--transition-normal);
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-color);
+}
+
+.card-header {
+    background-color: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+    padding: var(--spacing-md);
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.card-body {
+    padding: var(--spacing-lg);
+}
+
+/* Botones mejorados */
+.btn {
+    border-radius: var(--border-radius);
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-weight: 500;
+    transition: all var(--transition-fast);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.btn:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    border: none;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+}
+
+/* Inputs mejorados */
+.form-control,
+.form-select {
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    color: var(--text-primary);
+    padding: var(--spacing-sm) var(--spacing-md);
+    transition: all var(--transition-fast);
+}
+
+.form-control:focus,
+.form-select:focus {
+    background-color: var(--bg-primary);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(139, 0, 0, 0.25);
+    color: var(--text-primary);
+}
+
+.form-control::placeholder {
+    color: var(--text-muted);
+}
+
+/* Tablas mejoradas */
+.table {
+    background-color: var(--bg-primary);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+}
+
+.table thead {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.table tbody tr {
+    transition: all var(--transition-fast);
+}
+
+.table tbody tr:hover {
+    background-color: var(--bg-secondary);
+    transform: scale(1.01);
+}
+
+.table td,
+.table th {
+    border-color: var(--border-color);
+    padding: var(--spacing-md);
+}
+
+/* Badges mejorados */
+.badge {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    transition: all var(--transition-fast);
+}
+
+.badge:hover {
+    transform: scale(1.1);
+}
+
+/* Alerts mejorados */
+.alert {
+    border-radius: var(--border-radius);
+    border: none;
+    padding: var(--spacing-md);
+    animation: fadeIn var(--transition-normal);
+    box-shadow: var(--shadow-sm);
+}
+
+/* ============================================
+   TOGGLE DE MODO OSCURO
+   ============================================ */
+
+.theme-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    box-shadow: var(--shadow-lg);
+    transition: all var(--transition-normal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.theme-toggle:hover {
+    transform: scale(1.1) rotate(180deg);
+    box-shadow: var(--shadow-xl);
+}
+
+.theme-toggle:active {
+    transform: scale(0.95);
+}
+
+/* ============================================
+   RESPONSIVE MEJORADO
+   ============================================ */
+
+/* Mobile First */
+@media (max-width: 576px) {
+    :root {
+        --spacing-md: 0.75rem;
+        --spacing-lg: 1rem;
+        --spacing-xl: 1.5rem;
+    }
+    
+    .card {
+        margin-bottom: var(--spacing-md);
+    }
+    
+    .card-body {
+        padding: var(--spacing-md);
+    }
+    
+    .btn {
+        width: 100%;
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .table {
+        font-size: 0.875rem;
+    }
+    
+    .table-responsive {
+        border-radius: var(--border-radius);
+    }
+}
+
+/* Tablet */
+@media (min-width: 577px) and (max-width: 768px) {
+    .card {
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    .btn-group {
+        flex-direction: column;
+    }
+    
+    .btn-group .btn {
+        width: 100%;
+        margin-bottom: var(--spacing-sm);
+    }
+}
+
+/* Desktop */
+@media (min-width: 769px) {
+    .container {
+        max-width: 1200px;
+    }
+    
+    .card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: var(--spacing-lg);
+    }
+}
+
+/* ============================================
+   UTILIDADES
+   ============================================ */
+
+.text-gradient {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.bg-gradient-primary {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+}
+
+.shadow-hover {
+    transition: box-shadow var(--transition-normal);
+}
+
+.shadow-hover:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+.rounded-lg {
+    border-radius: var(--border-radius-lg);
+}
+
+/* Loading spinner */
+.spinner {
+    border: 3px solid var(--border-color);
+    border-top: 3px solid var(--primary-color);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Smooth scroll */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Focus visible mejorado */
+*:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+

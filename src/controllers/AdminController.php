@@ -185,6 +185,20 @@ class AdminController extends Controller {
             $videoCount = 0;
         }
         
+        // Obtener estadísticas de personalización
+        $personalizacionCount = 0;
+        try {
+            if (class_exists('Personalizacion')) {
+                require_once 'src/models/Personalizacion.php';
+                $personalizacionModel = new Personalizacion();
+                $allPersonalizaciones = $personalizacionModel->getAll();
+                $personalizacionCount = count($allPersonalizaciones);
+            }
+        } catch (Exception $e) {
+            error_log("Error al obtener conteo de personalizaciones: " . $e->getMessage());
+            $personalizacionCount = 0;
+        }
+        
         // Obtener estadísticas de visitas
         $visitStats = [];
         $realTimeStats = [];
@@ -225,6 +239,7 @@ class AdminController extends Controller {
             'messagesCount' => $messagesCount,
             'documentCount' => $documentCount,
             'videoCount' => $videoCount,
+            'personalizacionCount' => $personalizacionCount,
             'recentUsers' => $recentUsers,
             'recentEvents' => $recentEvents,
             'visitStats' => $visitStats,
@@ -3413,6 +3428,222 @@ class AdminController extends Controller {
         }
         
         $this->redirect('/admin/videos');
+    }
+    
+    /**
+     * Gestión de personalización
+     */
+    public function personalizacion() {
+        try {
+            // Habilitar visualización de errores temporalmente
+            error_reporting(E_ALL);
+            ini_set('display_errors', 1);
+            
+            require_once 'src/models/Personalizacion.php';
+            
+            // Verificar si la clase existe
+            if (!class_exists('Personalizacion')) {
+                throw new Exception('La clase Personalizacion no existe');
+            }
+            
+            $personalizacionModel = new Personalizacion();
+            
+            // Obtener datos con manejo de errores
+            $colores = [];
+            $fuentes = [];
+            $animaciones = [];
+            $generales = [];
+            
+            try {
+                $colores = $personalizacionModel->getByType('color');
+            } catch (Exception $e) {
+                error_log("Error obteniendo colores: " . $e->getMessage());
+                // Si la tabla no existe, inicializar con valores por defecto
+                if (strpos($e->getMessage(), "doesn't exist") !== false || 
+                    strpos($e->getMessage(), "Table") !== false) {
+                    // La tabla no existe, usar valores por defecto
+                    $colores = [];
+                }
+            }
+            
+            try {
+                $fuentes = $personalizacionModel->getByType('fuente');
+            } catch (Exception $e) {
+                error_log("Error obteniendo fuentes: " . $e->getMessage());
+                $fuentes = [];
+            }
+            
+            try {
+                $animaciones = $personalizacionModel->getByType('animacion');
+            } catch (Exception $e) {
+                error_log("Error obteniendo animaciones: " . $e->getMessage());
+                $animaciones = [];
+            }
+            
+            try {
+                $generales = $personalizacionModel->getByType('general');
+            } catch (Exception $e) {
+                error_log("Error obteniendo generales: " . $e->getMessage());
+                $generales = [];
+            }
+            
+            $data = [
+                'title' => 'Personalización',
+                'colores' => $colores,
+                'fuentes' => $fuentes,
+                'animaciones' => $animaciones,
+                'generales' => $generales
+            ];
+            
+            $this->loadViewDirectly('admin/personalizacion', $data);
+        } catch (Exception $e) {
+            error_log("Error en personalizacion(): " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
+            
+            // Mostrar error detallado
+            echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Error</title>';
+            echo '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">';
+            echo '</head><body><div class="container mt-5">';
+            echo '<div class="alert alert-danger">';
+            echo '<h4>Error al cargar la página de personalización</h4>';
+            echo '<p><strong>Mensaje:</strong> ' . htmlspecialchars($e->getMessage()) . '</p>';
+            echo '<p><strong>Archivo:</strong> ' . htmlspecialchars($e->getFile()) . '</p>';
+            echo '<p><strong>Línea:</strong> ' . $e->getLine() . '</p>';
+            echo '<details><summary>Stack Trace</summary><pre>' . htmlspecialchars($e->getTraceAsString()) . '</pre></details>';
+            echo '</div>';
+            echo '<div class="alert alert-info">';
+            echo '<h5>Posibles soluciones:</h5>';
+            echo '<ol>';
+            echo '<li>Ejecuta el SQL: <a href="' . URL_ROOT . '/ejecutar-sql-personalizacion.php" target="_blank">ejecutar-sql-personalizacion.php</a></li>';
+            echo '<li>Verifica la conexión a la base de datos</li>';
+            echo '<li>Revisa los logs de error del servidor</li>';
+            echo '</ol>';
+            echo '</div>';
+            echo '<a href="' . URL_ROOT . '/admin/dashboard" class="btn btn-primary">Volver al Dashboard</a>';
+            echo '<a href="' . URL_ROOT . '/debug-personalizacion.php" class="btn btn-secondary">Ejecutar Diagnóstico</a>';
+            echo '</div></body></html>';
+            exit;
+        } catch (Error $e) {
+            error_log("Error fatal en personalizacion(): " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
+            
+            echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Error Fatal</title>';
+            echo '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">';
+            echo '</head><body><div class="container mt-5">';
+            echo '<div class="alert alert-danger">';
+            echo '<h4>Error Fatal al cargar la página de personalización</h4>';
+            echo '<p><strong>Mensaje:</strong> ' . htmlspecialchars($e->getMessage()) . '</p>';
+            echo '<p><strong>Archivo:</strong> ' . htmlspecialchars($e->getFile()) . '</p>';
+            echo '<p><strong>Línea:</strong> ' . $e->getLine() . '</p>';
+            echo '<details><summary>Stack Trace</summary><pre>' . htmlspecialchars($e->getTraceAsString()) . '</pre></details>';
+            echo '</div>';
+            echo '<a href="' . URL_ROOT . '/admin/dashboard" class="btn btn-primary">Volver al Dashboard</a>';
+            echo '<a href="' . URL_ROOT . '/debug-personalizacion.php" class="btn btn-secondary">Ejecutar Diagnóstico</a>';
+            echo '</div></body></html>';
+            exit;
+        }
+    }
+    
+    /**
+     * Guardar personalización
+     */
+    public function guardarPersonalizacion() {
+        try {
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                throw new Exception('Método no permitido');
+            }
+            
+            require_once 'src/models/Personalizacion.php';
+            $personalizacionModel = new Personalizacion();
+            
+            $personalizaciones = [];
+            
+            // Procesar colores
+            if (isset($_POST['colores'])) {
+                foreach ($_POST['colores'] as $nombre => $valor) {
+                    $personalizaciones[] = [
+                        'tipo' => 'color',
+                        'nombre' => $nombre,
+                        'valor' => htmlspecialchars(trim($valor)),
+                        'descripcion' => ''
+                    ];
+                }
+            }
+            
+            // Procesar fuentes
+            if (isset($_POST['fuentes'])) {
+                foreach ($_POST['fuentes'] as $nombre => $valor) {
+                    $personalizaciones[] = [
+                        'tipo' => 'fuente',
+                        'nombre' => $nombre,
+                        'valor' => htmlspecialchars(trim($valor)),
+                        'descripcion' => ''
+                    ];
+                }
+            }
+            
+            // Procesar animaciones
+            if (isset($_POST['animaciones'])) {
+                foreach ($_POST['animaciones'] as $nombre => $valor) {
+                    $personalizaciones[] = [
+                        'tipo' => 'animacion',
+                        'nombre' => $nombre,
+                        'valor' => htmlspecialchars(trim($valor)),
+                        'descripcion' => ''
+                    ];
+                }
+            }
+            
+            // Procesar generales
+            if (isset($_POST['generales'])) {
+                foreach ($_POST['generales'] as $nombre => $valor) {
+                    $personalizaciones[] = [
+                        'tipo' => 'general',
+                        'nombre' => $nombre,
+                        'valor' => htmlspecialchars(trim($valor)),
+                        'descripcion' => ''
+                    ];
+                }
+            }
+            
+            if ($personalizacionModel->saveMultiple($personalizaciones)) {
+                $_SESSION['success_message'] = 'Personalización guardada correctamente';
+                // Actualizar versión para forzar recarga del CSS
+                $_SESSION['personalizacion_version'] = time();
+            } else {
+                throw new Exception('Error al guardar la personalización');
+            }
+            
+            $this->redirect('/admin/personalizacion');
+        } catch (Exception $e) {
+            error_log("Error en guardarPersonalizacion(): " . $e->getMessage());
+            $_SESSION['error_message'] = $e->getMessage();
+            $this->redirect('/admin/personalizacion');
+        }
+    }
+    
+    /**
+     * Resetear personalización a valores por defecto
+     */
+    public function resetearPersonalizacion() {
+        try {
+            require_once 'src/models/Personalizacion.php';
+            $personalizacionModel = new Personalizacion();
+            
+            if ($personalizacionModel->resetDefaults()) {
+                $_SESSION['success_message'] = 'Personalización reseteada a valores por defecto';
+                // Actualizar versión para forzar recarga del CSS
+                $_SESSION['personalizacion_version'] = time();
+            } else {
+                throw new Exception('Error al resetear la personalización');
+            }
+            
+            $this->redirect('/admin/personalizacion');
+        } catch (Exception $e) {
+            error_log("Error en resetearPersonalizacion(): " . $e->getMessage());
+            $_SESSION['error_message'] = $e->getMessage();
+            $this->redirect('/admin/personalizacion');
+        }
     }
 }
 

@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Custom CSS -->
     <link href="<?= URL_ROOT ?>/assets/css/admin.css" rel="stylesheet">
+    <!-- Personalización dinámica (CSS generado desde la base de datos) -->
+    <link rel="stylesheet" href="<?= URL_ROOT ?>/aplicar-personalizacion.php?v=<?php echo isset($_SESSION['personalizacion_version']) ? $_SESSION['personalizacion_version'] : time(); ?>">
     <?php if (isset($data['styles'])): ?>
         <?php foreach ($data['styles'] as $style): ?>
             <link href="<?= $style ?>" rel="stylesheet">

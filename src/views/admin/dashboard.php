@@ -77,6 +77,7 @@
                     <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/videos">Videos</a>
                     <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/documentos">Documentos</a>
                     <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/visitas">Analíticas</a>
+                    <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/personalizacion">Personalización</a>
                     <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/logout">Cerrar Sesión</a>
                 </div>
             </div>
@@ -185,6 +186,23 @@
         </div>
     </div>
     <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-3">
+        <div class="card text-white h-100" style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);">
+            <div class="card-body d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <h5 class="card-title mb-1">Personalización</h5>
+                        <h2 class="mb-0"><?= isset($data['personalizacionCount']) ? $data['personalizacionCount'] : 0 ?></h2>
+                        <small class="opacity-75">Estilos activos</small>
+                    </div>
+                    <i class="fas fa-palette fa-2x opacity-50 d-none d-sm-block"></i>
+                </div>
+                <a href="<?php echo URL_ROOT; ?>/admin/personalizacion" class="btn btn-light btn-sm mt-auto">
+                    <i class="fas fa-palette me-1"></i>Personalizar diseño
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-3">
         <div class="card text-white bg-warning h-100">
             <div class="card-body d-flex flex-column">
                 <div class="d-flex justify-content-between align-items-start mb-3">
@@ -199,6 +217,7 @@
                     <a href="<?php echo URL_ROOT; ?>/admin/crearUsuario" class="text-white d-block small mb-1">Nuevo usuario</a>
                     <a href="<?php echo URL_ROOT; ?>/admin/nuevoEvento" class="text-white d-block small mb-1">Nuevo evento</a>
                     <a href="<?php echo URL_ROOT; ?>/admin/videos/nuevo" class="text-white d-block small mb-1">Nuevo video</a>
+                    <a href="<?php echo URL_ROOT; ?>/admin/personalizacion" class="text-white d-block small mb-1">Personalizar diseño</a>
                     <a href="<?php echo URL_ROOT; ?>/admin/galeria" class="text-white d-block small mb-1">Subir archivos</a>
                     <a href="<?php echo URL_ROOT; ?>/admin/documentos" class="text-white d-block small mb-1">Gestionar documentos</a>
                     <a href="<?php echo URL_ROOT; ?>/admin/nueva-noticia" class="text-white d-block small">Nueva noticia</a>

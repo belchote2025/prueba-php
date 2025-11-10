@@ -64,12 +64,14 @@ error_log("admin/videos/index.php - Total videos: " . $totalVideos);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Videos - Panel de Administración</title>
     
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <!-- Admin CSS -->
-    <link href="<?php echo URL_ROOT; ?>/assets/css/admin.css" rel="stylesheet">
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Font Awesome -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+        <!-- Admin CSS -->
+        <link href="<?php echo URL_ROOT; ?>/assets/css/admin.css" rel="stylesheet">
+        <!-- Theme CSS -->
+        <link href="<?php echo URL_ROOT; ?>/assets/css/theme.css" rel="stylesheet">
     
     <style>
         body { 
@@ -427,6 +429,8 @@ error_log("admin/videos/index.php - Total videos: " . $totalVideos);
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Theme JS -->
+    <script src="<?php echo URL_ROOT; ?>/assets/js/theme.js"></script>
 </body>
 </html>
 

@@ -448,17 +448,26 @@ if (empty($url[0])) {
                     echo "Error: No se encuentra la vista de gestión de galería";
                 }
                 return;
-            } elseif ($action === 'flipbooks') {
-                // Manejar la ruta gestión de flipbooks
-                if (file_exists('src/views/admin/flipbooks.php')) {
-                    require 'src/views/admin/flipbooks.php';
+                } elseif ($action === 'flipbooks') {
+                    // Manejar la ruta gestión de flipbooks
+                    if (file_exists('src/views/admin/flipbooks.php')) {
+                        require 'src/views/admin/flipbooks.php';
+                    } else {
+                        echo "Error: No se encuentra la vista de gestión de flipbooks";
+                    }
+                    return;
+                } elseif ($action === 'personalizacion') {
+                    $adminController->personalizacion();
+                    return;
+                } elseif ($action === 'guardar-personalizacion' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+                    $adminController->guardarPersonalizacion();
+                    return;
+                } elseif ($action === 'resetear-personalizacion' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+                    $adminController->resetearPersonalizacion();
+                    return;
                 } else {
-                    echo "Error: No se encuentra la vista de gestión de flipbooks";
+                    $adminController->dashboard();
                 }
-                return;
-            } else {
-                $adminController->dashboard();
-            }
         } catch (Exception $e) {
             // Habilitar visualización de errores para depuración
             error_reporting(E_ALL);

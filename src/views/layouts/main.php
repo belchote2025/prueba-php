@@ -27,6 +27,8 @@ if (!function_exists('isLoggedIn')) {
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/assets/css/style.css">
     <!-- Animations CSS -->
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/assets/css/animations.css">
+    <!-- Personalización dinámica (CSS generado desde la base de datos) -->
+    <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/aplicar-personalizacion.php?v=<?php echo isset($_SESSION['personalizacion_version']) ? $_SESSION['personalizacion_version'] : time(); ?>">
 </head>
 <body>
     <!-- Navigation -->
