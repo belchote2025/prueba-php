@@ -211,12 +211,22 @@
             border-radius: 10px;
         }
         
+        .card img[style*="height: 400px"] {
+            height: 300px !important;
+        }
+        
         .btn {
             padding: 10px 20px;
         }
         
         .hero-section, .hero, .carousel-item, .carousel-image-container {
             background-attachment: scroll;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .card img[style*="height: 400px"] {
+            height: 250px !important;
         }
     }
 </style>
@@ -256,11 +266,13 @@
         </div>
         <div class="col-lg-6">
             <div class="card medieval-border h-100">
-                <div class="bg-gradient-dark rounded-3 shadow-lg d-flex align-items-center justify-content-center" style="height: 400px; background: linear-gradient(135deg, #8B4513 0%, #654321 100%);">
-                    <div class="text-center text-white">
-                        <i class="bi bi-clock-history" style="font-size: 5rem;"></i>
-                        <h3 class="mt-3">Orígenes Mariscales</h3>
-                    </div>
+                <div style="width: 100%; height: 400px; background: linear-gradient(135deg, #8B4513 0%, #654321 100%); border-radius: 0.5rem; position: relative; overflow: hidden;">
+                    <img src="<?php echo URL_ROOT; ?>/assets/images/caballero-templario.jpg" 
+                         alt="Caballero Templario - Orígenes Mariscales" 
+                         class="img-fluid rounded-3 shadow-lg"
+                         style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;"
+                         onerror="this.onerror=null; this.src='<?php echo URL_ROOT; ?>/assets/images/backgrounds/knight-templar-background.jpg';"
+                         onload="this.parentElement.style.background='none';">
                 </div>
                 <div class="card-body">
                     <h3 class="card-title text-danger">Fundación</h3>

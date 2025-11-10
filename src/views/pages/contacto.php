@@ -14,7 +14,7 @@
                     </p>
                     
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-12 col-md-6 mb-4 mb-md-0">
                             <h4 class="text-danger mb-3">
                                 <i class="bi bi-geo-alt me-2"></i>
                                 Información de Contacto
@@ -45,7 +45,7 @@
                             </div>
                         </div>
                         
-                        <div class="col-md-6">
+                        <div class="col-12 col-md-6">
                             <h4 class="text-danger mb-3">
                                 <i class="bi bi-send me-2"></i>
                                 Envíanos un Mensaje
@@ -111,7 +111,7 @@
                     <hr class="my-5">
                     
                     <div class="row text-center">
-                        <div class="col-md-4">
+                        <div class="col-12 col-md-6 col-lg-4 mb-4 mb-lg-0">
                             <div class="contact-card p-3">
                                 <i class="bi bi-people fa-3x text-danger mb-3"></i>
                                 <h5>Únete a Nosotros</h5>
@@ -119,7 +119,7 @@
                             </div>
                         </div>
                         
-                        <div class="col-md-4">
+                        <div class="col-12 col-md-6 col-lg-4 mb-4 mb-lg-0">
                             <div class="contact-card p-3">
                                 <i class="bi bi-calendar-event fa-3x text-danger mb-3"></i>
                                 <h5>Eventos</h5>
@@ -127,7 +127,7 @@
                             </div>
                         </div>
                         
-                        <div class="col-md-4">
+                        <div class="col-12 col-md-12 col-lg-4">
                             <div class="contact-card p-3">
                                 <i class="bi bi-handshake fa-3x text-danger mb-3"></i>
                                 <h5>Colaboraciones</h5>
@@ -175,6 +175,45 @@
     background: linear-gradient(45deg, #8b0000, #660000);
     transform: translateY(-2px);
     box-shadow: 0 4px 15px rgba(220,20,60,0.3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .contact-info {
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .contact-card {
+        margin-bottom: 1.5rem;
+    }
+    
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    .card-body {
+        padding: 1.5rem 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .contact-info {
+        padding: 0.875rem;
+    }
+    
+    .contact-card {
+        padding: 1rem !important;
+    }
+    
+    .contact-card i {
+        font-size: 2.5rem !important;
+    }
+    
+    .card-header h2 {
+        font-size: 1.25rem;
+    }
 }
 </style>
 

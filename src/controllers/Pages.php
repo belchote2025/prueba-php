@@ -682,25 +682,55 @@ class Pages extends Controller {
 
     // Página de galería multimedia
     public function galeriaMultimedia() {
-        // Cargar videos desde la base de datos
-        $videos = [];
-        $videoCount = 0;
-        
-        if (class_exists('Video')) {
+        try {
+            // Verificar si existe la clase Video
+            if (!class_exists('Video')) {
+                error_log("Error: Clase Video no encontrada");
+                $data = [
+                    'title' => 'Galería Multimedia',
+                    'description' => 'Galería multimedia de la Filá Mariscales',
+                    'videos' => [],
+                    'video_count' => 0,
+                    'error' => 'Clase Video no encontrada'
+                ];
+                $this->view('pages/galeria-multimedia', $data);
+                return;
+            }
+            
             $videoModel = $this->model('Video');
-            $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-            // En público solo mostramos videos activos
-            $videos = $videoModel->getActiveVideos($page, 12);
-            // Contar total (simplificado, se puede mejorar)
-            $videoCount = count($videos);
+            
+            // Obtener videos activos
+            $videos = $videoModel->getAllVideos(1, 50, null, true); // Solo videos activos
+            $videoCount = $videoModel->getTotalVideos(null, true);
+            
+            // Log para depuración
+            error_log("galeriaMultimedia: Videos obtenidos: " . count($videos) . ", Total: " . $videoCount);
+            
+            // Si no hay videos, intentar obtener todos (incluyendo inactivos) para depuración
+            if (empty($videos)) {
+                error_log("No hay videos activos. Intentando obtener todos los videos...");
+                $allVideos = $videoModel->getAllVideos(1, 50, null, null);
+                error_log("Total de videos (activos e inactivos): " . count($allVideos));
+            }
+            
+            $data = [
+                'title' => 'Galería Multimedia',
+                'description' => 'Galería multimedia de la Filá Mariscales',
+                'videos' => $videos,
+                'video_count' => $videoCount
+            ];
+        } catch (Exception $e) {
+            error_log("Error en galeriaMultimedia(): " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
+            $data = [
+                'title' => 'Galería Multimedia',
+                'description' => 'Galería multimedia de la Filá Mariscales',
+                'videos' => [],
+                'video_count' => 0,
+                'error' => $e->getMessage()
+            ];
         }
         
-        $data = [
-            'title' => 'Galería Multimedia',
-            'description' => 'Videos de actuaciones y eventos de la Filá Mariscales',
-            'videos' => $videos,
-            'video_count' => $videoCount
-        ];
         $this->view('pages/galeria-multimedia', $data);
     }
 

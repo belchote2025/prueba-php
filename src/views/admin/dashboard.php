@@ -62,39 +62,44 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="<?php echo URL_ROOT; ?>/admin/dashboard">
-                <i class="fas fa-shield-alt me-2"></i>Panel de Administración
+                <i class="fas fa-shield-alt me-2"></i><span class="d-none d-sm-inline">Panel de Administración</span><span class="d-sm-none">Admin</span>
             </a>
-            <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/dashboard">Dashboard</a>
-                <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/usuarios">Usuarios</a>
-                <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/eventos">Eventos</a>
-                <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/noticias">Blog</a>
-                <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/videos">Videos</a>
-                <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/galeria">Galería</a>
-                <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/documentos">Documentos</a>
-                <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/visitas">Analíticas</a>
-                <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/logout">Cerrar Sesión</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="navbar-nav ms-auto">
+                    <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/dashboard">Dashboard</a>
+                    <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/usuarios">Usuarios</a>
+                    <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/eventos">Eventos</a>
+                    <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/noticias">Blog</a>
+                    <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/galeria">Galería</a>
+                    <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/videos">Videos</a>
+                    <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/documentos">Documentos</a>
+                    <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/visitas">Analíticas</a>
+                    <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/logout">Cerrar Sesión</a>
+                </div>
             </div>
         </div>
     </nav>
 
     <div class="container-fluid">
-        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">Panel de Control</h1>
+        <div class="d-flex justify-content-between flex-wrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2 mb-2 mb-md-0">Panel de Control</h1>
     <div class="btn-toolbar mb-2 mb-md-0">
         <div class="btn-group me-2">
             <a href="<?php echo URL_ROOT; ?>/admin/export/dashboard" class="btn btn-sm btn-outline-secondary" title="Exportar CSV">
-                Exportar
+                <i class="fas fa-download d-md-none"></i><span class="d-none d-md-inline">Exportar</span>
             </a>
             <button type="button" class="btn btn-sm btn-outline-secondary" onclick="window.print()" title="Imprimir página">
-                Imprimir
+                <i class="fas fa-print d-md-none"></i><span class="d-none d-md-inline">Imprimir</span>
             </button>
         </div>
     </div>
 </div>
 
 <div class="row mb-4">
-    <div class="col-md-3 mb-3">
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-3">
         <div class="card text-white bg-danger h-100">
             <div class="card-body d-flex flex-column">
                 <div class="d-flex justify-content-between align-items-start mb-3">
@@ -103,7 +108,7 @@
                         <h2 class="mb-0"><?= $userCount ?></h2>
                         <small class="opacity-75">Total de miembros</small>
                     </div>
-                    <i class="fas fa-users fa-2x opacity-50"></i>
+                    <i class="fas fa-users fa-2x opacity-50 d-none d-sm-block"></i>
                 </div>
                 <a href="<?= URL_ROOT ?>/admin/usuarios" class="btn btn-light btn-sm mt-auto">
                     <i class="fas fa-users me-1"></i>Ver usuarios
@@ -111,7 +116,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-3 mb-3">
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-3">
         <div class="card text-white bg-success h-100">
             <div class="card-body d-flex flex-column">
                 <div class="d-flex justify-content-between align-items-start mb-3">
@@ -120,7 +125,7 @@
                         <h2 class="mb-0"><?= $eventCount ?></h2>
                         <small class="opacity-75">En curso y próximos</small>
                     </div>
-                    <i class="fas fa-calendar-alt fa-2x opacity-50"></i>
+                    <i class="fas fa-calendar-alt fa-2x opacity-50 d-none d-sm-block"></i>
                 </div>
                 <a href="<?= URL_ROOT ?>/admin/eventos" class="btn btn-light btn-sm mt-auto">
                     <i class="fas fa-calendar-alt me-1"></i>Ver eventos
@@ -128,7 +133,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-3 mb-3">
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-3">
         <div class="card text-white bg-info h-100">
             <div class="card-body d-flex flex-column">
                 <div class="d-flex justify-content-between align-items-start mb-3">
@@ -137,7 +142,7 @@
                         <h2 class="mb-0"><?= isset($galleryCount) ? $galleryCount : 0 ?></h2>
                         <small class="opacity-75">Archivos multimedia</small>
                     </div>
-                    <i class="fas fa-images fa-2x opacity-50"></i>
+                    <i class="fas fa-images fa-2x opacity-50 d-none d-sm-block"></i>
                 </div>
                 <a href="<?= URL_ROOT ?>/admin/galeria" class="btn btn-light btn-sm mt-auto">
                     <i class="fas fa-images me-1"></i>Gestionar galería
@@ -145,7 +150,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-3 mb-3">
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-3">
         <div class="card text-white bg-secondary h-100">
             <div class="card-body d-flex flex-column">
                 <div class="d-flex justify-content-between align-items-start mb-3">
@@ -154,7 +159,7 @@
                         <h2 class="mb-0"><?= isset($documentCount) ? $documentCount : 0 ?></h2>
                         <small class="opacity-75">Archivos para descarga</small>
                     </div>
-                    <i class="fas fa-file-alt fa-2x opacity-50"></i>
+                    <i class="fas fa-file-alt fa-2x opacity-50 d-none d-sm-block"></i>
                 </div>
                 <a href="<?= URL_ROOT ?>/admin/documentos" class="btn btn-light btn-sm mt-auto">
                     <i class="fas fa-file-alt me-1"></i>Gestionar documentos
@@ -162,7 +167,24 @@
             </div>
         </div>
     </div>
-    <div class="col-md-3 mb-3">
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-3">
+        <div class="card text-white bg-info h-100">
+            <div class="card-body d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <h5 class="card-title mb-1">Videos</h5>
+                        <h2 class="mb-0"><?= isset($data['videoCount']) ? $data['videoCount'] : 0 ?></h2>
+                        <small class="opacity-75">Multimedia</small>
+                    </div>
+                    <i class="fas fa-video fa-2x opacity-50 d-none d-sm-block"></i>
+                </div>
+                <a href="<?php echo URL_ROOT; ?>/admin/videos" class="btn btn-light btn-sm mt-auto">
+                    <i class="fas fa-video me-1"></i>Gestionar videos
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-3">
         <div class="card text-white bg-warning h-100">
             <div class="card-body d-flex flex-column">
                 <div class="d-flex justify-content-between align-items-start mb-3">
@@ -171,33 +193,16 @@
                         <h2 class="mb-0">+</h2>
                         <small class="opacity-75">Herramientas</small>
                     </div>
-                    <i class="fas fa-plus fa-2x opacity-50"></i>
+                    <i class="fas fa-plus fa-2x opacity-50 d-none d-sm-block"></i>
                 </div>
                 <div class="mt-auto">
-                    <a href="<?php echo URL_ROOT; ?>/admin/crearUsuario" class="text-white d-block small">Nuevo usuario</a>
-                    <a href="<?php echo URL_ROOT; ?>/admin/nuevoEvento" class="text-white d-block small">Nuevo evento</a>
-                    <a href="<?php echo URL_ROOT; ?>/admin/videos/nuevo" class="text-white d-block small">Nuevo video</a>
-                    <a href="<?php echo URL_ROOT; ?>/admin/galeria" class="text-white d-block small">Subir archivos</a>
-                    <a href="<?php echo URL_ROOT; ?>/admin/documentos" class="text-white d-block small">Gestionar documentos</a>
+                    <a href="<?php echo URL_ROOT; ?>/admin/crearUsuario" class="text-white d-block small mb-1">Nuevo usuario</a>
+                    <a href="<?php echo URL_ROOT; ?>/admin/nuevoEvento" class="text-white d-block small mb-1">Nuevo evento</a>
+                    <a href="<?php echo URL_ROOT; ?>/admin/videos/nuevo" class="text-white d-block small mb-1">Nuevo video</a>
+                    <a href="<?php echo URL_ROOT; ?>/admin/galeria" class="text-white d-block small mb-1">Subir archivos</a>
+                    <a href="<?php echo URL_ROOT; ?>/admin/documentos" class="text-white d-block small mb-1">Gestionar documentos</a>
                     <a href="<?php echo URL_ROOT; ?>/admin/nueva-noticia" class="text-white d-block small">Nueva noticia</a>
                 </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3 mb-3">
-        <div class="card text-white h-100" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);">
-            <div class="card-body d-flex flex-column">
-                <div class="d-flex justify-content-between align-items-start mb-3">
-                    <div>
-                        <h5 class="card-title mb-1">Videos</h5>
-                        <h2 class="mb-0"><?= isset($data['videoCount']) ? $data['videoCount'] : 0 ?></h2>
-                        <small class="opacity-75">Videos registrados</small>
-                    </div>
-                    <i class="fas fa-video fa-2x opacity-50"></i>
-                </div>
-                <a href="<?= URL_ROOT ?>/admin/videos" class="btn btn-light btn-sm mt-auto">
-                    <i class="fas fa-video me-1"></i>Gestionar videos
-                </a>
             </div>
         </div>
     </div>
@@ -205,7 +210,7 @@
 
 <!-- Estadísticas Secundarias -->
 <div class="row mb-4">
-    <div class="col-md-3 mb-3">
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
         <div class="card text-white h-100" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
             <div class="card-body d-flex flex-column">
                 <div class="d-flex justify-content-between align-items-start mb-3">
@@ -214,7 +219,7 @@
                         <h2 class="mb-0"><?= $productCount ?? 0 ?></h2>
                         <small class="opacity-75">Productos</small>
                     </div>
-                    <i class="fas fa-shopping-cart fa-2x opacity-50"></i>
+                    <i class="fas fa-shopping-cart fa-2x opacity-50 d-none d-sm-block"></i>
                 </div>
                 <div class="mt-auto">
                     <a href="<?php echo URL_ROOT; ?>/admin/productos" class="btn btn-light btn-sm">
@@ -225,7 +230,7 @@
         </div>
     </div>
 
-    <div class="col-md-3 mb-3">
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
         <div class="card text-white bg-dark h-100">
             <div class="card-body d-flex flex-column">
                 <div class="d-flex justify-content-between align-items-start mb-3">
@@ -234,7 +239,7 @@
                         <h2 class="mb-0"><?= isset($data['newsCount']) ? $data['newsCount'] : 0 ?></h2>
                         <small class="opacity-75">Publicaciones</small>
                     </div>
-                    <i class="fas fa-newspaper fa-2x opacity-50"></i>
+                    <i class="fas fa-newspaper fa-2x opacity-50 d-none d-sm-block"></i>
                 </div>
                 <a href="<?= URL_ROOT ?>/admin/noticias" class="btn btn-light btn-sm mt-auto">
                     <i class="fas fa-newspaper me-1"></i>Gestionar noticias
@@ -242,7 +247,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-3 mb-3">
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
         <div class="card text-white bg-danger h-100">
             <div class="card-body d-flex flex-column">
                 <div class="d-flex justify-content-between align-items-start mb-3">
@@ -251,7 +256,7 @@
                         <h2 class="mb-0"><?= isset($data['messagesCount']) ? $data['messagesCount'] : 0 ?></h2>
                         <small class="opacity-75">Sin leer</small>
                     </div>
-                    <i class="fas fa-envelope fa-2x opacity-50"></i>
+                    <i class="fas fa-envelope fa-2x opacity-50 d-none d-sm-block"></i>
                 </div>
                 <a href="<?= URL_ROOT ?>/admin/mensajes" class="btn btn-light btn-sm mt-auto">
                     <i class="fas fa-envelope me-1"></i>Ver mensajes
@@ -259,7 +264,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-3 mb-3">
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
         <div class="card text-white bg-purple h-100" style="background: linear-gradient(135deg, #6f42c1 0%, #5a2d91 100%);">
             <div class="card-body d-flex flex-column">
                 <div class="d-flex justify-content-between align-items-start mb-3">
@@ -268,7 +273,7 @@
                         <h2 class="mb-0"><?= isset($data['pendingFees']) ? $data['pendingFees'] : 0 ?></h2>
                         <small class="opacity-75">Por cobrar</small>
                     </div>
-                    <i class="fas fa-exclamation-triangle fa-2x opacity-50"></i>
+                    <i class="fas fa-exclamation-triangle fa-2x opacity-50 d-none d-sm-block"></i>
                 </div>
                 <a href="<?= URL_ROOT ?>/admin/cuotas" class="btn btn-light btn-sm mt-auto">
                     <i class="fas fa-exclamation-triangle me-1"></i>Gestionar cuotas
@@ -283,26 +288,26 @@
     <div class="col-12 mb-3">
         <div class="card text-white h-100" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
             <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <div>
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
+                    <div class="mb-3 mb-md-0">
                         <h4 class="card-title mb-1">
                             <i class="fas fa-chart-line me-2"></i>Analíticas de Visitas
                         </h4>
                         <p class="opacity-75 mb-0">Estadísticas en tiempo real del sitio web</p>
                     </div>
-                    <div class="text-end">
-                        <button class="btn btn-light btn-sm me-2" onclick="refreshVisitStats()">
-                            <i class="fas fa-sync-alt me-1"></i>Actualizar
+                    <div class="text-start text-md-end">
+                        <button class="btn btn-light btn-sm me-2 mb-2 mb-md-0" onclick="refreshVisitStats()">
+                            <i class="fas fa-sync-alt me-1"></i><span class="d-none d-sm-inline">Actualizar</span>
                         </button>
                         <a href="<?php echo URL_ROOT; ?>/admin/visitas" class="btn btn-outline-light btn-sm">
-                            <i class="fas fa-chart-bar me-1"></i>Ver Detalles
+                            <i class="fas fa-chart-bar me-1"></i><span class="d-none d-sm-inline">Ver Detalles</span>
                         </a>
                     </div>
                 </div>
                 
                 <!-- Métricas Principales -->
                 <div class="row mb-4">
-                    <div class="col-md-3 text-center">
+                    <div class="col-6 col-md-3 text-center mb-3">
                         <div class="metric-item">
                             <h3 class="mb-1"><?= number_format($visitStats['total_visitas'] ?? 0) ?></h3>
                             <p class="mb-0 opacity-75">
@@ -311,7 +316,7 @@
                             </p>
                         </div>
                     </div>
-                    <div class="col-md-3 text-center">
+                    <div class="col-6 col-md-3 text-center mb-3">
                         <div class="metric-item">
                             <h3 class="mb-1"><?= number_format($visitStats['visitas_unicas'] ?? 0) ?></h3>
                             <p class="mb-0 opacity-75">
@@ -320,7 +325,7 @@
                             </p>
                         </div>
                     </div>
-                    <div class="col-md-3 text-center">
+                    <div class="col-6 col-md-3 text-center mb-3">
                         <div class="metric-item">
                             <h3 class="mb-1"><?= number_format($visitStats['visitas_hoy'] ?? 0) ?></h3>
                             <p class="mb-0 opacity-75">
@@ -329,7 +334,7 @@
                             </p>
                         </div>
                     </div>
-                    <div class="col-md-3 text-center">
+                    <div class="col-6 col-md-3 text-center mb-3">
                         <div class="metric-item">
                             <h3 class="mb-1 text-success"><?= number_format($realTimeStats['usuarios_online'] ?? 0) ?></h3>
                             <p class="mb-0 opacity-75">
@@ -955,7 +960,70 @@ function initializeCalendar() {
         padding: 2px;
     }
     
+    .card-title {
+        font-size: 0.9rem;
+    }
+    
+    .card-title + h2 {
+        font-size: 1.5rem;
+    }
+    
+    .metric-item h3 {
+        font-size: 1.5rem;
+    }
+    
+    .btn-sm {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+    }
+    
+    .navbar-brand {
+        font-size: 1rem;
+    }
+    
+    .container-fluid {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+    
+    .h2 {
+        font-size: 1.5rem;
+    }
+}
 
+@media (max-width: 576px) {
+    .card-title {
+        font-size: 0.85rem;
+    }
+    
+    .card-title + h2 {
+        font-size: 1.25rem;
+    }
+    
+    .metric-item h3 {
+        font-size: 1.25rem;
+    }
+    
+    .metric-item p {
+        font-size: 0.75rem;
+    }
+    
+    .btn {
+        font-size: 0.8rem;
+        padding: 0.375rem 0.75rem;
+    }
+    
+    .navbar-nav .nav-link {
+        padding: 0.5rem 1rem;
+    }
 }
 </style>
 

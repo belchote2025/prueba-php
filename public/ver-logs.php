@@ -67,7 +67,7 @@ foreach ($logPaths as $path) {
     <?php endif; ?>
     
     <hr>
-    <p><a href="<?php echo URL_ROOT; ?>/admin/videos">← Volver a Videos</a></p>
+    <p><a href="<?php echo URL_ROOT; ?>/admin/dashboard">← Volver al Dashboard</a></p>
     <p><a href="<?php echo URL_ROOT; ?>/debug-url.php">Ver Debug de URL</a></p>
 </body>
 </html>

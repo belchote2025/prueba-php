@@ -249,6 +249,8 @@ if (empty($url[0])) {
     // Admin routes (simple guard + custom login/logout)
     $action = isset($url[1]) ? $url[1] : (isAdminLoggedIn() ? 'dashboard' : 'login');
     
+    // DEPURACIÓN: Log del routing
+    error_log("Admin routing - Action: " . $action . ", URL array: " . print_r($url, true));
 
     if ($action === 'login') {
         // Serve admin login page without constructing the controller
@@ -268,7 +270,15 @@ if (empty($url[0])) {
 
     // Any other admin route requires authentication
     if (!isAdminLoggedIn()) {
-        header('Location: ' . URL_ROOT . '/admin/login');
+        // Verificar si los headers ya se enviaron
+        if (headers_sent()) {
+            // Si los headers ya se enviaron, usar JavaScript para redirigir
+            echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Redirigiendo...</title>';
+            echo '<script>window.location.href = "' . URL_ROOT . '/admin/login";</script>';
+            echo '</head><body><p>Redirigiendo al login...</p></body></html>';
+        } else {
+            header('Location: ' . URL_ROOT . '/admin/login');
+        }
         exit;
     }
 
@@ -277,8 +287,14 @@ if (empty($url[0])) {
         try {
             $adminController = new AdminController();
             
-            if (method_exists($adminController, $action)) {
+            // Verificar si es una acción de videos primero (para evitar conflictos con el routing genérico)
+            // NO hacer nada aquí si es videos, se maneja más abajo
+            if ($action === 'videos') {
+                // Saltar este bloque, se maneja más abajo en el bloque específico de videos
+                // No hacer return aquí, dejar que continúe al bloque de videos
+            } elseif (method_exists($adminController, $action)) {
                 call_user_func_array([$adminController, $action], array_slice($url, 2));
+                return; // IMPORTANTE: Salir después de ejecutar
             } elseif ($action === 'mensajes' && isset($url[2]) && isset($url[3])) {
                 // Manejar acciones de mensajes: /admin/mensajes/view/filename, /admin/mensajes/download/filename, etc.
                 $subAction = $url[2];
@@ -344,18 +360,52 @@ if (empty($url[0])) {
                 $id = isset($url[2]) ? $url[2] : null;
                 $estado = isset($url[3]) ? $url[3] : null;
                 $adminController->cambiarEstadoNoticia($id, $estado);
-            } elseif ($action === 'videos') {
-                // Manejar la ruta videos
-                if (isset($url[2]) && $url[2] === 'nuevo') {
+            } 
+            
+            // BLOQUE ESPECÍFICO DE VIDEOS - Debe estar fuera del elseif anterior
+            if ($action === 'videos') {
+                // Manejar rutas de videos
+                $subAction = $url[2] ?? null;
+                $id = $url[3] ?? null;
+                
+                // DEPURACIÓN
+                error_log("Routing videos - subAction: " . ($subAction ?? 'null') . ", id: " . ($id ?? 'null'));
+                
+                if ($subAction === 'nuevo') {
+                    error_log("Llamando a nuevoVideo()");
                     $adminController->nuevoVideo();
-                } elseif (isset($url[2]) && $url[2] === 'editar' && isset($url[3])) {
-                    $adminController->editarVideo($url[3]);
-                } elseif (isset($url[2]) && $url[2] === 'eliminar' && isset($url[3])) {
-                    $adminController->eliminarVideo($url[3]);
+                    return;
+                } elseif ($subAction === 'guardar' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+                    error_log("Llamando a guardarVideo()");
+                    $adminController->guardarVideo();
+                    return;
+                } elseif ($subAction === 'editar' && $id) {
+                    // Asegurar que $id sea un entero
+                    $id = (int)$id;
+                    error_log("Llamando a editarVideo($id)");
+                    $adminController->editarVideo($id);
+                    return;
+                } elseif ($subAction === 'actualizar' && $id && $_SERVER['REQUEST_METHOD'] === 'POST') {
+                    $id = (int)$id;
+                    error_log("Llamando a actualizarVideo($id)");
+                    $adminController->actualizarVideo($id);
+                    return;
+                } elseif ($subAction === 'eliminar' && $id && $_SERVER['REQUEST_METHOD'] === 'POST') {
+                    $id = (int)$id;
+                    error_log("Llamando a eliminarVideo($id)");
+                    $adminController->eliminarVideo($id);
+                    return;
                 } else {
-                    $adminController->videos();
+                    // Si no hay subAction o es numérico, es una página
+                    $page = isset($url[2]) && is_numeric($url[2]) ? (int)$url[2] : 1;
+                    error_log("Llamando a videos($page) - Sin subAction");
+                    $adminController->videos($page);
+                    return; // IMPORTANTE: Salir después de ejecutar videos
                 }
-            } elseif ($action === 'cuotas') {
+            }
+            
+            // Continuar con otras acciones si no es videos
+            if ($action === 'cuotas') {
                 // Manejar rutas de cuotas
                 if (isset($url[2]) && $url[2] === 'nueva') {
                     $adminController->nuevaCuota();
@@ -388,7 +438,41 @@ if (empty($url[0])) {
                 $adminController->dashboard();
             }
         } catch (Exception $e) {
-            echo "Error interno del servidor. Revisa los logs para más detalles.";
+            // Habilitar visualización de errores para depuración
+            error_reporting(E_ALL);
+            ini_set('display_errors', 1);
+            error_log("EXCEPCIÓN en routing admin: " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
+            echo "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Error</title>";
+            echo "<link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css' rel='stylesheet'>";
+            echo "</head><body><div class='container mt-5'>";
+            echo "<div class='alert alert-danger'>";
+            echo "<h4>Error en el routing de administración</h4>";
+            echo "<p><strong>Mensaje:</strong> " . htmlspecialchars($e->getMessage()) . "</p>";
+            echo "<p><strong>Archivo:</strong> " . htmlspecialchars($e->getFile()) . "</p>";
+            echo "<p><strong>Línea:</strong> " . $e->getLine() . "</p>";
+            echo "<details><summary>Stack Trace</summary><pre>" . htmlspecialchars($e->getTraceAsString()) . "</pre></details>";
+            echo "</div>";
+            echo "<a href='" . URL_ROOT . "/admin/dashboard' class='btn btn-primary'>Volver al Dashboard</a>";
+            echo "</div></body></html>";
+        } catch (Error $e) {
+            // Capturar errores fatales también
+            error_reporting(E_ALL);
+            ini_set('display_errors', 1);
+            error_log("ERROR FATAL en routing admin: " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
+            echo "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Error Fatal</title>";
+            echo "<link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css' rel='stylesheet'>";
+            echo "</head><body><div class='container mt-5'>";
+            echo "<div class='alert alert-danger'>";
+            echo "<h4>Error Fatal en el routing de administración</h4>";
+            echo "<p><strong>Mensaje:</strong> " . htmlspecialchars($e->getMessage()) . "</p>";
+            echo "<p><strong>Archivo:</strong> " . htmlspecialchars($e->getFile()) . "</p>";
+            echo "<p><strong>Línea:</strong> " . $e->getLine() . "</p>";
+            echo "<details><summary>Stack Trace</summary><pre>" . htmlspecialchars($e->getTraceAsString()) . "</pre></details>";
+            echo "</div>";
+            echo "<a href='" . URL_ROOT . "/admin/dashboard' class='btn btn-primary'>Volver al Dashboard</a>";
+            echo "</div></body></html>";
         }
     } else {
         echo "Error: No se puede cargar el controlador de administrador";

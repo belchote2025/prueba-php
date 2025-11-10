@@ -36,6 +36,59 @@ function getDefaultImage() {
     </div>
 </section>
 
+<style>
+/* Responsive Blog */
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 2rem 0 !important;
+        margin-top: 70px;
+    }
+    
+    .hero-section h1 {
+        font-size: 1.75rem !important;
+    }
+    
+    .hero-section .lead {
+        font-size: 1rem !important;
+    }
+    
+    .card-img-top[style*="height: 400px"] {
+        height: 250px !important;
+    }
+    
+    .card-img-top[style*="height: 250px"] {
+        height: 200px !important;
+    }
+    
+    .card-body {
+        padding: 1rem !important;
+    }
+    
+    .card-body.p-4 {
+        padding: 1.5rem 1rem !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-section h1 {
+        font-size: 1.5rem !important;
+    }
+    
+    .card-img-top[style*="height: 400px"],
+    .card-img-top[style*="height: 250px"] {
+        height: 180px !important;
+    }
+    
+    .card-body.p-4 {
+        padding: 1rem !important;
+    }
+    
+    .col-6.col-md-4.col-lg-2 {
+        margin-bottom: 1rem;
+    }
+}
+</style>
+
 <!-- Main Content -->
 <section class="py-5">
     <div class="container">
@@ -51,7 +104,7 @@ function getDefaultImage() {
         $featuredAutor = is_object($featured) ? ($featured->autor_nombre ?? 'Admin') : ($featured['autor_nombre'] ?? 'Admin');
         ?>
         <div class="row mb-5">
-            <div class="col-lg-8 mx-auto">
+            <div class="col-12 col-lg-8 mx-auto">
                 <div class="card border-0 shadow-sm mb-5">
                     <?php if ($featuredImagen): ?>
                         <img src="<?php echo URL_ROOT; ?>/serve-image.php?path=uploads/news/<?php echo urlencode($featuredImagen); ?>" 
@@ -105,7 +158,7 @@ function getDefaultImage() {
                 $postAutor = is_object($newsItem) ? ($newsItem->autor_nombre ?? 'Admin') : ($newsItem['autor_nombre'] ?? 'Admin');
                 $postCategoria = 'Actualidad'; // Por defecto, se puede mejorar después
             ?>
-            <div class="col-md-6 col-lg-4">
+            <div class="col-12 col-md-6 col-lg-4 mb-4">
                 <div class="card h-100 border-0 shadow-sm">
                     <div class="position-relative">
                         <?php if ($postImagen): ?>
@@ -145,7 +198,7 @@ function getDefaultImage() {
         <?php else: ?>
         <!-- No hay posts -->
         <div class="row justify-content-center">
-            <div class="col-lg-8 text-center py-5">
+            <div class="col-12 col-lg-8 text-center py-5">
                 <div class="card border-0 shadow-sm">
                     <div class="card-body py-5">
                         <i class="bi bi-newspaper text-muted" style="font-size: 4rem;"></i>
@@ -196,15 +249,15 @@ function getDefaultImage() {
         
         <!-- Newsletter Section -->
         <div class="row justify-content-center">
-            <div class="col-lg-8">
+            <div class="col-12 col-lg-8">
                 <div class="card border-0 bg-light">
                     <div class="card-body p-4 text-center">
                         <div class="row align-items-center">
-                            <div class="col-lg-6 mb-4 mb-lg-0">
+                            <div class="col-12 col-lg-6 mb-4 mb-lg-0">
                                 <h3 class="h4 fw-bold mb-3">¿Quieres estar al día?</h3>
                                 <p class="mb-0">Suscríbete a nuestro boletín y recibe las últimas noticias directamente en tu correo.</p>
                             </div>
-                            <div class="col-lg-6">
+                            <div class="col-12 col-lg-6">
                                 <form action="<?php echo URL_ROOT; ?>/newsletter/subscribe" method="POST" class="row g-2">
                                     <div class="col-12">
                                         <input type="email" name="email" class="form-control" placeholder="Tu correo electrónico" required>

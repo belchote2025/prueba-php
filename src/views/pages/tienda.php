@@ -16,25 +16,25 @@
         
         <!-- Estadísticas de la Tienda -->
         <div class="row mb-5">
-            <div class="col-md-3 col-6 mb-3">
+            <div class="col-6 col-md-3 mb-3">
                 <div class="text-center">
                     <div class="display-6 text-primary fw-bold"><?= count($products) ?></div>
                     <small class="text-muted">Productos Disponibles</small>
                 </div>
             </div>
-            <div class="col-md-3 col-6 mb-3">
+            <div class="col-6 col-md-3 mb-3">
                 <div class="text-center">
                     <div class="display-6 text-success fw-bold">100%</div>
                     <small class="text-muted">Oficiales</small>
                 </div>
             </div>
-            <div class="col-md-3 col-6 mb-3">
+            <div class="col-6 col-md-3 mb-3">
                 <div class="text-center">
                     <div class="display-6 text-warning fw-bold">24h</div>
                     <small class="text-muted">Envío Rápido</small>
                 </div>
             </div>
-            <div class="col-md-3 col-6 mb-3">
+            <div class="col-6 col-md-3 mb-3">
                 <div class="text-center">
                     <div class="display-6 text-info fw-bold">1975</div>
                     <small class="text-muted">Desde</small>
@@ -66,7 +66,7 @@
         <?php if (!empty($products)): ?>
             <div class="row" id="products-container">
                 <?php foreach ($products as $product): ?>
-                    <div class="col-md-6 col-lg-4 col-xl-3 mb-4 product-item" data-category="<?= trim($product->categoria_nombre ?? 'General') ?>">
+                    <div class="col-12 col-md-6 col-lg-4 col-xl-3 mb-4 product-item" data-category="<?= trim($product->categoria_nombre ?? 'General') ?>">
                 <div class="card h-100 border-0 shadow-sm product-card">
                     <div class="position-relative">
                                 <?php if (!empty($product->imagen)): ?>

@@ -70,8 +70,9 @@ $videos = $data['videos'] ?? [];
                                 // Determinar URL del video según tipo
                                 $videoSrc = '';
                                 if ($videoTipo === 'youtube') {
-                                    $videoModel = new Video();
-                                    $youtubeId = $videoModel->extractYouTubeId($videoUrl);
+                                    // Extraer ID de YouTube manualmente
+                                    preg_match('/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/', $videoUrl, $matches);
+                                    $youtubeId = isset($matches[1]) ? $matches[1] : '';
                                     if ($youtubeId) {
                                         $videoSrc = 'https://www.youtube.com/embed/' . $youtubeId;
                                         if (!$videoThumbnail) {
@@ -79,16 +80,25 @@ $videos = $data['videos'] ?? [];
                                         }
                                     }
                                 } elseif ($videoTipo === 'vimeo') {
-                                    $videoModel = new Video();
-                                    $vimeoId = $videoModel->extractVimeoId($videoUrl);
+                                    // Extraer ID de Vimeo manualmente
+                                    preg_match('/vimeo\.com\/(\d+)/', $videoUrl, $matches);
+                                    $vimeoId = isset($matches[1]) ? $matches[1] : '';
                                     if ($vimeoId) {
                                         $videoSrc = 'https://player.vimeo.com/video/' . $vimeoId;
                                     }
+                                } elseif ($videoTipo === 'local') {
+                                    // Video local - usar URL directamente
+                                    $videoSrc = $videoUrl;
+                                    // Si no hay thumbnail, intentar generar uno o usar placeholder
+                                    if (!$videoThumbnail) {
+                                        $videoThumbnail = URL_ROOT . '/assets/images/default-video.jpg';
+                                    }
                                 } else {
+                                    // Otro tipo de video
                                     $videoSrc = $videoUrl;
                                 }
                             ?>
-                            <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="col-lg-4 col-md-6 col-12 mb-4">
                                 <div class="video-card">
                                     <div class="video-thumbnail">
                                         <div class="video-overlay">
@@ -123,7 +133,42 @@ $videos = $data['videos'] ?? [];
                         <?php else: ?>
                             <div class="col-12 text-center py-5">
                                 <i class="bi bi-play-circle text-muted" style="font-size: 4rem;"></i>
-                                <p class="text-muted mt-3">Aún no hay videos disponibles</p>
+                                <h4 class="text-muted mt-3">Aún no hay videos disponibles</h4>
+                                <p class="text-muted">Los videos aparecerán aquí cuando se agreguen y activen desde el panel de administración.</p>
+                                <?php if (isset($data['error'])): ?>
+                                    <div class="alert alert-warning mt-3">
+                                        <strong>Error:</strong> <?php echo htmlspecialchars($data['error']); ?>
+                                    </div>
+                                <?php endif; ?>
+                                <div class="alert alert-info mt-3" style="max-width: 700px; margin: 0 auto;">
+                                    <h5 class="mb-3">📹 ¿Cómo añadir videos?</h5>
+                                    <ol class="text-start" style="display: inline-block;">
+                                        <li>Inicia sesión en el <strong>Panel de Administración</strong></li>
+                                        <li>Ve a <strong>"Videos"</strong> en el menú superior</li>
+                                        <li>Haz clic en <strong>"Nuevo Video"</strong></li>
+                                        <li>Completa el formulario y marca <strong>"Video activo"</strong></li>
+                                        <li>Guarda el video</li>
+                                    </ol>
+                                    <p class="mt-3 mb-0"><strong>💡 Nota:</strong> Si ya has agregado videos pero no aparecen aquí, verifica que estén marcados como <strong>"Activos"</strong> en el panel de administración.</p>
+                                </div>
+                                <p class="mt-3">
+                                    <a href="<?php echo URL_ROOT; ?>/admin/videos" class="btn btn-danger me-2">
+                                        <i class="bi bi-plus-circle me-2"></i>Gestionar Videos
+                                    </a>
+                                    <a href="<?php echo URL_ROOT; ?>/public/activar-video.php" class="btn btn-warning me-2">
+                                        <i class="bi bi-check-circle me-2"></i>Activar Videos
+                                    </a>
+                                    <a href="<?php echo URL_ROOT; ?>/admin/login" class="btn btn-outline-primary">
+                                        <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión
+                                    </a>
+                                </p>
+                                <p class="mt-2">
+                                    <small>
+                                        <a href="<?php echo URL_ROOT; ?>/public/insertar-videos-ejemplo.php" class="text-muted">
+                                            Insertar videos de ejemplo
+                                        </a>
+                                    </small>
+                                </p>
                             </div>
                         <?php endif; ?>
                     </div>
@@ -495,24 +540,49 @@ $videos = $data['videos'] ?? [];
 
 /* Responsive Design for Videos */
 @media (max-width: 768px) {
-    .video-modal {
-        padding: 1rem;
+    .hero-section {
+        padding: 2rem 0;
     }
     
-    .modal-content {
-        max-height: 95vh;
+    .hero-section h1 {
+        font-size: 1.75rem;
+        margin-bottom: 1rem;
     }
     
-    .video-container {
-        padding-bottom: 60%;
+    .hero-section .lead {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
     }
     
-    .video-details {
-        padding: 1rem;
+    .gallery-stats {
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-top: 1.5rem;
     }
     
-    .video-details h3 {
-        font-size: 1.2rem;
+    .stat-item {
+        flex: 1 1 auto;
+        min-width: 80px;
+    }
+    
+    .stat-item h3 {
+        font-size: 1.75rem;
+    }
+    
+    .videos-header h2 {
+        font-size: 1.5rem;
+    }
+    
+    .videos-header .lead {
+        font-size: 0.95rem;
+    }
+    
+    .video-card {
+        margin-bottom: 1.5rem;
+    }
+    
+    .video-thumbnail {
+        height: 180px;
     }
     
     .play-btn {
@@ -521,23 +591,83 @@ $videos = $data['videos'] ?? [];
         font-size: 1.5rem;
     }
     
-    .video-thumbnail {
-        height: 150px;
+    .video-info {
+        padding: 1rem;
     }
     
-    .gallery-stats {
-        flex-direction: column;
-        gap: 1rem;
+    .video-title {
+        font-size: 1.1rem;
+    }
+    
+    .video-description {
+        font-size: 0.9rem;
+    }
+    
+    .modal-content {
+        max-width: 100%;
+        margin: 0;
+        border-radius: 0;
+        height: 100vh;
+        max-height: 100vh;
+    }
+    
+    .video-container {
+        padding-bottom: 56.25%;
+    }
+    
+    .video-details {
+        padding: 1rem;
+    }
+    
+    .video-details h3 {
+        font-size: 1.25rem;
+    }
+    
+    .modal-close {
+        width: 44px;
+        height: 44px;
+        top: 0.5rem;
+        right: 0.5rem;
     }
 }
 
-@media (max-width: 480px) {
-    .video-card {
-        margin-bottom: 1rem;
+@media (max-width: 576px) {
+    .hero-section h1 {
+        font-size: 1.5rem;
+    }
+    
+    .hero-section .lead {
+        font-size: 0.95rem;
+    }
+    
+    .gallery-stats {
+        gap: 0.75rem;
+    }
+    
+    .stat-item h3 {
+        font-size: 1.5rem;
+    }
+    
+    .stat-item small {
+        font-size: 0.75rem;
+    }
+    
+    .videos-header h2 {
+        font-size: 1.25rem;
+    }
+    
+    .video-thumbnail {
+        height: 160px;
+    }
+    
+    .play-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 1.25rem;
     }
     
     .video-info {
-        padding: 1rem;
+        padding: 0.875rem;
     }
     
     .video-title {
@@ -545,13 +675,15 @@ $videos = $data['videos'] ?? [];
     }
     
     .video-description {
-        font-size: 0.8rem;
+        font-size: 0.875rem;
     }
     
-    .video-meta {
-        flex-direction: column;
-        gap: 0.5rem;
-        align-items: flex-start;
+    .video-details h3 {
+        font-size: 1.1rem;
+    }
+    
+    .video-details p {
+        font-size: 0.9rem;
     }
 }
 </style>
@@ -560,10 +692,16 @@ $videos = $data['videos'] ?? [];
 document.addEventListener('DOMContentLoaded', function() {
     // ===== FUNCIONALIDAD DE VIDEOS =====
     
-    // Elementos del modal de video
+    // Elementos del modal de video - verificar que existan
     const videoModal = document.getElementById('videoModal');
     const modalOverlay = document.getElementById('modalOverlay');
     const modalClose = document.getElementById('modalClose');
+    
+    // Si no existen los elementos del modal, no continuar
+    if (!videoModal || !modalOverlay || !modalClose) {
+        console.warn('Elementos del modal de video no encontrados. El modal puede no estar disponible.');
+        return;
+    }
     
     // Función para abrir modal con video
     function openVideoModal(videoSrc, videoTipo, videoTitulo, videoDescripcion) {
@@ -571,8 +709,16 @@ document.addEventListener('DOMContentLoaded', function() {
         const modalTitle = document.getElementById('modalTitle');
         const modalDescription = document.getElementById('modalDescription');
         
+        // Verificar que los elementos existan
+        if (!videoModal || !videoPlayer) {
+            console.error('Elementos del modal no encontrados');
+            return;
+        }
+        
         // Limpiar contenido anterior
-        videoPlayer.innerHTML = '';
+        if (videoPlayer) {
+            videoPlayer.innerHTML = '';
+        }
         
         // Crear iframe según el tipo
         if (videoTipo === 'youtube' || videoTipo === 'vimeo') {
@@ -584,21 +730,45 @@ document.addEventListener('DOMContentLoaded', function() {
             iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
             iframe.allowFullscreen = true;
             iframe.style.borderRadius = '10px';
-            videoPlayer.appendChild(iframe);
+            if (videoPlayer) {
+                videoPlayer.appendChild(iframe);
+            }
+        } else if (videoTipo === 'local') {
+            // Video local - usar elemento <video>
+            const video = document.createElement('video');
+            video.src = videoSrc;
+            video.controls = true;
+            video.setAttribute('playsinline', '');
+            video.setAttribute('webkit-playsinline', '');
+            video.style.width = '100%';
+            video.style.maxHeight = '500px';
+            video.style.borderRadius = '10px';
+            video.style.backgroundColor = '#000';
+            if (videoPlayer) {
+                videoPlayer.appendChild(video);
+            }
         } else {
-            // Video local
+            // Otro tipo - intentar como iframe o video
             const video = document.createElement('video');
             video.src = videoSrc;
             video.controls = true;
             video.style.width = '100%';
             video.style.borderRadius = '10px';
-            videoPlayer.appendChild(video);
+            if (videoPlayer) {
+                videoPlayer.appendChild(video);
+            }
         }
         
-        modalTitle.textContent = videoTitulo || 'Video';
-        modalDescription.textContent = videoDescripcion || '';
+        if (modalTitle) {
+            modalTitle.textContent = videoTitulo || 'Video';
+        }
+        if (modalDescription) {
+            modalDescription.textContent = videoDescripcion || '';
+        }
         
-        videoModal.classList.add('active');
+        if (videoModal) {
+            videoModal.classList.add('active');
+        }
         document.body.style.overflow = 'hidden';
     }
     
@@ -618,13 +788,25 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Event listeners para cerrar el modal
-    modalClose.addEventListener('click', closeVideoModal);
-    modalOverlay.addEventListener('click', closeVideoModal);
+    // Función para cerrar modal
+    function closeVideoModal() {
+        if (videoModal) {
+            videoModal.classList.remove('active');
+        }
+        document.body.style.overflow = '';
+    }
+    
+    // Event listeners para cerrar el modal - solo si los elementos existen
+    if (modalClose) {
+        modalClose.addEventListener('click', closeVideoModal);
+    }
+    if (modalOverlay) {
+        modalOverlay.addEventListener('click', closeVideoModal);
+    }
     
     // Cerrar modal con tecla Escape
     document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && videoModal.classList.contains('active')) {
+        if (e.key === 'Escape' && videoModal && videoModal.classList.contains('active')) {
             closeVideoModal();
         }
     });

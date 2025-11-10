@@ -213,7 +213,7 @@ $documentos_socios = [
 <section class="login-section py-5 <?php echo isset($user) ? 'd-none' : ''; ?>" id="loginSection">
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-6 col-lg-5">
+            <div class="col-12 col-md-6 col-lg-5 mb-4 mb-md-0">
                 <div class="login-card">
                     <div class="login-header text-center mb-4">
                         <div class="login-icon">
@@ -290,7 +290,7 @@ $documentos_socios = [
         
         <!-- Quick Actions -->
         <div class="row g-4 mb-5">
-            <div class="col-md-6 col-lg-3">
+            <div class="col-6 col-md-6 col-lg-3 mb-3">
                 <div class="action-card">
                     <div class="action-icon">
                         <i class="bi bi-calendar-check"></i>
@@ -303,7 +303,7 @@ $documentos_socios = [
                 </div>
             </div>
             
-            <div class="col-md-6 col-lg-3">
+            <div class="col-6 col-md-6 col-lg-3 mb-3">
                 <div class="action-card">
                     <div class="action-icon">
                         <i class="bi bi-credit-card"></i>
@@ -316,7 +316,7 @@ $documentos_socios = [
                 </div>
             </div>
             
-            <div class="col-md-6 col-lg-3">
+            <div class="col-6 col-md-6 col-lg-3 mb-3">
                 <div class="action-card">
                     <div class="action-icon">
                         <i class="bi bi-file-earmark-text"></i>
@@ -329,7 +329,7 @@ $documentos_socios = [
                 </div>
             </div>
             
-            <div class="col-md-6 col-lg-3">
+            <div class="col-6 col-md-6 col-lg-3 mb-3">
                 <div class="action-card">
                     <div class="action-icon">
                         <i class="bi bi-people"></i>
@@ -343,7 +343,7 @@ $documentos_socios = [
             </div>
             
             <!-- Nuevas tarjetas funcionales -->
-            <div class="col-md-6 col-lg-3">
+            <div class="col-6 col-md-6 col-lg-3 mb-3">
                 <div class="action-card">
                     <div class="action-icon">
                         <i class="bi bi-chat-dots"></i>
@@ -356,7 +356,7 @@ $documentos_socios = [
                 </div>
             </div>
             
-            <div class="col-md-6 col-lg-3">
+            <div class="col-6 col-md-6 col-lg-3 mb-3">
                 <div class="action-card">
                     <div class="action-icon">
                         <i class="bi bi-trophy"></i>
@@ -369,7 +369,7 @@ $documentos_socios = [
                 </div>
             </div>
             
-            <div class="col-md-6 col-lg-3">
+            <div class="col-6 col-md-6 col-lg-3 mb-3">
                 <div class="action-card">
                     <div class="action-icon">
                         <i class="bi bi-gear"></i>
@@ -382,7 +382,7 @@ $documentos_socios = [
                 </div>
             </div>
             
-            <div class="col-md-6 col-lg-3">
+            <div class="col-6 col-md-6 col-lg-3 mb-3">
                 <div class="action-card">
                     <div class="action-icon">
                         <i class="bi bi-question-circle"></i>

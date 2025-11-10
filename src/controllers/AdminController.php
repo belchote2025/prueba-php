@@ -175,14 +175,14 @@ class AdminController extends Controller {
         
         // Obtener estadísticas de videos
         $videoCount = 0;
-        if (class_exists('Video')) {
-            try {
+        try {
+            if (class_exists('Video')) {
                 $videoModel = $this->model('Video');
-                $allVideos = $videoModel->getAllVideos(1, 1000, null, false);
-                $videoCount = count($allVideos);
-            } catch (Exception $e) {
-                $videoCount = 0;
+                $videoCount = $videoModel->getTotalVideos(null, null);
             }
+        } catch (Exception $e) {
+            error_log("Error al obtener conteo de videos: " . $e->getMessage());
+            $videoCount = 0;
         }
         
         // Obtener estadísticas de visitas
@@ -677,15 +677,107 @@ class AdminController extends Controller {
     
     // Método para cargar vistas directamente sin layout
     private function loadViewDirectly($view, $data = []) {
-        // Extract data array to individual variables
-        extract($data);
+        // Habilitar visualización de errores temporalmente
+        $oldErrorReporting = error_reporting(E_ALL);
+        $oldDisplayErrors = ini_set('display_errors', 1);
         
-        // Include the view file directly
-        $viewFile = dirname(dirname(__DIR__)) . '/src/views/' . $view . '.php';
-        if (file_exists($viewFile)) {
-            require_once $viewFile;
-        } else {
-            die('View does not exist: ' . $viewFile);
+        try {
+            // Verificar si hay output buffering activo
+            $obLevel = ob_get_level();
+            if ($obLevel > 0) {
+                // Limpiar cualquier buffer existente
+                while (ob_get_level() > 0) {
+                    ob_end_clean();
+                }
+            }
+            
+            // Extract data array to individual variables
+            extract($data);
+
+            // Include the view file directly
+            $viewFile = dirname(dirname(__DIR__)) . '/src/views/' . $view . '.php';
+            
+            if (!file_exists($viewFile)) {
+                throw new Exception("View file does not exist: {$viewFile}");
+            }
+            
+            // Asegurar que $data esté disponible en la vista
+            $GLOBALS['data'] = $data;
+            
+            // Iniciar output buffering
+            ob_start();
+            
+            try {
+                require $viewFile;
+                $output = ob_get_clean();
+                
+                // Si no hay salida, puede haber un error silencioso
+                if (empty($output)) {
+                    error_log("ERROR: View {$viewFile} produced no output");
+                    error_log("Headers sent: " . (headers_sent() ? 'Yes' : 'No'));
+                    error_log("Output buffering level: " . ob_get_level());
+                    
+                    // Intentar mostrar un error visible
+                    if (!headers_sent()) {
+                        echo "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Error</title>";
+                        echo "<link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css' rel='stylesheet'>";
+                        echo "</head><body><div class='container mt-5'>";
+                        echo "<div class='alert alert-danger'>";
+                        echo "<h4>Error: La vista no produjo salida</h4>";
+                        echo "<p>Vista: " . htmlspecialchars($view) . "</p>";
+                        echo "<p>Archivo: " . htmlspecialchars($viewFile) . "</p>";
+                        echo "<p>Verifica los logs de error para más detalles.</p>";
+                        echo "</div></div></body></html>";
+                    }
+                } else {
+                    echo $output;
+                }
+                
+            } catch (Throwable $e) {
+                ob_end_clean();
+                throw $e;
+            }
+            
+        } catch (Exception $e) {
+            error_log("Error loading view {$view}: " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
+            
+            // Restaurar configuración de errores
+            error_reporting($oldErrorReporting);
+            ini_set('display_errors', $oldDisplayErrors);
+            
+            die('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Error</title>' .
+                '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">' .
+                '</head><body><div class="container mt-5"><div class="alert alert-danger">' .
+                '<h4>Error al cargar la vista</h4>' .
+                '<p><strong>Vista:</strong> ' . htmlspecialchars($view) . '</p>' .
+                '<p><strong>Mensaje:</strong> ' . htmlspecialchars($e->getMessage()) . '</p>' .
+                '<p><strong>Archivo:</strong> ' . htmlspecialchars($e->getFile()) . '</p>' .
+                '<p><strong>Línea:</strong> ' . $e->getLine() . '</p>' .
+                '<details><summary>Stack Trace</summary><pre>' . htmlspecialchars($e->getTraceAsString()) . '</pre></details>' .
+                '</div><a href="' . URL_ROOT . '/admin/dashboard" class="btn btn-primary">Volver al Dashboard</a></div></body></html>');
+        } catch (Error $e) {
+            error_log("Fatal error loading view {$view}: " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
+            
+            // Restaurar configuración de errores
+            error_reporting($oldErrorReporting);
+            ini_set('display_errors', $oldDisplayErrors);
+            
+            die('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Error Fatal</title>' .
+                '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">' .
+                '</head><body><div class="container mt-5"><div class="alert alert-danger">' .
+                '<h4>Error Fatal al cargar la vista</h4>' .
+                '<p><strong>Vista:</strong> ' . htmlspecialchars($view) . '</p>' .
+                '<p><strong>Mensaje:</strong> ' . htmlspecialchars($e->getMessage()) . '</p>' .
+                '<p><strong>Archivo:</strong> ' . htmlspecialchars($e->getFile()) . '</p>' .
+                '<p><strong>Línea:</strong> ' . $e->getLine() . '</p>' .
+                '<details><summary>Stack Trace</summary><pre>' . htmlspecialchars($e->getTraceAsString()) . '</pre></details>' .
+                '</div><a href="' . URL_ROOT . '/admin/dashboard" class="btn btn-primary">Volver al Dashboard</a></div></body></html>');
+        } finally {
+            // Restaurar configuración de errores
+            error_reporting($oldErrorReporting);
+            ini_set('display_errors', $oldDisplayErrors);
         }
     }
     
@@ -2729,239 +2821,6 @@ class AdminController extends Controller {
         $this->redirect('/admin/documentos');
     }
     
-    // ===== GESTIÓN DE VIDEOS =====
-    
-    /**
-     * Listar videos
-     */
-    public function videos() {
-        $videos = [];
-        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-        if ($page < 1) $page = 1;
-        
-        if (class_exists('Video')) {
-            try {
-                $videoModel = $this->model('Video');
-                // En admin mostramos TODOS los videos (activos e inactivos)
-                $videos = $videoModel->getAllVideos($page, 20, null, false);
-            } catch (Exception $e) {
-                error_log("Error al cargar videos: " . $e->getMessage());
-            }
-        }
-        
-        $data = [
-            'title' => 'Gestión de Videos',
-            'videos' => $videos,
-            'current_page' => $page
-        ];
-        
-        $this->loadViewDirectly('admin/videos/index', $data);
-    }
-    
-    /**
-     * Crear nuevo video
-     */
-    public function nuevoVideo() {
-        $formData = [
-            'titulo' => '',
-            'descripcion' => '',
-            'url_video' => '',
-            'url_thumbnail' => '',
-            'tipo' => 'youtube',
-            'categoria' => '',
-            'evento_id' => null,
-            'duracion' => null,
-            'activo' => true,
-            'errors' => []
-        ];
-        
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            // Validar CSRF
-            if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
-                $formData['errors']['csrf'] = 'Token de seguridad inválido';
-            } else {
-                $formData['titulo'] = trim($_POST['titulo'] ?? '');
-                $formData['descripcion'] = trim($_POST['descripcion'] ?? '');
-                $formData['url_video'] = trim($_POST['url_video'] ?? '');
-                $formData['url_thumbnail'] = trim($_POST['url_thumbnail'] ?? '');
-                $formData['tipo'] = trim($_POST['tipo'] ?? 'youtube');
-                $formData['categoria'] = trim($_POST['categoria'] ?? '');
-                $formData['evento_id'] = !empty($_POST['evento_id']) ? intval($_POST['evento_id']) : null;
-                $formData['duracion'] = !empty($_POST['duracion']) ? intval($_POST['duracion']) : null;
-                $formData['activo'] = isset($_POST['activo']) && $_POST['activo'] == '1';
-                
-                // Validaciones
-                if (empty($formData['titulo'])) {
-                    $formData['errors']['titulo'] = 'El título es obligatorio';
-                }
-                
-                if (empty($formData['url_video'])) {
-                    $formData['errors']['url_video'] = 'La URL del video es obligatoria';
-                }
-                
-                // Validar URL según tipo
-                if ($formData['tipo'] === 'youtube' && !preg_match('/youtube\.com|youtu\.be/', $formData['url_video'])) {
-                    $formData['errors']['url_video'] = 'URL de YouTube inválida';
-                } elseif ($formData['tipo'] === 'vimeo' && !preg_match('/vimeo\.com/', $formData['url_video'])) {
-                    $formData['errors']['url_video'] = 'URL de Vimeo inválida';
-                }
-                
-                if (empty($formData['errors'])) {
-                    if (class_exists('Video')) {
-                        try {
-                            $videoModel = $this->model('Video');
-                            $videoId = $videoModel->createVideo($formData);
-                            
-                            if ($videoId) {
-                                setFlashMessage('success', 'Video creado correctamente');
-                                $this->redirect('/admin/videos?success=1');
-                            } else {
-                                error_log("Error: createVideo retornó false");
-                                $formData['errors']['general'] = 'Error al crear el video. Revisa los logs para más detalles.';
-                            }
-                        } catch (Exception $e) {
-                            error_log("Excepción al crear video: " . $e->getMessage());
-                            $formData['errors']['general'] = 'Error al crear el video: ' . $e->getMessage();
-                        }
-                    } else {
-                        $formData['errors']['general'] = 'Sistema de videos no disponible';
-                    }
-                }
-            }
-        }
-        
-        // Cargar eventos para el selector
-        $eventos = [];
-        if ($this->eventModel) {
-            try {
-                $eventos = $this->eventModel->getAllEvents();
-            } catch (Exception $e) {
-                error_log("Error al cargar eventos: " . $e->getMessage());
-            }
-        }
-        
-        $data = [
-            'title' => 'Nuevo Video',
-            'form_data' => $formData,
-            'eventos' => $eventos
-        ];
-        
-        $this->loadViewDirectly('admin/videos/crear', $data);
-    }
-    
-    /**
-     * Editar video
-     */
-    public function editarVideo($id) {
-        if (!class_exists('Video')) {
-            setFlashMessage('error', 'Sistema de videos no disponible');
-            $this->redirect('/admin/videos');
-            return;
-        }
-        
-        $videoModel = $this->model('Video');
-        $video = $videoModel->getVideoById($id);
-        
-        if (!$video) {
-            setFlashMessage('error', 'Video no encontrado');
-            $this->redirect('/admin/videos');
-            return;
-        }
-        
-        $formData = [
-            'titulo' => $video->titulo ?? '',
-            'descripcion' => $video->descripcion ?? '',
-            'url_video' => $video->url_video ?? '',
-            'url_thumbnail' => $video->url_thumbnail ?? '',
-            'tipo' => $video->tipo ?? 'youtube',
-            'categoria' => $video->categoria ?? '',
-            'evento_id' => $video->evento_id ?? null,
-            'duracion' => $video->duracion ?? null,
-            'activo' => $video->activo ?? true,
-            'errors' => []
-        ];
-        
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            // Validar CSRF
-            if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
-                $formData['errors']['csrf'] = 'Token de seguridad inválido';
-            } else {
-                $formData['titulo'] = trim($_POST['titulo'] ?? '');
-                $formData['descripcion'] = trim($_POST['descripcion'] ?? '');
-                $formData['url_video'] = trim($_POST['url_video'] ?? '');
-                $formData['url_thumbnail'] = trim($_POST['url_thumbnail'] ?? '');
-                $formData['tipo'] = trim($_POST['tipo'] ?? 'youtube');
-                $formData['categoria'] = trim($_POST['categoria'] ?? '');
-                $formData['evento_id'] = !empty($_POST['evento_id']) ? intval($_POST['evento_id']) : null;
-                $formData['duracion'] = !empty($_POST['duracion']) ? intval($_POST['duracion']) : null;
-                $formData['activo'] = isset($_POST['activo']) && $_POST['activo'] == '1';
-                
-                // Validaciones
-                if (empty($formData['titulo'])) {
-                    $formData['errors']['titulo'] = 'El título es obligatorio';
-                }
-                
-                if (empty($formData['url_video'])) {
-                    $formData['errors']['url_video'] = 'La URL del video es obligatoria';
-                }
-                
-                if (empty($formData['errors'])) {
-                    if ($videoModel->updateVideo($id, $formData)) {
-                        setFlashMessage('success', 'Video actualizado correctamente');
-                        $this->redirect('/admin/videos?success=1');
-                    } else {
-                        $formData['errors']['general'] = 'Error al actualizar el video';
-                    }
-                }
-            }
-        }
-        
-        // Cargar eventos
-        $eventos = [];
-        if ($this->eventModel) {
-            try {
-                $eventos = $this->eventModel->getAllEvents();
-            } catch (Exception $e) {
-                error_log("Error al cargar eventos: " . $e->getMessage());
-            }
-        }
-        
-        $data = [
-            'title' => 'Editar Video',
-            'form_data' => $formData,
-            'video' => $video,
-            'eventos' => $eventos
-        ];
-        
-        $this->loadViewDirectly('admin/videos/editar', $data);
-    }
-    
-    /**
-     * Eliminar video
-     */
-    public function eliminarVideo($id) {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect('/admin/videos');
-            return;
-        }
-        
-        if (!class_exists('Video')) {
-            setFlashMessage('error', 'Sistema de videos no disponible');
-            $this->redirect('/admin/videos');
-            return;
-        }
-        
-        $videoModel = $this->model('Video');
-        
-        if ($videoModel->deleteVideo($id)) {
-            setFlashMessage('success', 'Video eliminado correctamente');
-        } else {
-            setFlashMessage('error', 'Error al eliminar el video');
-        }
-        
-        $this->redirect('/admin/videos');
-    }
-    
     /**
      * Gestión de cuotas
      */
@@ -3203,6 +3062,348 @@ class AdminController extends Controller {
         }
         
         $this->redirect('/admin/cuotas');
+    }
+    
+    // ===== GESTIÓN DE VIDEOS =====
+    
+    /**
+     * Listar todos los videos
+     */
+    public function videos($page = 1) {
+        // DEPURACIÓN: Asegurar que los errores se muestren
+        error_reporting(E_ALL);
+        ini_set('display_errors', 1);
+        
+        // Log para depuración
+        error_log("AdminController->videos() llamado con page: " . $page);
+        
+        try {
+            // Asegurar que $page sea un entero
+            $page = (int)$page;
+            if ($page < 1) $page = 1;
+            
+            error_log("AdminController->videos() - Página procesada: " . $page);
+            
+            // Verificar si existe la clase Video
+            if (!class_exists('Video')) {
+                error_log("Error: Clase Video no encontrada");
+                throw new Exception('La clase Video no está disponible. Verifica que el archivo src/models/Video.php exista.');
+            }
+            
+            error_log("AdminController->videos() - Clase Video encontrada");
+            
+            $videoModel = $this->model('Video');
+            
+            if (!$videoModel) {
+                throw new Exception('No se pudo crear una instancia del modelo Video');
+            }
+            
+            error_log("AdminController->videos() - Modelo Video creado");
+            
+            $perPage = 20;
+            $videos = $videoModel->getAllVideos($page, $perPage, null, null);
+            $totalVideos = $videoModel->getTotalVideos(null, null);
+            $totalPages = ceil($totalVideos / $perPage);
+            
+            error_log("AdminController->videos() - Videos obtenidos: " . count($videos) . ", Total: " . $totalVideos);
+            
+            $data = [
+                'title' => 'Gestión de Videos',
+                'videos' => $videos,
+                'current_page' => $page,
+                'total_pages' => $totalPages,
+                'total_videos' => $totalVideos
+            ];
+            
+            error_log("AdminController->videos() - Llamando a loadViewDirectly");
+            $this->loadViewDirectly('admin/videos/index', $data);
+            error_log("AdminController->videos() - loadViewDirectly completado");
+        } catch (Exception $e) {
+            error_log("Error en videos(): " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
+            
+            // Mostrar error en pantalla para depuración
+            echo "<!DOCTYPE html>";
+            echo "<html><head><meta charset='UTF-8'><title>Error</title>";
+            echo "<link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css' rel='stylesheet'>";
+            echo "</head><body>";
+            echo "<div class='container mt-5'>";
+            echo "<div class='alert alert-danger'>";
+            echo "<h4>Error al cargar los videos</h4>";
+            echo "<p><strong>Mensaje:</strong> " . htmlspecialchars($e->getMessage()) . "</p>";
+            echo "<p><strong>Archivo:</strong> " . htmlspecialchars($e->getFile()) . "</p>";
+            echo "<p><strong>Línea:</strong> " . $e->getLine() . "</p>";
+            echo "<details><summary>Stack Trace</summary><pre>" . htmlspecialchars($e->getTraceAsString()) . "</pre></details>";
+            echo "</div>";
+            echo "<a href='" . URL_ROOT . "/admin/dashboard' class='btn btn-primary'>Volver al Dashboard</a>";
+            echo "</div>";
+            echo "</body></html>";
+            exit;
+        }
+    }
+    
+    /**
+     * Formulario para crear nuevo video
+     */
+    public function nuevoVideo() {
+        try {
+            $eventModel = $this->model('Event');
+            $eventos = $eventModel->getAllEvents(1, 100);
+            
+            $data = [
+                'title' => 'Nuevo Video',
+                'eventos' => $eventos,
+                'video' => null
+            ];
+            
+            $this->loadViewDirectly('admin/videos/crear', $data);
+        } catch (Exception $e) {
+            error_log("Error en nuevoVideo(): " . $e->getMessage());
+            $_SESSION['error_message'] = 'Error al cargar el formulario: ' . $e->getMessage();
+            $this->redirect('/admin/videos');
+        }
+    }
+    
+    /**
+     * Guardar nuevo video
+     */
+    public function guardarVideo() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/admin/videos');
+            return;
+        }
+        
+        try {
+            $videoModel = $this->model('Video');
+            
+            // Procesar subida de video local si existe
+            $urlVideo = $_POST['url_video'] ?? '';
+            $tipo = $_POST['tipo'] ?? 'youtube';
+            $urlThumbnail = $_POST['url_thumbnail'] ?? '';
+            
+            // Si es video local, procesar subida
+            if ($tipo === 'local' && isset($_FILES['video_file']) && $_FILES['video_file']['error'] === UPLOAD_ERR_OK) {
+                $uploadDir = 'uploads/videos/';
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0755, true);
+                }
+                
+                $fileName = time() . '_' . basename($_FILES['video_file']['name']);
+                $targetPath = $uploadDir . $fileName;
+                
+                $allowedTypes = ['video/mp4', 'video/webm', 'video/ogg', 'video/quicktime'];
+                if (in_array($_FILES['video_file']['type'], $allowedTypes)) {
+                    if (move_uploaded_file($_FILES['video_file']['tmp_name'], $targetPath)) {
+                        $urlVideo = URL_ROOT . '/' . $targetPath;
+                    } else {
+                        throw new Exception('Error al subir el archivo de video');
+                    }
+                } else {
+                    throw new Exception('Tipo de archivo no permitido. Use MP4, WebM, OGG o QuickTime');
+                }
+            }
+            
+            // Procesar thumbnail si se sube
+            if (isset($_FILES['thumbnail_file']) && $_FILES['thumbnail_file']['error'] === UPLOAD_ERR_OK) {
+                $uploadDir = 'uploads/videos/thumbnails/';
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0755, true);
+                }
+                
+                $fileName = time() . '_' . basename($_FILES['thumbnail_file']['name']);
+                $targetPath = $uploadDir . $fileName;
+                
+                $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                if (in_array($_FILES['thumbnail_file']['type'], $allowedTypes)) {
+                    if (move_uploaded_file($_FILES['thumbnail_file']['tmp_name'], $targetPath)) {
+                        $urlThumbnail = URL_ROOT . '/' . $targetPath;
+                    }
+                }
+            }
+            
+            $data = [
+                'titulo' => htmlspecialchars(trim($_POST['titulo'] ?? '')),
+                'descripcion' => htmlspecialchars(trim($_POST['descripcion'] ?? '')),
+                'url_video' => $urlVideo,
+                'url_thumbnail' => $urlThumbnail,
+                'tipo' => $tipo,
+                'categoria' => htmlspecialchars(trim($_POST['categoria'] ?? 'general')),
+                'evento_id' => !empty($_POST['evento_id']) ? (int)$_POST['evento_id'] : null,
+                'duracion' => !empty($_POST['duracion']) ? (int)$_POST['duracion'] : 0,
+                'activo' => isset($_POST['activo']) ? 1 : 0
+            ];
+            
+            if (empty($data['titulo'])) {
+                throw new Exception('El título es obligatorio');
+            }
+            
+            if (empty($data['url_video'])) {
+                throw new Exception('La URL del video es obligatoria');
+            }
+            
+            $videoId = $videoModel->createVideo($data);
+            
+            if ($videoId) {
+                $_SESSION['success_message'] = 'Video creado correctamente';
+                $this->redirect('/admin/videos');
+            } else {
+                throw new Exception('Error al crear el video');
+            }
+        } catch (Exception $e) {
+            error_log("Error en guardarVideo(): " . $e->getMessage());
+            $_SESSION['error_message'] = $e->getMessage();
+            $this->redirect('/admin/videos/nuevo');
+        }
+    }
+    
+    /**
+     * Formulario para editar video
+     */
+    public function editarVideo($id = null) {
+        // Asegurar que $id sea un entero
+        if ($id !== null) {
+            $id = (int)$id;
+        }
+        
+        if (!$id || $id < 1) {
+            $this->redirect('/admin/videos');
+            return;
+        }
+        
+        try {
+            $videoModel = $this->model('Video');
+            $eventModel = $this->model('Event');
+            
+            $video = $videoModel->getVideoById($id);
+            if (!$video) {
+                throw new Exception('Video no encontrado');
+            }
+            
+            $eventos = $eventModel->getAllEvents(1, 100);
+            
+            $data = [
+                'title' => 'Editar Video',
+                'video' => $video,
+                'eventos' => $eventos
+            ];
+            
+            $this->loadViewDirectly('admin/videos/editar', $data);
+        } catch (Exception $e) {
+            error_log("Error en editarVideo(): " . $e->getMessage());
+            $_SESSION['error_message'] = $e->getMessage();
+            $this->redirect('/admin/videos');
+        }
+    }
+    
+    /**
+     * Actualizar video
+     */
+    public function actualizarVideo($id = null) {
+        if (!$id || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/admin/videos');
+            return;
+        }
+        
+        try {
+            $videoModel = $this->model('Video');
+            
+            $video = $videoModel->getVideoById($id);
+            if (!$video) {
+                throw new Exception('Video no encontrado');
+            }
+            
+            $urlVideo = $_POST['url_video'] ?? $video->url_video;
+            $tipo = $_POST['tipo'] ?? $video->tipo;
+            $urlThumbnail = $_POST['url_thumbnail'] ?? $video->url_thumbnail;
+            
+            // Procesar subida de video local si existe
+            if ($tipo === 'local' && isset($_FILES['video_file']) && $_FILES['video_file']['error'] === UPLOAD_ERR_OK) {
+                $uploadDir = 'uploads/videos/';
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0755, true);
+                }
+                
+                $fileName = time() . '_' . basename($_FILES['video_file']['name']);
+                $targetPath = $uploadDir . $fileName;
+                
+                $allowedTypes = ['video/mp4', 'video/webm', 'video/ogg', 'video/quicktime'];
+                if (in_array($_FILES['video_file']['type'], $allowedTypes)) {
+                    if (move_uploaded_file($_FILES['video_file']['tmp_name'], $targetPath)) {
+                        $urlVideo = URL_ROOT . '/' . $targetPath;
+                    }
+                }
+            }
+            
+            // Procesar thumbnail si se sube
+            if (isset($_FILES['thumbnail_file']) && $_FILES['thumbnail_file']['error'] === UPLOAD_ERR_OK) {
+                $uploadDir = 'uploads/videos/thumbnails/';
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0755, true);
+                }
+                
+                $fileName = time() . '_' . basename($_FILES['thumbnail_file']['name']);
+                $targetPath = $uploadDir . $fileName;
+                
+                $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                if (in_array($_FILES['thumbnail_file']['type'], $allowedTypes)) {
+                    if (move_uploaded_file($_FILES['thumbnail_file']['tmp_name'], $targetPath)) {
+                        $urlThumbnail = URL_ROOT . '/' . $targetPath;
+                    }
+                }
+            }
+            
+            $data = [
+                'titulo' => htmlspecialchars(trim($_POST['titulo'] ?? '')),
+                'descripcion' => htmlspecialchars(trim($_POST['descripcion'] ?? '')),
+                'url_video' => $urlVideo,
+                'url_thumbnail' => $urlThumbnail,
+                'tipo' => $tipo,
+                'categoria' => htmlspecialchars(trim($_POST['categoria'] ?? 'general')),
+                'evento_id' => !empty($_POST['evento_id']) ? (int)$_POST['evento_id'] : null,
+                'duracion' => !empty($_POST['duracion']) ? (int)$_POST['duracion'] : 0,
+                'activo' => isset($_POST['activo']) ? 1 : 0
+            ];
+            
+            if (empty($data['titulo'])) {
+                throw new Exception('El título es obligatorio');
+            }
+            
+            if ($videoModel->updateVideo($id, $data)) {
+                $_SESSION['success_message'] = 'Video actualizado correctamente';
+                $this->redirect('/admin/videos');
+            } else {
+                throw new Exception('Error al actualizar el video');
+            }
+        } catch (Exception $e) {
+            error_log("Error en actualizarVideo(): " . $e->getMessage());
+            $_SESSION['error_message'] = $e->getMessage();
+            $this->redirect('/admin/videos/editar/' . $id);
+        }
+    }
+    
+    /**
+     * Eliminar video
+     */
+    public function eliminarVideo($id = null) {
+        if (!$id || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/admin/videos');
+            return;
+        }
+        
+        try {
+            $videoModel = $this->model('Video');
+            
+            if ($videoModel->deleteVideo($id)) {
+                $_SESSION['success_message'] = 'Video eliminado correctamente';
+            } else {
+                $_SESSION['error_message'] = 'Error al eliminar el video';
+            }
+        } catch (Exception $e) {
+            error_log("Error en eliminarVideo(): " . $e->getMessage());
+            $_SESSION['error_message'] = 'Error al eliminar el video: ' . $e->getMessage();
+        }
+        
+        $this->redirect('/admin/videos');
     }
 }
 

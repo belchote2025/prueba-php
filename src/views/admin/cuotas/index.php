@@ -14,12 +14,12 @@ $filtroUsuario = $data['filtroUsuario'] ?? null;
 ?>
 
 <div class="container-fluid py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="h3 mb-0">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
+        <h2 class="h3 mb-3 mb-md-0">
             <i class="bi bi-cash-coin me-2"></i>
             Gestión de Cuotas
         </h2>
-        <a href="<?php echo URL_ROOT; ?>/admin/cuotas/nueva" class="btn btn-danger">
+        <a href="<?php echo URL_ROOT; ?>/admin/cuotas/nueva" class="btn btn-danger w-100 w-md-auto">
             <i class="bi bi-plus-circle me-2"></i>
             Nueva Cuota
         </a>
@@ -41,7 +41,7 @@ $filtroUsuario = $data['filtroUsuario'] ?? null;
     
     <!-- Estadísticas -->
     <div class="row mb-4">
-        <div class="col-md-6">
+        <div class="col-12 col-md-6 mb-3 mb-md-0">
             <div class="card bg-warning text-white">
                 <div class="card-body">
                     <h5 class="card-title">Cuotas Pendientes</h5>
@@ -49,7 +49,7 @@ $filtroUsuario = $data['filtroUsuario'] ?? null;
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-12 col-md-6">
             <div class="card bg-danger text-white">
                 <div class="card-body">
                     <h5 class="card-title">Cuotas Vencidas</h5>
@@ -63,7 +63,7 @@ $filtroUsuario = $data['filtroUsuario'] ?? null;
     <div class="card shadow-sm mb-4">
         <div class="card-body">
             <form method="GET" action="<?php echo URL_ROOT; ?>/admin/cuotas" class="row g-3">
-                <div class="col-md-4">
+                <div class="col-12 col-md-4 mb-3 mb-md-0">
                     <label for="estado" class="form-label">Estado</label>
                     <select name="estado" id="estado" class="form-select">
                         <option value="">Todos</option>
@@ -73,7 +73,7 @@ $filtroUsuario = $data['filtroUsuario'] ?? null;
                         <option value="cancelada" <?php echo $filtroEstado === 'cancelada' ? 'selected' : ''; ?>>Cancelada</option>
                     </select>
                 </div>
-                <div class="col-md-4">
+                <div class="col-12 col-md-4 mb-3 mb-md-0">
                     <label for="usuario_id" class="form-label">Usuario</label>
                     <select name="usuario_id" id="usuario_id" class="form-select">
                         <option value="">Todos</option>
@@ -87,11 +87,11 @@ $filtroUsuario = $data['filtroUsuario'] ?? null;
                         <?php endforeach; ?>
                     </select>
                 </div>
-                <div class="col-md-4 d-flex align-items-end">
-                    <button type="submit" class="btn btn-primary me-2">
+                <div class="col-12 col-md-4 d-flex flex-column flex-md-row align-items-stretch align-items-md-end gap-2">
+                    <button type="submit" class="btn btn-primary flex-fill flex-md-grow-0">
                         <i class="bi bi-funnel me-1"></i>Filtrar
                     </button>
-                    <a href="<?php echo URL_ROOT; ?>/admin/cuotas" class="btn btn-outline-secondary">
+                    <a href="<?php echo URL_ROOT; ?>/admin/cuotas" class="btn btn-outline-secondary flex-fill flex-md-grow-0">
                         <i class="bi bi-x-circle me-1"></i>Limpiar
                     </a>
                 </div>
@@ -284,4 +284,60 @@ function marcarComoPagada(cuotaId) {
     modal.show();
 }
 </script>
+
+<style>
+/* Responsive para Cuotas */
+@media (max-width: 768px) {
+    .container-fluid {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+    
+    .table th,
+    .table td {
+        padding: 0.5rem;
+    }
+    
+    .table th {
+        font-size: 0.8rem;
+    }
+    
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .table-responsive {
+        font-size: 0.8rem;
+    }
+    
+    .table th,
+    .table td {
+        padding: 0.375rem;
+    }
+    
+    .d-flex.gap-2 {
+        flex-direction: column;
+        gap: 0.5rem !important;
+    }
+    
+    .d-flex.gap-2 .btn {
+        width: 100%;
+    }
+    
+    h2.h3 {
+        font-size: 1.25rem;
+    }
+}
+</style>
 

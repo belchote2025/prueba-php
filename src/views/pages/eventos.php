@@ -94,6 +94,76 @@ ob_start();
         margin-bottom: 1rem;
         opacity: 0.5;
     }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .hero-section {
+            padding: 2rem 0 1rem 0;
+            margin-top: 70px;
+        }
+        
+        .hero-section h1 {
+            font-size: 1.75rem;
+        }
+        
+        .hero-section .lead {
+            font-size: 1rem;
+        }
+        
+        .filter-buttons {
+            margin-bottom: 1.5rem;
+        }
+        
+        .filter-btn {
+            width: 100%;
+            margin: 0.25rem 0;
+        }
+        
+        .event-card {
+            margin-bottom: 1.5rem;
+        }
+        
+        .event-date {
+            min-width: 70px;
+            padding: 0.75rem;
+        }
+        
+        .event-date .day {
+            font-size: 1.25rem;
+        }
+        
+        .event-date .month {
+            font-size: 0.8rem;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .hero-section h1 {
+            font-size: 1.5rem;
+        }
+        
+        .filter-btn {
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+        }
+        
+        .event-date {
+            min-width: 60px;
+            padding: 0.5rem;
+        }
+        
+        .event-date .day {
+            font-size: 1.1rem;
+        }
+        
+        .no-events {
+            padding: 2rem 1rem;
+        }
+        
+        .no-events i {
+            font-size: 3rem;
+        }
+    }
 </style>
 
 <!-- Hero Section -->
@@ -141,7 +211,7 @@ ob_start();
                     $isUpcoming = strtotime($eventDate) >= time();
                     $eventClass = $isUpcoming ? 'upcoming' : 'past';
                     ?>
-                    <div class="col-lg-4 col-md-6 event-item" data-event-type="<?php echo $eventClass; ?>">
+                    <div class="col-12 col-lg-4 col-md-6 event-item" data-event-type="<?php echo $eventClass; ?>">
                         <div class="card event-card h-100 position-relative">
                             <!-- Event Status Badge -->
                             <div class="event-status">

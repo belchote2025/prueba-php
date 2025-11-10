@@ -20,6 +20,7 @@ $router->get('evento/{id}', 'Pages@verEvento');
 $router->post('reservar-evento', 'Pages@reservarEvento');
 $router->get('calendario', 'Pages@calendario');
 $router->get('galeria', 'Pages@galeria');
+$router->get('galeria-multimedia', 'Pages@galeriaMultimedia');
 $router->get('musica', 'Pages@musica');
 $router->get('libro', 'Pages@libro');
 $router->get('descargas', 'Pages@descargas');
@@ -128,6 +129,14 @@ $router->group('admin', function($router) {
     $router->get('eliminarCarousel/{fileName}', 'Admin\AdminController@eliminarCarousel');
     $router->post('actualizarDescripcionGaleria', 'Admin\AdminController@actualizarDescripcionGaleria');
     $router->post('actualizarDescripcionCarousel', 'Admin\AdminController@actualizarDescripcionCarousel');
+    
+    // Video management
+    $router->get('videos', 'Admin\AdminController@videos');
+    $router->get('videos/nuevo', 'Admin\AdminController@nuevoVideo');
+    $router->post('videos/guardar', 'Admin\AdminController@guardarVideo');
+    $router->get('videos/editar/{id}', 'Admin\AdminController@editarVideo');
+    $router->post('videos/actualizar/{id}', 'Admin\AdminController@actualizarVideo');
+    $router->post('videos/eliminar/{id}', 'Admin\AdminController@eliminarVideo');
     
     // Documents management
     $router->get('documentos', 'Admin\AdminController@documentos');

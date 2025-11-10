@@ -99,12 +99,14 @@ ob_start(); // Start output buffering
             </div>
             <div class="col-lg-6 col-md-12">
                 <div class="position-relative about-image">
-                    <div class="bg-gradient-dark rounded-3 shadow-lg d-flex align-items-center justify-content-center about-image-container">
-                        <div class="text-center text-white">
-                            <i class="bi bi-shield-fill about-icon"></i>
-                            <h3 class="mt-3">Filá Mariscales</h3>
-                        </div>
-                    </div>
+                <div style="width: 100%; height: 400px; background: linear-gradient(135deg, rgba(139, 0, 0, 0.8) 0%, rgba(220, 20, 60, 0.8) 100%); border-radius: 0.5rem; position: relative; overflow: hidden;" class="about-image-container">
+                    <img src="<?php echo URL_ROOT; ?>/assets/images/fila-mariscales-event.jpg" 
+                         alt="Filá Mariscales - Evento y Comunidad" 
+                         class="img-fluid rounded-3 shadow-lg"
+                         style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;"
+                         onerror="this.onerror=null; this.src='<?php echo URL_ROOT; ?>/assets/images/backgrounds/knight-templar-background.jpg';"
+                         onload="this.parentElement.style.background='none';">
+                </div>
                 </div>
             </div>
         </div>
@@ -282,9 +284,9 @@ ob_end_flush(); // End output buffering
 }
 
 .btn-hero {
-    background: linear-gradient(135deg, #FFFFFF 0%, #f0f0f0 100%);
-    color: #8B0000;
-    border: 2px solid #FFFFFF;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(240, 240, 240, 0.15) 100%);
+    color: #FFFFFF;
+    border: 2px solid rgba(255, 255, 255, 0.3);
     padding: 12px 30px;
     border-radius: 25px;
     font-weight: bold;
@@ -292,12 +294,17 @@ ob_end_flush(); // End output buffering
     display: inline-block;
     transition: all 0.3s ease;
     white-space: nowrap;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .btn-hero:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
-    color: #8B0000;
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(240, 240, 240, 0.25) 100%);
+    border-color: rgba(255, 255, 255, 0.5);
+    color: #FFFFFF;
 }
 
 /* Carousel Controls */
@@ -335,11 +342,8 @@ ob_end_flush(); // End output buffering
 
 .about-image-container {
     height: 400px;
-    background: linear-gradient(135deg, #8B4513 0%, #654321 100%);
-}
-
-.about-icon {
-    font-size: 5rem;
+    width: 100%;
+    object-fit: cover;
 }
 
 /* Responsive para el carrusel y hero */
@@ -364,10 +368,6 @@ ob_end_flush(); // End output buffering
     
     .about-image-container {
         height: 350px;
-    }
-    
-    .about-icon {
-        font-size: 4rem;
     }
 }
 
@@ -427,9 +427,6 @@ ob_end_flush(); // End output buffering
         height: 300px;
     }
     
-    .about-icon {
-        font-size: 3.5rem;
-    }
     
     .stats-container {
         gap: 1.5rem;
@@ -487,9 +484,6 @@ ob_end_flush(); // End output buffering
         height: 250px;
     }
     
-    .about-icon {
-        font-size: 3rem;
-    }
     
     .stats-container {
         gap: 1rem;

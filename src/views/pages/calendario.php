@@ -75,17 +75,17 @@ if (empty($eventosProximos)) {
         <!-- Year Navigation -->
         <div class="row mb-5">
             <div class="col-12">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2 class="fw-bold mb-0"><?php echo date('Y'); ?></h2>
-                    <div class="btn-group" role="group" aria-label="Navegación de meses">
-                        <button type="button" class="btn btn-outline-primary"><i class="bi bi-chevron-left"></i> <?php echo date('Y') - 1; ?></button>
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
+                    <h2 class="fw-bold mb-3 mb-md-0"><?php echo date('Y'); ?></h2>
+                    <div class="btn-group w-100 w-md-auto" role="group" aria-label="Navegación de meses">
+                        <button type="button" class="btn btn-outline-primary"><i class="bi bi-chevron-left"></i> <span class="d-none d-sm-inline"><?php echo date('Y') - 1; ?></span></button>
                         <button type="button" class="btn btn-primary active"><?php echo date('Y'); ?></button>
-                        <button type="button" class="btn btn-outline-primary"><?php echo date('Y') + 1; ?> <i class="bi bi-chevron-right"></i></button>
+                        <button type="button" class="btn btn-outline-primary"><span class="d-none d-sm-inline"><?php echo date('Y') + 1; ?></span> <i class="bi bi-chevron-right"></i></button>
                     </div>
                 </div>
                 
                 <!-- Month Navigation -->
-                <div class="d-flex flex-wrap gap-2 mb-4">
+                <div class="d-flex flex-wrap gap-2 mb-4 justify-content-center justify-content-md-start">
                     <?php 
                     $months = [
                         'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',

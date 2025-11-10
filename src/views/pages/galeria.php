@@ -86,7 +86,7 @@ $categorias = [
 <section class="gallery-filters py-4 scroll-reveal">
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-lg-8">
+            <div class="col-12 col-lg-8">
                 <div class="filter-buttons d-flex flex-wrap gap-2 justify-content-center">
                     <?php foreach ($categorias as $key => $categoria): ?>
                     <button class="filter-btn btn-animated hover-glow <?php echo $key === 'todos' ? 'active' : ''; ?>" 
@@ -106,7 +106,7 @@ $categorias = [
     <div class="container">
         <div class="row g-4 stagger-animation" id="galleryGrid">
             <?php foreach ($galeria_items as $index => $item): ?>
-            <div class="col-md-6 col-lg-4 gallery-item scroll-reveal" data-category="<?php echo $item['categoria']; ?>" style="animation-delay: <?php echo $index * 0.1; ?>s;">
+            <div class="col-12 col-md-6 col-lg-4 gallery-item scroll-reveal mb-4" data-category="<?php echo $item['categoria']; ?>" style="animation-delay: <?php echo $index * 0.1; ?>s;">
                 <div class="gallery-card card-animated hover-lift">
                     <div class="gallery-image img-zoom">
                         <img src="<?php echo $item['imagen']; ?>" 

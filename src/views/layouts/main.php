@@ -86,7 +86,7 @@ if (!function_exists('isLoggedIn')) {
                     
                     <!-- Utilidades -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle <?php echo (isActive('calendario') || isActive('musica') || isActive('descargas') || isActive('galeria')) ? 'active' : ''; ?>" href="#" role="button" data-bs-toggle="dropdown">
+                        <a class="nav-link dropdown-toggle <?php echo (isActive('calendario') || isActive('musica') || isActive('descargas') || isActive('galeria') || isActive('galeria-multimedia')) ? 'active' : ''; ?>" href="#" role="button" data-bs-toggle="dropdown">
                             <i class="bi bi-tools me-1"></i>Utilidades
                         </a>
                         <ul class="dropdown-menu">
@@ -107,7 +107,12 @@ if (!function_exists('isLoggedIn')) {
                             </li>
                             <li>
                                 <a class="dropdown-item" href="<?php echo URL_ROOT; ?>/galeria">
-                                    <i class="bi bi-images me-2"></i>Galería
+                                    <i class="bi bi-images me-2"></i>Galería de Fotos
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="<?php echo URL_ROOT; ?>/galeria-multimedia">
+                                    <i class="bi bi-play-circle me-2"></i>Galería Multimedia
                                 </a>
                             </li>
                         </ul>
@@ -240,7 +245,7 @@ if (!function_exists('isLoggedIn')) {
             <div class="container">
                 <div class="row g-3">
                     <!-- Información de la Filá -->
-                    <div class="col-lg-6 col-md-6">
+                    <div class="col-12 col-lg-6 col-md-6 mb-4 mb-md-0">
                         <div class="footer-info">
                             <div class="footer-logo mb-2">
                                 <i class="bi bi-shield-fill me-2"></i>
@@ -273,7 +278,7 @@ if (!function_exists('isLoggedIn')) {
                     </div>
 
                     <!-- Contacto -->
-                    <div class="col-lg-6 col-md-6">
+                    <div class="col-12 col-lg-6 col-md-6">
                         <div class="footer-contact">
                             <h6 class="text-white mb-2">Contacto</h6>
                             <div class="row">
@@ -322,15 +327,15 @@ if (!function_exists('isLoggedIn')) {
         <div class="footer-bottom py-2">
             <div class="container">
                 <div class="row align-items-center">
-                    <div class="col-md-6">
+                    <div class="col-12 col-md-6 mb-3 mb-md-0 text-center text-md-start">
                         <p class="mb-0 text-light">
                             &copy; <?php echo date('Y'); ?> <strong>Filá Mariscales</strong>. Todos los derechos reservados.
                         </p>
                     </div>
-                    <div class="col-md-6 text-md-end">
+                    <div class="col-12 col-md-6 text-center text-md-end">
                         <div class="footer-bottom-links">
-                            <a href="<?php echo URL_ROOT; ?>/privacidad" class="text-light text-decoration-none me-3">Política de Privacidad</a>
-                            <a href="<?php echo URL_ROOT; ?>/cookies" class="text-light text-decoration-none me-3">Cookies</a>
+                            <a href="<?php echo URL_ROOT; ?>/privacidad" class="text-light text-decoration-none me-2 me-md-3">Política de Privacidad</a>
+                            <a href="<?php echo URL_ROOT; ?>/cookies" class="text-light text-decoration-none me-2 me-md-3">Cookies</a>
                             <a href="<?php echo URL_ROOT; ?>/legal" class="text-light text-decoration-none">Aviso Legal</a>
                         </div>
                     </div>

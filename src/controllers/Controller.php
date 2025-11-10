@@ -2,8 +2,23 @@
 class Controller {
     // Load model
     public function model($model) {
-        require_once dirname(dirname(__DIR__)) . '/src/models/' . $model . '.php';
-        return new $model();
+        $modelFile = dirname(dirname(__DIR__)) . '/src/models/' . $model . '.php';
+        
+        if (!file_exists($modelFile)) {
+            throw new Exception("Model file not found: {$modelFile}");
+        }
+        
+        require_once $modelFile;
+        
+        if (!class_exists($model)) {
+            throw new Exception("Model class '{$model}' not found in file: {$modelFile}");
+        }
+        
+        try {
+            return new $model();
+        } catch (Exception $e) {
+            throw new Exception("Error creating instance of {$model}: " . $e->getMessage());
+        }
     }
 
     // Load view
