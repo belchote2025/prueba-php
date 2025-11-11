@@ -7,13 +7,10 @@
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome - Múltiples CDNs como respaldo -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" onerror="this.onerror=null;this.href='https://use.fontawesome.com/releases/v6.0.0/css/all.css';">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <!-- Admin CSS -->
     <link href="<?php echo URL_ROOT; ?>/assets/css/admin.css" rel="stylesheet">
-    <!-- Font Awesome Fallback CSS -->
-    <link href="<?php echo URL_ROOT; ?>/assets/css/fontawesome-fallback.css" rel="stylesheet">
     
     <style>
         body { 
@@ -54,6 +51,30 @@
         .metric-item p {
             font-size: 0.9rem;
             margin: 0;
+        }
+        /* Asegurar que todas las fichas tengan el mismo tamaño */
+        .dashboard-card {
+            min-height: 200px;
+            height: 100%;
+        }
+        .dashboard-card .card {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .dashboard-card .card-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        /* Asegurar que el dropdown de acciones rápidas aparezca por encima */
+        .dashboard-card .dropdown {
+            position: relative;
+            z-index: 1050;
+        }
+        .dashboard-card .dropdown-menu {
+            z-index: 1051 !important;
+            position: absolute !important;
         }
     </style>
 </head>
@@ -99,8 +120,9 @@
     </div>
 </div>
 
+<!-- Fichas Principales - Primera Fila: Gestión Principal -->
 <div class="row mb-4">
-    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-3">
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-3 dashboard-card">
         <div class="card text-white bg-danger h-100">
             <div class="card-body d-flex flex-column">
                 <div class="d-flex justify-content-between align-items-start mb-3">
@@ -117,7 +139,7 @@
             </div>
         </div>
     </div>
-    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-3">
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-3 dashboard-card">
         <div class="card text-white bg-success h-100">
             <div class="card-body d-flex flex-column">
                 <div class="d-flex justify-content-between align-items-start mb-3">
@@ -134,102 +156,90 @@
             </div>
         </div>
     </div>
-    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-3">
-        <div class="card text-white bg-info h-100">
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-3 dashboard-card">
+        <div class="card text-white bg-dark h-100">
             <div class="card-body d-flex flex-column">
                 <div class="d-flex justify-content-between align-items-start mb-3">
                     <div>
-                        <h5 class="card-title mb-1">Galería</h5>
-                        <h2 class="mb-0"><?= isset($galleryCount) ? $galleryCount : 0 ?></h2>
-                        <small class="opacity-75">Archivos multimedia</small>
+                        <h5 class="card-title mb-1">Noticias</h5>
+                        <h2 class="mb-0"><?= isset($data['newsCount']) ? $data['newsCount'] : 0 ?></h2>
+                        <small class="opacity-75">Publicaciones</small>
                     </div>
-                    <i class="fas fa-images fa-2x opacity-50 d-none d-sm-block"></i>
+                    <i class="fas fa-newspaper fa-2x opacity-50 d-none d-sm-block"></i>
                 </div>
-                <a href="<?= URL_ROOT ?>/admin/galeria" class="btn btn-light btn-sm mt-auto">
-                    <i class="fas fa-images me-1"></i>Gestionar galería
+                <a href="<?= URL_ROOT ?>/admin/noticias" class="btn btn-light btn-sm mt-auto">
+                    <i class="fas fa-newspaper me-1"></i>Gestionar noticias
                 </a>
             </div>
         </div>
     </div>
-    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-3">
-        <div class="card text-white bg-secondary h-100">
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-3 dashboard-card">
+        <div class="card text-white bg-danger h-100">
             <div class="card-body d-flex flex-column">
                 <div class="d-flex justify-content-between align-items-start mb-3">
                     <div>
-                        <h5 class="card-title mb-1">Documentos</h5>
-                        <h2 class="mb-0"><?= isset($documentCount) ? $documentCount : 0 ?></h2>
-                        <small class="opacity-75">Archivos para descarga</small>
+                        <h5 class="card-title mb-1">Mensajes</h5>
+                        <h2 class="mb-0"><?= isset($data['messagesCount']) ? $data['messagesCount'] : 0 ?></h2>
+                        <small class="opacity-75">Sin leer</small>
                     </div>
-                    <i class="fas fa-file-alt fa-2x opacity-50 d-none d-sm-block"></i>
+                    <i class="fas fa-envelope fa-2x opacity-50 d-none d-sm-block"></i>
                 </div>
-                <a href="<?= URL_ROOT ?>/admin/documentos" class="btn btn-light btn-sm mt-auto">
-                    <i class="fas fa-file-alt me-1"></i>Gestionar documentos
+                <a href="<?= URL_ROOT ?>/admin/mensajes" class="btn btn-light btn-sm mt-auto">
+                    <i class="fas fa-envelope me-1"></i>Ver mensajes
                 </a>
             </div>
         </div>
     </div>
-    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-3">
-        <div class="card text-white bg-info h-100">
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-3 dashboard-card">
+        <div class="card text-white bg-purple h-100" style="background: linear-gradient(135deg, #6f42c1 0%, #5a2d91 100%);">
             <div class="card-body d-flex flex-column">
                 <div class="d-flex justify-content-between align-items-start mb-3">
                     <div>
-                        <h5 class="card-title mb-1">Videos</h5>
-                        <h2 class="mb-0"><?= isset($data['videoCount']) ? $data['videoCount'] : 0 ?></h2>
-                        <small class="opacity-75">Multimedia</small>
+                        <h5 class="card-title mb-1">Cuotas Pendientes</h5>
+                        <h2 class="mb-0"><?= isset($data['pendingFees']) ? $data['pendingFees'] : 0 ?></h2>
+                        <small class="opacity-75">Por cobrar</small>
                     </div>
-                    <i class="fas fa-video fa-2x opacity-50 d-none d-sm-block"></i>
+                    <i class="fas fa-exclamation-triangle fa-2x opacity-50 d-none d-sm-block"></i>
                 </div>
-                <a href="<?php echo URL_ROOT; ?>/admin/videos" class="btn btn-light btn-sm mt-auto">
-                    <i class="fas fa-video me-1"></i>Gestionar videos
+                <a href="<?= URL_ROOT ?>/admin/cuotas" class="btn btn-light btn-sm mt-auto">
+                    <i class="fas fa-exclamation-triangle me-1"></i>Gestionar cuotas
                 </a>
             </div>
         </div>
     </div>
-    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-3">
-        <div class="card text-white h-100" style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);">
-            <div class="card-body d-flex flex-column">
-                <div class="d-flex justify-content-between align-items-start mb-3">
-                    <div>
-                        <h5 class="card-title mb-1">Personalización</h5>
-                        <h2 class="mb-0"><?= isset($data['personalizacionCount']) ? $data['personalizacionCount'] : 0 ?></h2>
-                        <small class="opacity-75">Estilos activos</small>
-                    </div>
-                    <i class="fas fa-palette fa-2x opacity-50 d-none d-sm-block"></i>
-                </div>
-                <a href="<?php echo URL_ROOT; ?>/admin/personalizacion" class="btn btn-light btn-sm mt-auto">
-                    <i class="fas fa-palette me-1"></i>Personalizar diseño
-                </a>
-            </div>
-        </div>
-    </div>
-    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-3">
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-3 dashboard-card">
         <div class="card text-white bg-warning h-100">
             <div class="card-body d-flex flex-column">
                 <div class="d-flex justify-content-between align-items-start mb-3">
                     <div>
                         <h5 class="card-title mb-1">Acciones Rápidas</h5>
-                        <h2 class="mb-0">+</h2>
+                        <h2 class="mb-0">7</h2>
                         <small class="opacity-75">Herramientas</small>
                     </div>
-                    <i class="fas fa-plus fa-2x opacity-50 d-none d-sm-block"></i>
+                    <i class="fas fa-bolt fa-2x opacity-50 d-none d-sm-block"></i>
                 </div>
-                <div class="mt-auto">
-                    <a href="<?php echo URL_ROOT; ?>/admin/crearUsuario" class="text-white d-block small mb-1">Nuevo usuario</a>
-                    <a href="<?php echo URL_ROOT; ?>/admin/nuevoEvento" class="text-white d-block small mb-1">Nuevo evento</a>
-                    <a href="<?php echo URL_ROOT; ?>/admin/videos/nuevo" class="text-white d-block small mb-1">Nuevo video</a>
-                    <a href="<?php echo URL_ROOT; ?>/admin/personalizacion" class="text-white d-block small mb-1">Personalizar diseño</a>
-                    <a href="<?php echo URL_ROOT; ?>/admin/galeria" class="text-white d-block small mb-1">Subir archivos</a>
-                    <a href="<?php echo URL_ROOT; ?>/admin/documentos" class="text-white d-block small mb-1">Gestionar documentos</a>
-                    <a href="<?php echo URL_ROOT; ?>/admin/nueva-noticia" class="text-white d-block small">Nueva noticia</a>
+                <div class="dropdown mt-auto" style="position: relative; z-index: 1050;">
+                    <button class="btn btn-light btn-sm w-100 dropdown-toggle" type="button" id="dropdownAccionesRapidas" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-bolt me-1"></i>Ver acciones
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccionesRapidas" style="z-index: 1051;">
+                        <li><a class="dropdown-item" href="<?php echo URL_ROOT; ?>/admin/crearUsuario"><i class="fas fa-user-plus me-2"></i>Nuevo usuario</a></li>
+                        <li><a class="dropdown-item" href="<?php echo URL_ROOT; ?>/admin/nuevoEvento"><i class="fas fa-calendar-plus me-2"></i>Nuevo evento</a></li>
+                        <li><a class="dropdown-item" href="<?php echo URL_ROOT; ?>/admin/nueva-noticia"><i class="fas fa-newspaper me-2"></i>Nueva noticia</a></li>
+                        <li><a class="dropdown-item" href="<?php echo URL_ROOT; ?>/admin/videos/nuevo"><i class="fas fa-video me-2"></i>Nuevo video</a></li>
+                        <li><a class="dropdown-item" href="<?php echo URL_ROOT; ?>/admin/galeria"><i class="fas fa-upload me-2"></i>Subir archivos</a></li>
+                        <li><a class="dropdown-item" href="<?php echo URL_ROOT; ?>/admin/documentos"><i class="fas fa-file-alt me-2"></i>Gestionar documentos</a></li>
+                        <li><a class="dropdown-item" href="<?php echo URL_ROOT; ?>/admin/personalizacion"><i class="fas fa-palette me-2"></i>Personalizar diseño</a></li>
+                    </ul>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Estadísticas Secundarias -->
+<!-- Fichas Secundarias - Segunda Fila: Contenido y Multimedia -->
 <div class="row mb-4">
-    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-3 dashboard-card">
         <div class="card text-white h-100" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
             <div class="card-body d-flex flex-column">
                 <div class="d-flex justify-content-between align-items-start mb-3">
@@ -248,54 +258,70 @@
             </div>
         </div>
     </div>
-
-    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
-        <div class="card text-white bg-dark h-100">
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-3 dashboard-card">
+        <div class="card text-white bg-info h-100">
             <div class="card-body d-flex flex-column">
                 <div class="d-flex justify-content-between align-items-start mb-3">
                     <div>
-                        <h5 class="card-title mb-1">Noticias</h5>
-                        <h2 class="mb-0"><?= isset($data['newsCount']) ? $data['newsCount'] : 0 ?></h2>
-                        <small class="opacity-75">Publicaciones</small>
+                        <h5 class="card-title mb-1">Galería</h5>
+                        <h2 class="mb-0"><?= isset($galleryCount) ? $galleryCount : 0 ?></h2>
+                        <small class="opacity-75">Archivos multimedia</small>
                     </div>
-                    <i class="fas fa-newspaper fa-2x opacity-50 d-none d-sm-block"></i>
+                    <i class="fas fa-images fa-2x opacity-50 d-none d-sm-block"></i>
                 </div>
-                <a href="<?= URL_ROOT ?>/admin/noticias" class="btn btn-light btn-sm mt-auto">
-                    <i class="fas fa-newspaper me-1"></i>Gestionar noticias
+                <a href="<?= URL_ROOT ?>/admin/galeria" class="btn btn-light btn-sm mt-auto">
+                    <i class="fas fa-images me-1"></i>Gestionar galería
                 </a>
             </div>
         </div>
     </div>
-    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
-        <div class="card text-white bg-danger h-100">
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-3 dashboard-card">
+        <div class="card text-white bg-info h-100">
             <div class="card-body d-flex flex-column">
                 <div class="d-flex justify-content-between align-items-start mb-3">
                     <div>
-                        <h5 class="card-title mb-1">Mensajes</h5>
-                        <h2 class="mb-0"><?= isset($data['messagesCount']) ? $data['messagesCount'] : 0 ?></h2>
-                        <small class="opacity-75">Sin leer</small>
+                        <h5 class="card-title mb-1">Videos</h5>
+                        <h2 class="mb-0"><?= isset($data['videoCount']) ? $data['videoCount'] : 0 ?></h2>
+                        <small class="opacity-75">Multimedia</small>
                     </div>
-                    <i class="fas fa-envelope fa-2x opacity-50 d-none d-sm-block"></i>
+                    <i class="fas fa-video fa-2x opacity-50 d-none d-sm-block"></i>
                 </div>
-                <a href="<?= URL_ROOT ?>/admin/mensajes" class="btn btn-light btn-sm mt-auto">
-                    <i class="fas fa-envelope me-1"></i>Ver mensajes
+                <a href="<?php echo URL_ROOT; ?>/admin/videos" class="btn btn-light btn-sm mt-auto">
+                    <i class="fas fa-video me-1"></i>Gestionar videos
                 </a>
             </div>
         </div>
     </div>
-    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3">
-        <div class="card text-white bg-purple h-100" style="background: linear-gradient(135deg, #6f42c1 0%, #5a2d91 100%);">
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-3 dashboard-card">
+        <div class="card text-white bg-secondary h-100">
             <div class="card-body d-flex flex-column">
                 <div class="d-flex justify-content-between align-items-start mb-3">
                     <div>
-                        <h5 class="card-title mb-1">Cuotas Pendientes</h5>
-                        <h2 class="mb-0"><?= isset($data['pendingFees']) ? $data['pendingFees'] : 0 ?></h2>
-                        <small class="opacity-75">Por cobrar</small>
+                        <h5 class="card-title mb-1">Documentos</h5>
+                        <h2 class="mb-0"><?= isset($documentCount) ? $documentCount : 0 ?></h2>
+                        <small class="opacity-75">Archivos para descarga</small>
                     </div>
-                    <i class="fas fa-exclamation-triangle fa-2x opacity-50 d-none d-sm-block"></i>
+                    <i class="fas fa-file-alt fa-2x opacity-50 d-none d-sm-block"></i>
                 </div>
-                <a href="<?= URL_ROOT ?>/admin/cuotas" class="btn btn-light btn-sm mt-auto">
-                    <i class="fas fa-exclamation-triangle me-1"></i>Gestionar cuotas
+                <a href="<?= URL_ROOT ?>/admin/documentos" class="btn btn-light btn-sm mt-auto">
+                    <i class="fas fa-file-alt me-1"></i>Gestionar documentos
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-3 dashboard-card">
+        <div class="card text-white h-100" style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);">
+            <div class="card-body d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <h5 class="card-title mb-1">Personalización</h5>
+                        <h2 class="mb-0"><?= isset($data['personalizacionCount']) ? $data['personalizacionCount'] : 0 ?></h2>
+                        <small class="opacity-75">Estilos activos</small>
+                    </div>
+                    <i class="fas fa-palette fa-2x opacity-50 d-none d-sm-block"></i>
+                </div>
+                <a href="<?php echo URL_ROOT; ?>/admin/personalizacion" class="btn btn-light btn-sm mt-auto">
+                    <i class="fas fa-palette me-1"></i>Personalizar diseño
                 </a>
             </div>
         </div>
@@ -487,22 +513,22 @@
             <div class="card-body d-flex flex-column">
                 <div class="row flex-grow-1 admin-tools">
                     <div class="col-6 mb-3">
-                        <a href="<?= URL_ROOT ?>/admin/backup" class="btn btn-outline-primary w-100 h-100 d-flex flex-column align-items-center justify-content-center">
+                        <button type="button" onclick="showBackupInfo()" class="btn btn-outline-primary w-100 h-100 d-flex flex-column align-items-center justify-content-center">
                             <i class="fas fa-database fa-2x mb-2"></i>Backup BD
-                        </a>
+                        </button>
                     </div>
                     <div class="col-6 mb-3">
-                        <a href="<?= URL_ROOT ?>/admin/logs" class="btn btn-outline-secondary w-100 h-100 d-flex flex-column align-items-center justify-content-center">
+                        <button type="button" onclick="showLogsInfo()" class="btn btn-outline-secondary w-100 h-100 d-flex flex-column align-items-center justify-content-center">
                             <i class="fas fa-file-alt fa-2x mb-2"></i>Ver Logs
-                        </a>
+                        </button>
                     </div>
                     <div class="col-6 mb-3">
-                        <a href="<?= URL_ROOT ?>/admin/settings" class="btn btn-outline-info w-100 h-100 d-flex flex-column align-items-center justify-content-center">
+                        <a href="<?= URL_ROOT ?>/admin/personalizacion" class="btn btn-outline-info w-100 h-100 d-flex flex-column align-items-center justify-content-center">
                             <i class="fas fa-cog fa-2x mb-2"></i>Configuración
                         </a>
                     </div>
                     <div class="col-6 mb-3">
-                        <a href="<?= URL_ROOT ?>/admin/export" class="btn btn-outline-success w-100 h-100 d-flex flex-column align-items-center justify-content-center">
+                        <a href="<?= URL_ROOT ?>/admin/export/dashboard" class="btn btn-outline-success w-100 h-100 d-flex flex-column align-items-center justify-content-center">
                             <i class="fas fa-download fa-2x mb-2"></i>Exportar Datos
                         </a>
                     </div>
@@ -706,10 +732,10 @@ document.querySelectorAll('.alert-dismissible .btn-close').forEach(button => {
 });
 
 // Actualizar contadores en tiempo real (ejemplo)
-setInterval(() => {
-    // Aquí se podría hacer una llamada AJAX para actualizar los contadores
-    console.log('Actualizando dashboard...');
-}, 30000);
+// setInterval(() => {
+//     // Aquí se podría hacer una llamada AJAX para actualizar los contadores
+//     // console.log('Actualizando dashboard...');
+// }, 30000);
 
 // Mostrar notificación de bienvenida
 document.addEventListener('DOMContentLoaded', function() {
@@ -721,19 +747,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Inicializar calendario
     initializeCalendar();
 });
-
-// Funciones para el editor de contenido
-function saveContent() {
-    const mainTitle = document.getElementById('mainTitle').value;
-    const welcomeMessage = document.getElementById('welcomeMessage').value;
-    const siteStatus = document.getElementById('siteStatus').value;
-    
-    // Simular guardado
-    showNotification('Contenido guardado correctamente', 'success');
-    
-    // Aquí se enviaría la información al servidor
-    console.log('Guardando contenido:', { mainTitle, welcomeMessage, siteStatus });
-}
 
 // Funciones para notificaciones
 function sendNotification() {
@@ -1061,93 +1074,9 @@ function initializeCalendar() {
     </div>
 </div>
 
-<!-- Panel de Control Avanzado -->
+<!-- Herramientas y Configuración -->
 <div class="row mb-4">
-    <div class="col-md-8 mb-3">
-        <div class="card h-100">
-            <div class="card-header">
-                <h6 class="mb-0 text-white">
-                    <i class="fas fa-chart-line me-2"></i>Estadísticas en Tiempo Real
-                </h6>
-            </div>
-            <div class="card-body d-flex flex-column">
-                <div class="row flex-grow-1">
-                    <div class="col-md-6">
-                        <canvas id="visitsChart" width="300" height="200"></canvas>
-                    </div>
-                    <div class="col-md-6">
-                        <canvas id="eventsChart" width="300" height="200"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
     <div class="col-md-4 mb-3">
-        <div class="card h-100">
-            <div class="card-header">
-                <h6 class="mb-0 text-white">
-                    <i class="fas fa-clock me-2"></i>Estado del Sistema
-                </h6>
-            </div>
-            <div class="card-body d-flex flex-column">
-                <div class="system-status flex-grow-1">
-                    <div class="status-item d-flex justify-content-between align-items-center mb-3">
-                        <span>Base de Datos</span>
-                        <span class="badge bg-success">Online</span>
-                    </div>
-                    <div class="status-item d-flex justify-content-between align-items-center mb-3">
-                        <span>Servidor Web</span>
-                        <span class="badge bg-success">Activo</span>
-                    </div>
-                    <div class="status-item d-flex justify-content-between align-items-center mb-3">
-                        <span>Último Backup</span>
-                        <span class="badge bg-info">Hace 2h</span>
-                    </div>
-                    <div class="status-item d-flex justify-content-between align-items-center">
-                        <span>Espacio en Disco</span>
-                        <span class="badge bg-warning">75%</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Gestión de Contenido -->
-<div class="row mb-4">
-    <div class="col-md-6 mb-3">
-        <div class="card h-100">
-            <div class="card-header">
-                <h6 class="mb-0 text-white">
-                    <i class="fas fa-edit me-2"></i>Editor Rápido de Contenido
-                </h6>
-            </div>
-            <div class="card-body d-flex flex-column">
-                <div class="mb-3">
-                    <label class="form-label">Título de la Página Principal</label>
-                    <input type="text" class="form-control" value="Filá Mariscales de Caballeros Templarios" id="mainTitle">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Mensaje de Bienvenida</label>
-                    <textarea class="form-control" rows="3" id="welcomeMessage">Bienvenidos a la página oficial de la Filá Mariscales de Caballeros Templarios de Elche.</textarea>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Estado del Sitio</label>
-                    <select class="form-select" id="siteStatus">
-                        <option value="online">Online</option>
-                        <option value="maintenance">Mantenimiento</option>
-                        <option value="offline">Offline</option>
-                    </select>
-                </div>
-                <button class="btn btn-primary mt-auto" onclick="saveContent()">
-                    <i class="fas fa-save me-2"></i>Guardar Cambios
-                </button>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-md-6 mb-3">
         <div class="card h-100">
             <div class="card-header">
                 <h6 class="mb-0 text-white">
@@ -1190,10 +1119,6 @@ function initializeCalendar() {
             </div>
         </div>
     </div>
-</div>
-
-<!-- Comunicaciones y Notificaciones -->
-<div class="row mb-4">
     <div class="col-md-8 mb-3">
         <div class="card h-100">
             <div class="card-header">
@@ -1353,6 +1278,103 @@ function initializeCalendar() {
             }
         }
         
+        // Funciones para herramientas administrativas
+        function showBackupInfo() {
+            const modalHtml = `
+                <div class="modal fade" id="backupInfoModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">
+                                    <i class="fas fa-database me-2"></i>Backup de Base de Datos
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    <strong>Información sobre Backups</strong>
+                                </div>
+                                <p>Para realizar un backup de la base de datos, puedes usar una de las siguientes opciones:</p>
+                                <ul>
+                                    <li><strong>phpMyAdmin:</strong> Accede a phpMyAdmin desde XAMPP y exporta la base de datos manualmente.</li>
+                                    <li><strong>Línea de comandos:</strong> Usa mysqldump desde la terminal.</li>
+                                    <li><strong>Herramientas de servidor:</strong> Si estás en producción, usa las herramientas de backup de tu proveedor de hosting.</li>
+                                </ul>
+                                <div class="mt-3">
+                                    <h6>Comando mysqldump (ejemplo):</h6>
+                                    <code class="d-block p-2 bg-light rounded">
+                                        mysqldump -u root -p mariscales_db > backup_$(date +%Y%m%d_%H%M%S).sql
+                                    </code>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            const existingModal = document.getElementById('backupInfoModal');
+            if (existingModal) existingModal.remove();
+            
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            const modal = new bootstrap.Modal(document.getElementById('backupInfoModal'));
+            modal.show();
+        }
+        
+        function showLogsInfo() {
+            const modalHtml = `
+                <div class="modal fade" id="logsInfoModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">
+                                    <i class="fas fa-file-alt me-2"></i>Logs del Sistema
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    <strong>Ubicación de los Logs</strong>
+                                </div>
+                                <p>Los logs del sistema se encuentran en las siguientes ubicaciones:</p>
+                                <ul>
+                                    <li><strong>Logs de PHP:</strong> <code>C:\\xampp\\php\\logs\\php_error_log</code></li>
+                                    <li><strong>Logs de Apache:</strong> <code>C:\\xampp\\apache\\logs\\error.log</code></li>
+                                    <li><strong>Logs de la aplicación:</strong> <code>logs/error_YYYY-MM-DD.log</code></li>
+                                </ul>
+                                <div class="mt-3">
+                                    <h6>Ver logs en tiempo real (PowerShell):</h6>
+                                    <code class="d-block p-2 bg-light rounded">
+                                        Get-Content C:\\xampp\\php\\logs\\php_error_log -Wait -Tail 50
+                                    </code>
+                                </div>
+                                <div class="mt-3">
+                                    <h6>Ver logs de Apache:</h6>
+                                    <code class="d-block p-2 bg-light rounded">
+                                        Get-Content C:\\xampp\\apache\\logs\\error.log -Wait -Tail 50
+                                    </code>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            const existingModal = document.getElementById('logsInfoModal');
+            if (existingModal) existingModal.remove();
+            
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            const modal = new bootstrap.Modal(document.getElementById('logsInfoModal'));
+            modal.show();
+        }
+        
         // Inicializar tooltips de Bootstrap
         document.addEventListener('DOMContentLoaded', function() {
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
@@ -1360,32 +1382,6 @@ function initializeCalendar() {
                 return new bootstrap.Tooltip(tooltipTriggerEl);
             });
             
-            // Verificar si Font Awesome se cargó correctamente
-            setTimeout(function() {
-                var testIcon = document.createElement('i');
-                testIcon.className = 'fas fa-test';
-                testIcon.style.position = 'absolute';
-                testIcon.style.left = '-9999px';
-                testIcon.style.visibility = 'hidden';
-                document.body.appendChild(testIcon);
-                
-                var computedStyle = window.getComputedStyle(testIcon);
-                var fontFamily = computedStyle.getPropertyValue('font-family');
-                
-                document.body.removeChild(testIcon);
-                
-                if (!fontFamily.includes('Font Awesome') && !fontFamily.includes('FontAwesome')) {
-                    console.warn('Font Awesome no se cargó correctamente. Intentando cargar desde CDN alternativo...');
-                    
-                    // Crear un nuevo enlace para Font Awesome desde un CDN alternativo
-                    var link = document.createElement('link');
-                    link.rel = 'stylesheet';
-                    link.href = 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css';
-                    document.head.appendChild(link);
-                } else {
-                    console.log('Font Awesome cargado correctamente');
-                }
-            }, 1000);
         });
         
         // Funciones para analíticas de visitas

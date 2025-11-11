@@ -11,9 +11,9 @@ class Product {
      * Obtener todos los productos
      */
     public function getAllProducts() {
-        $this->db->query('SELECT p.*, c.nombre as categoria_nombre 
+        $this->db->query('SELECT p.*, 
+                         COALESCE(p.categoria, "Sin categoría") as categoria_nombre 
                          FROM productos p 
-                         LEFT JOIN categorias c ON p.categoria_id = c.id 
                          ORDER BY p.id DESC');
         
         return $this->db->resultSet();
@@ -23,14 +23,14 @@ class Product {
      * Crear un nuevo producto
      */
     public function createProduct($data) {
-        $this->db->query('INSERT INTO productos (nombre, descripcion, precio, stock, categoria_id, activo, fecha_creacion) 
-                         VALUES (:nombre, :descripcion, :precio, :stock, :categoria_id, :activo, NOW())');
+        $this->db->query('INSERT INTO productos (nombre, descripcion, precio, stock, categoria, activo, fecha_creacion) 
+                         VALUES (:nombre, :descripcion, :precio, :stock, :categoria, :activo, NOW())');
         
         $this->db->bind(':nombre', $data['nombre']);
         $this->db->bind(':descripcion', $data['descripcion'] ?? '');
         $this->db->bind(':precio', $data['precio']);
         $this->db->bind(':stock', $data['stock']);
-        $this->db->bind(':categoria_id', $data['categoria_id']);
+        $this->db->bind(':categoria', $data['categoria'] ?? $data['categoria_id'] ?? 'Sin categoría');
         $this->db->bind(':activo', $data['activo']);
         
         return $this->db->execute();
@@ -40,9 +40,9 @@ class Product {
      * Obtener un producto por ID
      */
     public function getProductById($id) {
-        $this->db->query('SELECT p.*, c.nombre as categoria_nombre 
+        $this->db->query('SELECT p.*, 
+                         COALESCE(p.categoria, "Sin categoría") as categoria_nombre 
                          FROM productos p 
-                         LEFT JOIN categorias c ON p.categoria_id = c.id 
                          WHERE p.id = :id');
         
         $this->db->bind(':id', $id);
@@ -58,7 +58,7 @@ class Product {
                              descripcion = :descripcion, 
                              precio = :precio, 
                              stock = :stock, 
-                             categoria_id = :categoria_id, 
+                             categoria = :categoria, 
                              activo = :activo,
                              fecha_actualizacion = NOW()
                          WHERE id = :id');
@@ -68,7 +68,7 @@ class Product {
         $this->db->bind(':descripcion', $data['descripcion'] ?? '');
         $this->db->bind(':precio', $data['precio']);
         $this->db->bind(':stock', $data['stock']);
-        $this->db->bind(':categoria_id', $data['categoria_id']);
+        $this->db->bind(':categoria', $data['categoria'] ?? $data['categoria_id'] ?? 'Sin categoría');
         $this->db->bind(':activo', $data['activo']);
         
         return $this->db->execute();
@@ -85,11 +85,16 @@ class Product {
     }
     
     /**
-     * Obtener categorías
+     * Obtener categorías (array hardcodeado)
      */
     public function getCategories() {
-        $this->db->query('SELECT * FROM categorias ORDER BY nombre');
-        return $this->db->resultSet();
+        return [
+            'ropa' => 'Ropa',
+            'accesorios' => 'Accesorios',
+            'banderas' => 'Banderas',
+            'merchandising' => 'Merchandising',
+            'otros' => 'Otros'
+        ];
     }
     
     /**

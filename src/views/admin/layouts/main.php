@@ -6,9 +6,8 @@
     <title><?= $data['title'] ?? 'Panel de Administración' ?> - Filá Mariscales</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome - Múltiples CDNs como respaldo -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" onerror="this.onerror=null;this.href='https://use.fontawesome.com/releases/v6.0.0/css/all.css';">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <!-- Custom CSS -->
     <link href="<?= URL_ROOT ?>/assets/css/admin.css" rel="stylesheet">
     <!-- Personalización dinámica (CSS generado desde la base de datos) -->
@@ -28,22 +27,95 @@
                 <p class="mb-0">Panel de Administración</p>
             </div>
             <div class="list-group list-group-flush">
-                <a href="<?= URL_ROOT ?>/admin" class="list-group-item list-group-item-action bg-dark text-white">
+                <!-- Principal -->
+                <a href="<?= URL_ROOT ?>/admin" class="list-group-item list-group-item-action bg-dark text-white <?= (basename($_SERVER['PHP_SELF']) == 'dashboard.php' || $_SERVER['REQUEST_URI'] == URL_ROOT . '/admin' || $_SERVER['REQUEST_URI'] == URL_ROOT . '/admin/') ? 'active bg-primary' : '' ?>">
                     <i class="fas fa-tachometer-alt me-2"></i>Dashboard
                 </a>
-                <a href="<?= URL_ROOT ?>/admin/users" class="list-group-item list-group-item-action bg-dark text-white">
-                    <i class="fas fa-users me-2"></i>Usuarios
+                
+                <!-- Separador: Contenido -->
+                <div class="list-group-item bg-dark text-white-50 small px-3 py-2" style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;">
+                    <i class="fas fa-file-alt me-1"></i> Contenido
+                </div>
+                
+                <a href="<?= URL_ROOT ?>/admin/noticias" class="list-group-item list-group-item-action bg-dark text-white <?= (strpos($_SERVER['REQUEST_URI'], '/admin/noticias') !== false || strpos($_SERVER['REQUEST_URI'], '/admin/nueva-noticia') !== false || strpos($_SERVER['REQUEST_URI'], '/admin/editar-noticia') !== false) ? 'active bg-primary' : '' ?>">
+                    <i class="fas fa-newspaper me-2"></i>Noticias / Blog
                 </a>
-                <a href="<?= URL_ROOT ?>/admin/events" class="list-group-item list-group-item-action bg-dark text-white">
+                <a href="<?= URL_ROOT ?>/admin/eventos" class="list-group-item list-group-item-action bg-dark text-white <?= (strpos($_SERVER['REQUEST_URI'], '/admin/eventos') !== false || strpos($_SERVER['REQUEST_URI'], '/admin/events') !== false || strpos($_SERVER['REQUEST_URI'], '/admin/nuevo-evento') !== false) ? 'active bg-primary' : '' ?>">
                     <i class="fas fa-calendar-alt me-2"></i>Eventos
                 </a>
-                <a href="<?= URL_ROOT ?>/admin/gallery" class="list-group-item list-group-item-action bg-dark text-white">
+                <a href="<?= URL_ROOT ?>/admin/galeria" class="list-group-item list-group-item-action bg-dark text-white <?= (strpos($_SERVER['REQUEST_URI'], '/admin/galeria') !== false || strpos($_SERVER['REQUEST_URI'], '/admin/gallery') !== false) ? 'active bg-primary' : '' ?>">
                     <i class="fas fa-images me-2"></i>Galería
                 </a>
-                <a href="<?= URL_ROOT ?>/admin/settings" class="list-group-item list-group-item-action bg-dark text-white">
-                    <i class="fas fa-cog me-2"></i>Ajustes
+                <a href="<?= URL_ROOT ?>/admin/videos" class="list-group-item list-group-item-action bg-dark text-white <?= (strpos($_SERVER['REQUEST_URI'], '/admin/videos') !== false) ? 'active bg-primary' : '' ?>">
+                    <i class="fas fa-video me-2"></i>Videos
                 </a>
-                <a href="<?= URL_ROOT ?>/" class="list-group-item list-group-item-action bg-dark text-white mt-4">
+                <a href="<?= URL_ROOT ?>/admin/documentos" class="list-group-item list-group-item-action bg-dark text-white <?= (strpos($_SERVER['REQUEST_URI'], '/admin/documentos') !== false) ? 'active bg-primary' : '' ?>">
+                    <i class="fas fa-file-alt me-2"></i>Documentos
+                </a>
+                <a href="<?= URL_ROOT ?>/admin/flipbooks" class="list-group-item list-group-item-action bg-dark text-white <?= (strpos($_SERVER['REQUEST_URI'], '/admin/flipbooks') !== false) ? 'active bg-primary' : '' ?>">
+                    <i class="fas fa-book me-2"></i>Flipbooks
+                </a>
+                
+                <!-- Separador: Usuarios -->
+                <div class="list-group-item bg-dark text-white-50 small px-3 py-2 mt-2" style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;">
+                    <i class="fas fa-users me-1"></i> Usuarios
+                </div>
+                
+                <a href="<?= URL_ROOT ?>/admin/usuarios" class="list-group-item list-group-item-action bg-dark text-white <?= (strpos($_SERVER['REQUEST_URI'], '/admin/usuarios') !== false || strpos($_SERVER['REQUEST_URI'], '/admin/users') !== false || strpos($_SERVER['REQUEST_URI'], '/admin/crearUsuario') !== false || strpos($_SERVER['REQUEST_URI'], '/admin/editarUsuario') !== false) ? 'active bg-primary' : '' ?>">
+                    <i class="fas fa-users me-2"></i>Gestión de Usuarios
+                </a>
+                <a href="<?= URL_ROOT ?>/admin/cuotas" class="list-group-item list-group-item-action bg-dark text-white <?= (strpos($_SERVER['REQUEST_URI'], '/admin/cuotas') !== false) ? 'active bg-primary' : '' ?>">
+                    <i class="fas fa-credit-card me-2"></i>Cuotas de Socios
+                </a>
+                
+                <!-- Separador: Comercio -->
+                <div class="list-group-item bg-dark text-white-50 small px-3 py-2 mt-2" style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;">
+                    <i class="fas fa-shopping-cart me-1"></i> Comercio
+                </div>
+                
+                <a href="<?= URL_ROOT ?>/admin/productos" class="list-group-item list-group-item-action bg-dark text-white <?= (strpos($_SERVER['REQUEST_URI'], '/admin/productos') !== false || strpos($_SERVER['REQUEST_URI'], '/admin/nuevo-producto') !== false || strpos($_SERVER['REQUEST_URI'], '/admin/editar-producto') !== false || strpos($_SERVER['REQUEST_URI'], '/admin/tienda') !== false) ? 'active bg-primary' : '' ?>">
+                    <i class="fas fa-shopping-cart me-2"></i>Tienda Online
+                </a>
+                
+                <!-- Separador: Comunicación -->
+                <div class="list-group-item bg-dark text-white-50 small px-3 py-2 mt-2" style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;">
+                    <i class="fas fa-comments me-1"></i> Comunicación
+                </div>
+                
+                <a href="<?= URL_ROOT ?>/admin/mensajes" class="list-group-item list-group-item-action bg-dark text-white <?= (strpos($_SERVER['REQUEST_URI'], '/admin/mensajes') !== false) ? 'active bg-primary' : '' ?>">
+                    <i class="fas fa-envelope me-2"></i>Mensajes
+                    <?php if (isset($data['messagesCount']) && $data['messagesCount'] > 0): ?>
+                        <span class="badge bg-danger float-end"><?= $data['messagesCount'] ?></span>
+                    <?php endif; ?>
+                </a>
+                
+                <!-- Separador: Análisis -->
+                <div class="list-group-item bg-dark text-white-50 small px-3 py-2 mt-2" style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;">
+                    <i class="fas fa-chart-bar me-1"></i> Análisis
+                </div>
+                
+                <a href="<?= URL_ROOT ?>/admin/visitas" class="list-group-item list-group-item-action bg-dark text-white <?= (strpos($_SERVER['REQUEST_URI'], '/admin/visitas') !== false) ? 'active bg-primary' : '' ?>">
+                    <i class="fas fa-chart-line me-2"></i>Analíticas / Visitas
+                </a>
+                
+                <!-- Separador: Configuración -->
+                <div class="list-group-item bg-dark text-white-50 small px-3 py-2 mt-2" style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;">
+                    <i class="fas fa-cog me-1"></i> Configuración
+                </div>
+                
+                <a href="<?= URL_ROOT ?>/admin/personalizacion" class="list-group-item list-group-item-action bg-dark text-white <?= (strpos($_SERVER['REQUEST_URI'], '/admin/personalizacion') !== false) ? 'active bg-primary' : '' ?>">
+                    <i class="fas fa-palette me-2"></i>Personalización
+                </a>
+                <a href="<?= URL_ROOT ?>/admin/settings" class="list-group-item list-group-item-action bg-dark text-white <?= (strpos($_SERVER['REQUEST_URI'], '/admin/settings') !== false) ? 'active bg-primary' : '' ?>">
+                    <i class="fas fa-cog me-2"></i>Ajustes Generales
+                </a>
+                
+                <!-- Separador: Acciones -->
+                <div class="list-group-item bg-dark text-white-50 small px-3 py-2 mt-3" style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;">
+                    <i class="fas fa-external-link-alt me-1"></i> Acciones
+                </div>
+                
+                <a href="<?= URL_ROOT ?>/" class="list-group-item list-group-item-action bg-dark text-white">
                     <i class="fas fa-home me-2"></i>Volver al Sitio
                 </a>
                 <a href="<?= URL_ROOT ?>/auth/logout" class="list-group-item list-group-item-action bg-dark text-white">

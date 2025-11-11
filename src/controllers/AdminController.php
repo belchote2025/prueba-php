@@ -1843,9 +1843,9 @@ class AdminController extends Controller {
             $pdo = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME, DB_USER, DB_PASS);
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             
-            $stmt = $pdo->query('SELECT p.*, c.nombre as categoria_nombre 
+            $stmt = $pdo->query('SELECT p.*, 
+                                COALESCE(p.categoria, "Sin categoría") as categoria_nombre 
                                 FROM productos p 
-                                LEFT JOIN categorias c ON p.categoria_id = c.id 
                                 ORDER BY p.id DESC');
             $products = $stmt->fetchAll(PDO::FETCH_OBJ);
             

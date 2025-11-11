@@ -1026,10 +1026,10 @@ class Pages extends Controller {
             $pdo = new PDO('mysql:host=localhost;dbname=mariscales_db', 'root', '');
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             
-            // Consulta que incluye las categorías (igual que AdminController)
-            $stmt = $pdo->query('SELECT p.*, c.nombre as categoria_nombre 
+            // Consulta que incluye las categorías (sin JOIN con tabla categorias)
+            $stmt = $pdo->query('SELECT p.*, 
+                                COALESCE(p.categoria, "Sin categoría") as categoria_nombre 
                                 FROM productos p 
-                                LEFT JOIN categorias c ON p.categoria_id = c.id 
                                 ORDER BY p.id DESC');
             $all_products = $stmt->fetchAll(PDO::FETCH_OBJ);
             

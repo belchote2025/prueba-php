@@ -61,6 +61,57 @@ unset($_SESSION['error_message']);
     <link href="<?php echo URL_ROOT; ?>/aplicar-personalizacion.php" rel="stylesheet">
     
     <style>
+        /* Navbar Styles */
+        .navbar {
+            padding: 0.75rem 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .navbar-brand {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .navbar-nav .nav-link {
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+            border-radius: 4px;
+            margin: 0 0.25rem;
+        }
+        
+        .navbar-nav .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .navbar-nav .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            font-weight: 600;
+        }
+        
+        .navbar-nav .nav-link.text-danger:hover {
+            background-color: rgba(220, 53, 69, 0.2);
+        }
+        
+        .navbar-toggler {
+            border: none;
+            padding: 0.25rem 0.5rem;
+        }
+        
+        .navbar-toggler:focus {
+            box-shadow: none;
+        }
+        
+        @media (max-width: 991.98px) {
+            .navbar-nav {
+                margin-top: 1rem;
+            }
+            
+            .navbar-nav .nav-link {
+                padding: 0.75rem 1rem;
+                margin: 0.25rem 0;
+            }
+        }
+        
         .color-picker-wrapper {
             display: flex;
             align-items: center;
@@ -101,20 +152,34 @@ unset($_SESSION['error_message']);
 </head>
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
         <div class="container-fluid">
-            <a class="navbar-brand" href="<?php echo URL_ROOT; ?>/admin/dashboard">
-                <i class="fas fa-shield-alt me-2"></i>Panel de Administración
+            <a class="navbar-brand d-flex align-items-center" href="<?php echo URL_ROOT; ?>/admin/dashboard">
+                <i class="fas fa-shield-alt me-2"></i>
+                <span class="d-none d-sm-inline">Panel de Administración</span>
+                <span class="d-sm-none">Admin</span>
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <div class="navbar-nav ms-auto">
-                    <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/dashboard">Dashboard</a>
-                    <a class="nav-link active" href="<?php echo URL_ROOT; ?>/admin/personalizacion">Personalización</a>
-                    <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/logout">Cerrar Sesión</a>
-                </div>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?php echo URL_ROOT; ?>/admin/dashboard">
+                            <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="<?php echo URL_ROOT; ?>/admin/personalizacion">
+                            <i class="fas fa-palette me-1"></i>Personalización
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-danger" href="<?php echo URL_ROOT; ?>/admin/logout">
+                            <i class="fas fa-sign-out-alt me-1"></i>Cerrar Sesión
+                        </a>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
